@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{F477E88C-AB39-313A-BFDA-3BE51D67F912}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>dmlc</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">dmlc.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">dmlc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">dmlc.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">dmlc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">dmlc.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">dmlc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">dmlc.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">dmlc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions)  /bigobj</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions)  /bigobj</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions)  /bigobj</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions)  /bigobj</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;DMLC_USE_HDFS=0;DMLC_USE_S3=0;DMLC_USE_AZURE=0;__USE_XOPEN2K8;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Documents\GitHub\mini-mxnet\include;D:\Documents\GitHub\mini-mxnet\src;D:\Documents\GitHub\mini-mxnet\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Documents\GitHub\mini-mxnet\3rdparty\cudnn\include;D:\Documents\GitHub\mini-mxnet\mshadow;D:\Documents\GitHub\mini-mxnet\3rdparty\cub;D:\Documents\GitHub\mini-mxnet\nnvm\include;D:\Documents\GitHub\mini-mxnet\dmlc-core\include;D:\Documents\GitHub\mini-mxnet\dlpack\include;D:\OpenCV3.3.1\opencv\build\include;D:\OpenCV3.3.1\opencv\build\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\cmake\bin\cmake.exe -HD:/Documents/GitHub/mini-mxnet -BD:/Documents/GitHub/mini-mxnet/windows --check-stamp-file D:/Documents/GitHub/mini-mxnet/windows/dmlc-core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\cmake\Utils.cmake;D:\cmake\share\cmake-3.8\Modules\FindPythonInterp.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\cmake\share\cmake-3.8\Modules\CTest.cmake;D:\cmake\share\cmake-3.8\Modules\CTestUseLaunchers.cmake;D:\cmake\share\cmake-3.8\Modules\CTestTargets.cmake;D:\cmake\share\cmake-3.8\Modules\DartConfiguration.tcl.in;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\cmake\bin\cmake.exe -HD:/Documents/GitHub/mini-mxnet -BD:/Documents/GitHub/mini-mxnet/windows --check-stamp-file D:/Documents/GitHub/mini-mxnet/windows/dmlc-core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\cmake\Utils.cmake;D:\cmake\share\cmake-3.8\Modules\FindPythonInterp.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\cmake\share\cmake-3.8\Modules\CTest.cmake;D:\cmake\share\cmake-3.8\Modules\CTestUseLaunchers.cmake;D:\cmake\share\cmake-3.8\Modules\CTestTargets.cmake;D:\cmake\share\cmake-3.8\Modules\DartConfiguration.tcl.in;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\cmake\bin\cmake.exe -HD:/Documents/GitHub/mini-mxnet -BD:/Documents/GitHub/mini-mxnet/windows --check-stamp-file D:/Documents/GitHub/mini-mxnet/windows/dmlc-core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\cmake\Utils.cmake;D:\cmake\share\cmake-3.8\Modules\FindPythonInterp.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\cmake\share\cmake-3.8\Modules\CTest.cmake;D:\cmake\share\cmake-3.8\Modules\CTestUseLaunchers.cmake;D:\cmake\share\cmake-3.8\Modules\CTestTargets.cmake;D:\cmake\share\cmake-3.8\Modules\DartConfiguration.tcl.in;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\cmake\bin\cmake.exe -HD:/Documents/GitHub/mini-mxnet -BD:/Documents/GitHub/mini-mxnet/windows --check-stamp-file D:/Documents/GitHub/mini-mxnet/windows/dmlc-core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:/Documents/GitHub/mini-mxnet/dmlc-core/CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;D:\Documents\GitHub\mini-mxnet\dmlc-core\cmake\Utils.cmake;D:\cmake\share\cmake-3.8\Modules\FindPythonInterp.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageHandleStandardArgs.cmake;D:\cmake\share\cmake-3.8\Modules\FindPackageMessage.cmake;D:\cmake\share\cmake-3.8\Modules\CTest.cmake;D:\cmake\share\cmake-3.8\Modules\CTestUseLaunchers.cmake;D:\cmake\share\cmake-3.8\Modules\CTestTargets.cmake;D:\cmake\share\cmake-3.8\Modules\DartConfiguration.tcl.in;D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Documents\GitHub\mini-mxnet\windows\dmlc-core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\any.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\array_view.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\base.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\blockingconcurrentqueue.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\common.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\concurrency.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\concurrentqueue.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\config.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\data.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\endian.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\input_split_shuffle.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\io.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\json.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\logging.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\lua.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\memory.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\memory_io.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\omp.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\optional.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\parameter.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\recordio.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\registry.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\serializer.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\thread_group.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\thread_local.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\threadediter.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\timer.h" />
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\type_traits.h" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\config.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\data.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\recordio.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\line_split.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\recordio_split.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\indexed_recordio_split.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\input_split_base.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\filesys.cc" />
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\local_filesys.cc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

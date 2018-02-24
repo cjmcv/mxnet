@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\config.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\data.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\recordio.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\line_split.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\recordio_split.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\indexed_recordio_split.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\input_split_base.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\filesys.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\src\io\local_filesys.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\any.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\array_view.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\blockingconcurrentqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\concurrency.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\concurrentqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\input_split_shuffle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\lua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\memory_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\omp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\optional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\parameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\recordio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\serializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\thread_group.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\thread_local.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\threadediter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\include\dmlc\type_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Documents\GitHub\mini-mxnet\dmlc-core\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6182EA1C-6A17-39A3-A778-5F82624EA18F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{38576E79-F688-36F5-949B-F6781631DFD7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
