@@ -1,3 +1,15 @@
+# Visual Studio related files.
+*.deps
+x64/
+*.user
+*.VC.db
+*.pdb
+
+# Temporary third-party libraries
+3rdparty/opencv/
+3rdparty/cudnn/
+3rdparty/openblas/
+
 # Compiled Object files
 *.slo
 *.lo
