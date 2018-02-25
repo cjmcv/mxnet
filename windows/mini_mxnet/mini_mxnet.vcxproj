@@ -1,0 +1,706 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\mxnet\base.h" />
+    <ClInclude Include="..\..\include\mxnet\c_api.h" />
+    <ClInclude Include="..\..\include\mxnet\c_predict_api.h" />
+    <ClInclude Include="..\..\include\mxnet\engine.h" />
+    <ClInclude Include="..\..\include\mxnet\executor.h" />
+    <ClInclude Include="..\..\include\mxnet\graph_attr_types.h" />
+    <ClInclude Include="..\..\include\mxnet\imperative.h" />
+    <ClInclude Include="..\..\include\mxnet\io.h" />
+    <ClInclude Include="..\..\include\mxnet\kvstore.h" />
+    <ClInclude Include="..\..\include\mxnet\ndarray.h" />
+    <ClInclude Include="..\..\include\mxnet\operator.h" />
+    <ClInclude Include="..\..\include\mxnet\operator_util.h" />
+    <ClInclude Include="..\..\include\mxnet\op_attr_types.h" />
+    <ClInclude Include="..\..\include\mxnet\resource.h" />
+    <ClInclude Include="..\..\include\mxnet\rtc.h" />
+    <ClInclude Include="..\..\include\mxnet\storage.h" />
+    <ClInclude Include="..\..\include\mxnet\tensor_blob.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\base.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\cuda\reduce.cuh" />
+    <ClInclude Include="..\..\mshadow\mshadow\cuda\tensor_gpu-inl.cuh" />
+    <ClInclude Include="..\..\mshadow\mshadow\dot_engine-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\expression.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\expr_engine-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\expr_scalar-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\broadcast.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\broadcast_with_axis.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\channel_pool.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\channel_unpool.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\choose.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\complex.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\concat.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\crop.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\fill.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\flip.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\implicit_gemm.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\mask.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\mirror.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\one_hot.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\pack_col2patch.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\pad.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\range.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\reduceto1d.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\reduce_with_axis.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\reshape.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\slice.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\slice_ex.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\spatial_pool.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\spatial_unpool.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\spatial_upsampling_nearest.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\swapaxis.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\take.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\take_grad.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\transpose.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\extension\unpack_patch2col.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\half.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\half2.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\io.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\logging.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\packet-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\packet\plain-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\packet\sse-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\random.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\stream_gpu-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\tensor.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\tensor_container.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\tensor_cpu-inl.h" />
+    <ClInclude Include="..\..\mshadow\mshadow\tensor_gpu-inl.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\base.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\compiler\contrib_op_param.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\compiler\op_attr_types.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\compiler\packed_func_ext.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\c_api.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\graph.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\graph_attr_types.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\node.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\op.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\op_attr_types.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\pass.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\pass_functions.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\symbolic.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\top\nn.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\top\tensor.h" />
+    <ClInclude Include="..\..\nnvm\include\nnvm\tuple.h" />
+    <ClInclude Include="..\..\nnvm\src\c_api\c_api_common.h" />
+    <ClInclude Include="..\..\nnvm\src\pass\graph_algorithm.h" />
+    <ClInclude Include="..\..\src\common\cuda_utils.h" />
+    <ClInclude Include="..\..\src\common\exec_utils.h" />
+    <ClInclude Include="..\..\src\common\lazy_alloc_array.h" />
+    <ClInclude Include="..\..\src\common\object_pool.h" />
+    <ClInclude Include="..\..\src\common\random_generator.h" />
+    <ClInclude Include="..\..\src\common\static_array.h" />
+    <ClInclude Include="..\..\src\common\utils.h" />
+    <ClInclude Include="..\..\src\c_api\c_api_common.h" />
+    <ClInclude Include="..\..\src\engine\engine_impl.h" />
+    <ClInclude Include="..\..\src\engine\openmp.h" />
+    <ClInclude Include="..\..\src\engine\profiler.h" />
+    <ClInclude Include="..\..\src\engine\stream_manager.h" />
+    <ClInclude Include="..\..\src\engine\threaded_engine.h" />
+    <ClInclude Include="..\..\src\engine\thread_pool.h" />
+    <ClInclude Include="..\..\src\executor\exec_pass.h" />
+    <ClInclude Include="..\..\src\executor\graph_executor.h" />
+    <ClInclude Include="..\..\src\imperative\imperative_utils.h" />
+    <ClInclude Include="..\..\src\io\image_augmenter.h" />
+    <ClInclude Include="..\..\src\io\image_iter_common.h" />
+    <ClInclude Include="..\..\src\io\image_recordio.h" />
+    <ClInclude Include="..\..\src\io\inst_vector.h" />
+    <ClInclude Include="..\..\src\io\iter_batchloader.h" />
+    <ClInclude Include="..\..\src\io\iter_normalize.h" />
+    <ClInclude Include="..\..\src\io\iter_prefetcher.h" />
+    <ClInclude Include="..\..\src\io\iter_sparse.h" />
+    <ClInclude Include="..\..\src\io\iter_sparse_batchloader.h" />
+    <ClInclude Include="..\..\src\io\iter_sparse_prefetcher.h" />
+    <ClInclude Include="..\..\src\kvstore\comm.h" />
+    <ClInclude Include="..\..\src\kvstore\gradient_compression-inl.h" />
+    <ClInclude Include="..\..\src\kvstore\gradient_compression.h" />
+    <ClInclude Include="..\..\src\kvstore\kvstore_dist.h" />
+    <ClInclude Include="..\..\src\kvstore\kvstore_dist_server.h" />
+    <ClInclude Include="..\..\src\kvstore\kvstore_local.h" />
+    <ClInclude Include="..\..\src\kvstore\kvstore_nccl.h" />
+    <ClInclude Include="..\..\src\kvstore\kvstore_utils.h" />
+    <ClInclude Include="..\..\src\ndarray\ndarray_function-inl.cuh" />
+    <ClInclude Include="..\..\src\ndarray\ndarray_function-inl.h" />
+    <ClInclude Include="..\..\src\ndarray\ndarray_function.h" />
+    <ClInclude Include="..\..\src\operator\batch_norm_v1-inl.h" />
+    <ClInclude Include="..\..\src\operator\bilinear_sampler-inl.h" />
+    <ClInclude Include="..\..\src\operator\channel_op_common.h" />
+    <ClInclude Include="..\..\src\operator\contrib\bounding_box-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\count_sketch-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctaloadbalance.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctamerge.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctascan.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctasearch.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctasegreduce.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctasegscan.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctasegsort.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\ctasortedsearch.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\devicetypes.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\deviceutil.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\intrinsics.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\loadstore.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\serialsets.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\device\sortnetwork.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\mgpudevice.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\mgpuenums.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\contrib\moderngpu\include\util\static.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\cpu_ctc.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\ctc_helper.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\gpu_ctc.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\gpu_ctc_kernels.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\hostdevice.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ctc_loss-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\deformable_convolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\deformable_psroi_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\dequantize-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\fft-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\ifft-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\krprod.h" />
+    <ClInclude Include="..\..\src\operator\contrib\multibox_detection-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\multibox_prior-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\multibox_target-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\multi_proposal-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\nn\deformable_im2col.cuh" />
+    <ClInclude Include="..\..\src\operator\contrib\nn\deformable_im2col.h" />
+    <ClInclude Include="..\..\src\operator\contrib\proposal-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\psroi_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\contrib\quantize-inl.h" />
+    <ClInclude Include="..\..\src\operator\convolution_v1-inl.h" />
+    <ClInclude Include="..\..\src\operator\correlation-inl.h" />
+    <ClInclude Include="..\..\src\operator\crop-inl.h" />
+    <ClInclude Include="..\..\src\operator\cudnn_bilinear_sampler-inl.h" />
+    <ClInclude Include="..\..\src\operator\cudnn_lrn-inl.h" />
+    <ClInclude Include="..\..\src\operator\cudnn_rnn-inl.h" />
+    <ClInclude Include="..\..\src\operator\cudnn_spatial_transformer-inl.h" />
+    <ClInclude Include="..\..\src\operator\custom\custom-inl.h" />
+    <ClInclude Include="..\..\src\operator\custom\native_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\custom\ndarray_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\c_lapack_api.h" />
+    <ClInclude Include="..\..\src\operator\elemwise_op_common.h" />
+    <ClInclude Include="..\..\src\operator\grid_generator-inl.h" />
+    <ClInclude Include="..\..\src\operator\identity_attach_KL_sparse_reg-inl.h" />
+    <ClInclude Include="..\..\src\operator\image\image_random-inl.h" />
+    <ClInclude Include="..\..\src\operator\instance_norm-inl.h" />
+    <ClInclude Include="..\..\src\operator\l2_normalization-inl.h" />
+    <ClInclude Include="..\..\src\operator\leaky_relu-inl.h" />
+    <ClInclude Include="..\..\src\operator\linalg.h" />
+    <ClInclude Include="..\..\src\operator\linalg_impl.h" />
+    <ClInclude Include="..\..\src\operator\loss_binary_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\make_loss-inl.h" />
+    <ClInclude Include="..\..\src\operator\math_functions-inl.h" />
+    <ClInclude Include="..\..\src\operator\mshadow_op.h" />
+    <ClInclude Include="..\..\src\operator\mxnet_op.h" />
+    <ClInclude Include="..\..\src\operator\nnpack\nnpack_convolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nnpack\nnpack_fully_connected-inl.h" />
+    <ClInclude Include="..\..\src\operator\nnpack\nnpack_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\nnpack\nnpack_util.h" />
+    <ClInclude Include="..\..\src\operator\nn\activation-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\batch_norm-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\concat-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\convolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_activation-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_algoreg-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_batch_norm-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_convolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_deconvolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_softmax_activation-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\deconvolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\depthwise_convolution-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\depthwise_convolution_tf.cuh" />
+    <ClInclude Include="..\..\src\operator\nn\dropout-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\fully_connected-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\im2col.cuh" />
+    <ClInclude Include="..\..\src\operator\nn\im2col.h" />
+    <ClInclude Include="..\..\src\operator\nn\lrn-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_base-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_batch_norm-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_lrn-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_ops-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\pool.cuh" />
+    <ClInclude Include="..\..\src\operator\nn\pool.h" />
+    <ClInclude Include="..\..\src\operator\nn\pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\sequence_mask-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\softmax-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\softmax_activation-inl.h" />
+    <ClInclude Include="..\..\src\operator\nn\upsampling-inl.h" />
+    <ClInclude Include="..\..\src\operator\operator_common.h" />
+    <ClInclude Include="..\..\src\operator\operator_tune-inl.h" />
+    <ClInclude Include="..\..\src\operator\operator_tune.h" />
+    <ClInclude Include="..\..\src\operator\optimizer_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\pad-inl.h" />
+    <ClInclude Include="..\..\src\operator\pooling_v1-inl.h" />
+    <ClInclude Include="..\..\src\operator\random\multisample_op.h" />
+    <ClInclude Include="..\..\src\operator\random\sampler.h" />
+    <ClInclude Include="..\..\src\operator\random\sample_multinomial_op.h" />
+    <ClInclude Include="..\..\src\operator\random\sample_op.h" />
+    <ClInclude Include="..\..\src\operator\regression_output-inl.h" />
+    <ClInclude Include="..\..\src\operator\rnn-inl.h" />
+    <ClInclude Include="..\..\src\operator\roi_pooling-inl.h" />
+    <ClInclude Include="..\..\src\operator\sequence_last-inl.h" />
+    <ClInclude Include="..\..\src\operator\sequence_mask-inl.h" />
+    <ClInclude Include="..\..\src\operator\sequence_op_common.h" />
+    <ClInclude Include="..\..\src\operator\sequence_reverse-inl.h" />
+    <ClInclude Include="..\..\src\operator\slice_channel-inl.h" />
+    <ClInclude Include="..\..\src\operator\softmax_output-inl.h" />
+    <ClInclude Include="..\..\src\operator\spatial_transformer-inl.h" />
+    <ClInclude Include="..\..\src\operator\special_functions-inl.h" />
+    <ClInclude Include="..\..\src\operator\svm_output-inl.h" />
+    <ClInclude Include="..\..\src\operator\swapaxis-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\broadcast_reduce-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\broadcast_reduce-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\broadcast_reduce_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\cast_storage-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\cast_storage-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\control_flow_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\dot-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\dot-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_binary_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_binary_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_binary_scalar_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_scatter_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_sum.h" />
+    <ClInclude Include="..\..\src\operator\tensor\elemwise_unary_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\indexing_op-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\indexing_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\init_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\la_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\la_op_inline.h" />
+    <ClInclude Include="..\..\src\operator\tensor\matrix_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\ordering_op-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\sort_op-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\sort_op.h" />
+    <ClInclude Include="..\..\src\operator\tensor\sparse_retain-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\square_sum-inl.h" />
+    <ClInclude Include="..\..\src\operator\tensor\util\tensor_util-inl.cuh" />
+    <ClInclude Include="..\..\src\operator\tensor\util\tensor_util-inl.h" />
+    <ClInclude Include="..\..\src\optimizer\sgd-inl.h" />
+    <ClInclude Include="..\..\src\storage\cpu_device_storage.h" />
+    <ClInclude Include="..\..\src\storage\cpu_shared_storage_manager.h" />
+    <ClInclude Include="..\..\src\storage\gpu_device_storage.h" />
+    <ClInclude Include="..\..\src\storage\naive_storage_manager.h" />
+    <ClInclude Include="..\..\src\storage\pinned_memory_storage.h" />
+    <ClInclude Include="..\..\src\storage\pooled_storage_manager.h" />
+    <ClInclude Include="..\..\src\storage\storage_manager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\src\common\random_generator.cu" />
+    <CudaCompile Include="..\..\src\common\utils.cu" />
+    <CudaCompile Include="..\..\src\kvstore\gradient_compression.cu" />
+    <CudaCompile Include="..\..\src\kvstore\kvstore_utils.cu" />
+    <CudaCompile Include="..\..\src\ndarray\ndarray_function.cu" />
+    <CudaCompile Include="..\..\src\operator\batch_norm_v1.cu" />
+    <CudaCompile Include="..\..\src\operator\bilinear_sampler.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\bounding_box.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\count_sketch.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\ctc_loss.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\deformable_convolution.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\deformable_psroi_pooling.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\dequantize.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\fft.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\ifft.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\multibox_detection.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\multibox_prior.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\multibox_target.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\multi_proposal.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\proposal.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\psroi_pooling.cu" />
+    <CudaCompile Include="..\..\src\operator\contrib\quantize.cu" />
+    <CudaCompile Include="..\..\src\operator\convolution_v1.cu" />
+    <CudaCompile Include="..\..\src\operator\correlation.cu" />
+    <CudaCompile Include="..\..\src\operator\crop.cu" />
+    <CudaCompile Include="..\..\src\operator\custom\native_op.cu" />
+    <CudaCompile Include="..\..\src\operator\grid_generator.cu" />
+    <CudaCompile Include="..\..\src\operator\identity_attach_KL_sparse_reg.cu" />
+    <CudaCompile Include="..\..\src\operator\instance_norm.cu" />
+    <CudaCompile Include="..\..\src\operator\l2_normalization.cu" />
+    <CudaCompile Include="..\..\src\operator\leaky_relu.cu" />
+    <CudaCompile Include="..\..\src\operator\loss_binary_op.cu" />
+    <CudaCompile Include="..\..\src\operator\make_loss.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\activation.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\batch_norm.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\concat.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\convolution.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\cudnn\cudnn_batch_norm.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\deconvolution.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\dropout.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\fully_connected.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\lrn.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\pooling.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\softmax.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\softmax_activation.cu" />
+    <CudaCompile Include="..\..\src\operator\nn\upsampling.cu" />
+    <CudaCompile Include="..\..\src\operator\optimizer_op.cu" />
+    <CudaCompile Include="..\..\src\operator\pad.cu" />
+    <CudaCompile Include="..\..\src\operator\pooling_v1.cu" />
+    <CudaCompile Include="..\..\src\operator\random\multisample_op.cu" />
+    <CudaCompile Include="..\..\src\operator\random\sample_multinomial_op.cu" />
+    <CudaCompile Include="..\..\src\operator\random\sample_op.cu" />
+    <CudaCompile Include="..\..\src\operator\regression_output.cu" />
+    <CudaCompile Include="..\..\src\operator\rnn.cu" />
+    <CudaCompile Include="..\..\src\operator\roi_pooling.cu" />
+    <CudaCompile Include="..\..\src\operator\sequence_last.cu" />
+    <CudaCompile Include="..\..\src\operator\sequence_mask.cu" />
+    <CudaCompile Include="..\..\src\operator\sequence_reverse.cu" />
+    <CudaCompile Include="..\..\src\operator\slice_channel.cu" />
+    <CudaCompile Include="..\..\src\operator\softmax_output.cu" />
+    <CudaCompile Include="..\..\src\operator\spatial_transformer.cu" />
+    <CudaCompile Include="..\..\src\operator\svm_output.cu" />
+    <CudaCompile Include="..\..\src\operator\swapaxis.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\broadcast_reduce_op_index.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\broadcast_reduce_op_value.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\cast_storage.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\control_flow_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\dot.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op_basic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op_extended.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op_logic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_op_basic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_op_extended.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_op_logic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_basic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_extended.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_logic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_scatter_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_sum.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_unary_op_basic.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\elemwise_unary_op_trig.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\indexing_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\init_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\la_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\matrix_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\ordering_op.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\sparse_retain.cu" />
+    <CudaCompile Include="..\..\src\operator\tensor\square_sum.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\nnvm\src\core\graph.cc" />
+    <ClCompile Include="..\..\nnvm\src\core\node.cc" />
+    <ClCompile Include="..\..\nnvm\src\core\op.cc" />
+    <ClCompile Include="..\..\nnvm\src\core\pass.cc" />
+    <ClCompile Include="..\..\nnvm\src\core\symbolic.cc" />
+    <ClCompile Include="..\..\nnvm\src\c_api\c_api_error.cc" />
+    <ClCompile Include="..\..\nnvm\src\c_api\c_api_graph.cc" />
+    <ClCompile Include="..\..\nnvm\src\c_api\c_api_symbolic.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\gradient.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\infer_shape_type.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\order_mutation.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\place_device.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\plan_memory.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\print_graph_ir.cc" />
+    <ClCompile Include="..\..\nnvm\src\pass\saveload_json.cc" />
+    <ClCompile Include="..\..\src\common\rtc.cc" />
+    <ClCompile Include="..\..\src\common\utils.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api_error.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api_executor.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api_function.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api_ndarray.cc" />
+    <ClCompile Include="..\..\src\c_api\c_api_symbolic.cc" />
+    <ClCompile Include="..\..\src\c_api\c_predict_api.cc" />
+    <ClCompile Include="..\..\src\engine\engine.cc" />
+    <ClCompile Include="..\..\src\engine\naive_engine.cc" />
+    <ClCompile Include="..\..\src\engine\openmp.cc" />
+    <ClCompile Include="..\..\src\engine\profiler.cc" />
+    <ClCompile Include="..\..\src\engine\threaded_engine.cc" />
+    <ClCompile Include="..\..\src\engine\threaded_engine_perdevice.cc" />
+    <ClCompile Include="..\..\src\engine\threaded_engine_pooled.cc" />
+    <ClCompile Include="..\..\src\executor\attach_op_execs_pass.cc" />
+    <ClCompile Include="..\..\src\executor\attach_op_resource_pass.cc" />
+    <ClCompile Include="..\..\src\executor\graph_executor.cc" />
+    <ClCompile Include="..\..\src\executor\infer_graph_attr_pass.cc" />
+    <ClCompile Include="..\..\src\executor\inplace_addto_detect_pass.cc" />
+    <ClCompile Include="..\..\src\imperative\cached_op.cc" />
+    <ClCompile Include="..\..\src\imperative\imperative.cc" />
+    <ClCompile Include="..\..\src\initialize.cc" />
+    <ClCompile Include="..\..\src\io\image_aug_default.cc" />
+    <ClCompile Include="..\..\src\io\image_det_aug_default.cc" />
+    <ClCompile Include="..\..\src\io\image_io.cc" />
+    <ClCompile Include="..\..\src\io\io.cc" />
+    <ClCompile Include="..\..\src\io\iter_csv.cc" />
+    <ClCompile Include="..\..\src\io\iter_image_det_recordio.cc" />
+    <ClCompile Include="..\..\src\io\iter_image_recordio.cc" />
+    <ClCompile Include="..\..\src\io\iter_image_recordio_2.cc" />
+    <ClCompile Include="..\..\src\io\iter_libsvm.cc" />
+    <ClCompile Include="..\..\src\io\iter_mnist.cc" />
+    <ClCompile Include="..\..\src\kvstore\gradient_compression.cc" />
+    <ClCompile Include="..\..\src\kvstore\kvstore.cc" />
+    <ClCompile Include="..\..\src\kvstore\kvstore_utils.cc" />
+    <ClCompile Include="..\..\src\ndarray\ndarray.cc" />
+    <ClCompile Include="..\..\src\ndarray\ndarray_function.cc" />
+    <ClCompile Include="..\..\src\nnvm\legacy_json_util.cc" />
+    <ClCompile Include="..\..\src\nnvm\legacy_op_util.cc" />
+    <ClCompile Include="..\..\src\operator\batch_norm_v1.cc" />
+    <ClCompile Include="..\..\src\operator\bilinear_sampler.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\bounding_box.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\count_sketch.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\ctc_loss.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\deformable_convolution.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\deformable_psroi_pooling.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\dequantize.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\fft.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\ifft.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\krprod.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\multibox_detection.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\multibox_prior.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\multibox_target.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\multi_proposal.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\proposal.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\psroi_pooling.cc" />
+    <ClCompile Include="..\..\src\operator\contrib\quantize.cc" />
+    <ClCompile Include="..\..\src\operator\convolution_v1.cc" />
+    <ClCompile Include="..\..\src\operator\correlation.cc" />
+    <ClCompile Include="..\..\src\operator\crop.cc" />
+    <ClCompile Include="..\..\src\operator\cross_device_copy.cc" />
+    <ClCompile Include="..\..\src\operator\custom\custom.cc" />
+    <ClCompile Include="..\..\src\operator\custom\native_op.cc" />
+    <ClCompile Include="..\..\src\operator\custom\ndarray_op.cc" />
+    <ClCompile Include="..\..\src\operator\grid_generator.cc" />
+    <ClCompile Include="..\..\src\operator\identity_attach_KL_sparse_reg.cc" />
+    <ClCompile Include="..\..\src\operator\image\image_random.cc" />
+    <ClCompile Include="..\..\src\operator\instance_norm.cc" />
+    <ClCompile Include="..\..\src\operator\l2_normalization.cc" />
+    <ClCompile Include="..\..\src\operator\leaky_relu.cc" />
+    <ClCompile Include="..\..\src\operator\loss_binary_op.cc" />
+    <ClCompile Include="..\..\src\operator\make_loss.cc" />
+    <ClCompile Include="..\..\src\operator\nnpack\nnpack_util.cc" />
+    <ClCompile Include="..\..\src\operator\nn\activation.cc" />
+    <ClCompile Include="..\..\src\operator\nn\batch_norm.cc" />
+    <ClCompile Include="..\..\src\operator\nn\concat.cc" />
+    <ClCompile Include="..\..\src\operator\nn\convolution.cc" />
+    <ClCompile Include="..\..\src\operator\nn\cudnn\cudnn_algoreg.cc" />
+    <ClCompile Include="..\..\src\operator\nn\cudnn\cudnn_batch_norm.cc" />
+    <ClCompile Include="..\..\src\operator\nn\deconvolution.cc" />
+    <ClCompile Include="..\..\src\operator\nn\dropout.cc" />
+    <ClCompile Include="..\..\src\operator\nn\fully_connected.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_act.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_base.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_concat.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_convolution.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_copy.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_deconvolution.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_fully_connected.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_softmax.cc" />
+    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_sum.cc" />
+    <ClCompile Include="..\..\src\operator\nn\pooling.cc" />
+    <ClCompile Include="..\..\src\operator\nn\softmax.cc" />
+    <ClCompile Include="..\..\src\operator\nn\softmax_activation.cc" />
+    <ClCompile Include="..\..\src\operator\nn\upsampling.cc" />
+    <ClCompile Include="..\..\src\operator\operator.cc" />
+    <ClCompile Include="..\..\src\operator\operator_tune.cc" />
+    <ClCompile Include="..\..\src\operator\operator_util.cc" />
+    <ClCompile Include="..\..\src\operator\optimizer_op.cc" />
+    <ClCompile Include="..\..\src\operator\pad.cc" />
+    <ClCompile Include="..\..\src\operator\pooling_v1.cc" />
+    <ClCompile Include="..\..\src\operator\random\multisample_op.cc" />
+    <ClCompile Include="..\..\src\operator\random\sample_multinomial_op.cc" />
+    <ClCompile Include="..\..\src\operator\random\sample_op.cc" />
+    <ClCompile Include="..\..\src\operator\regression_output.cc" />
+    <ClCompile Include="..\..\src\operator\rnn.cc" />
+    <ClCompile Include="..\..\src\operator\roi_pooling.cc" />
+    <ClCompile Include="..\..\src\operator\sequence_last.cc" />
+    <ClCompile Include="..\..\src\operator\sequence_mask.cc" />
+    <ClCompile Include="..\..\src\operator\sequence_reverse.cc" />
+    <ClCompile Include="..\..\src\operator\slice_channel.cc" />
+    <ClCompile Include="..\..\src\operator\softmax_output.cc" />
+    <ClCompile Include="..\..\src\operator\spatial_transformer.cc" />
+    <ClCompile Include="..\..\src\operator\svm_output.cc" />
+    <ClCompile Include="..\..\src\operator\swapaxis.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\broadcast_reduce_op_index.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\broadcast_reduce_op_value.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\cast_storage.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\control_flow_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\dot.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op_basic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_broadcast_op_logic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_op_basic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_op_extended.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_op_logic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_basic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_extended.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_binary_scalar_op_logic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_scatter_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_sum.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_unary_op_basic.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\elemwise_unary_op_trig.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\indexing_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\init_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\la_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\matrix_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\ordering_op.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\sparse_retain.cc" />
+    <ClCompile Include="..\..\src\operator\tensor\square_sum.cc" />
+    <ClCompile Include="..\..\src\resource.cc" />
+    <ClCompile Include="..\..\src\storage\storage.cc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4D47D525-F3F2-4357-96C0-A69085ABE5BA}</ProjectGuid>
+    <RootNamespace>mini_mxnet</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;WIN32_LEAN_AND_MEAN;DMLC_USE_CXX11;MSHADOW_IN_CXX11;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;MXNET_EXPORTS;NNVM_EXPORTS;DMLC_STRICT_CXX11;NOMINMAX;MSHADOW_USE_CUDA=1;MXNET_USE_NCCL=0;MSHADOW_USE_CBLAS=1;MSHADOW_USE_MKL=0;MSHADOW_USE_SSE=0;MSHADOW_FORCE_STREAM;USE_CUDNN;MXNET_USE_OPENCV=1;MXNET_USE_LAPACK=1;MSHADOW_USE_CUDNN=1;MXNET_ENABLE_CUDA_RTC=1;MXNET_USE_CUDA=1;MXNET_USE_PROFILER;CMAKE_INTDIR="Release";mxnet_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;..\..\src;..\..\3rdparty\openblas\include\openBLAS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;..\..\3rdparty\cudnn\include;..\..\mshadow;..\..\3rdparty\cub;..\..\nnvm\include;..\..\dmlc-core\include;..\..\dlpack\include;..\..\3rdparty\opencv\include;..\..\3rdparty\opencv\include\opencv;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
+      <OpenMPSupport>true</OpenMPSupport>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;..\..\3rdparty\openblas\lib\libopenblas.dll.a;..\..\3rdparty\cudnn\lib\cudnn.lib;..\..\3rdparty\opencv\lib\opencv_world331.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\cudart.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\curand.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\cublas.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\cublas_device.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\nvrtc.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\nvrtc.lib\..\cuda.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\cufft.lib\..\cufft.lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\cusolver.lib\..\cusolver.lib;..\x64\Release\dmlc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/win32;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/win32/$(Configuration);C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x64;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
+copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_30,sm_30</CodeGeneration>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.targets" />
+  </ImportGroup>
+</Project>
