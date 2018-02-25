@@ -120,10 +120,10 @@ scala-package/*/*/target/
 */node_modules/
 
 # Eclipse project config
-#CMakeFiles
 .project
 .cproject
 .pydevproject
+CMakeFiles
 cmake_install.cmake
 lib
 
