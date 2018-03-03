@@ -6,6 +6,7 @@ x64/
 *.pdb
 
 # Temporary third-party libraries
+3rdparty/cub/
 3rdparty/opencv/
 3rdparty/cudnn/
 3rdparty/openblas/

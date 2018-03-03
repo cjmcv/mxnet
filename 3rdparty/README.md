@@ -1,3 +1,3 @@
-3rdparty libraries: cudnn, openblas, opencv
+3rdparty libraries: cub, cudnn, openblas, opencv
 
-[Baidu Yun](https://pan.baidu.com/s/1pNcaSQ3)
+[Baidu Yun](https://pan.baidu.com/s/1o9e4TKm)
