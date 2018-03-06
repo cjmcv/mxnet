@@ -1,0 +1,168 @@
+mxnet自己构建工程(Release)
+1、创建nvidia例子工程，改配置类型exe为dll。
+2、拷贝官方用cmake生成的mxnet工程中的mxnet.vcxproj.filters，到自己的工程下，保留创建的文件夹。
+3、参考配置include和链接库等。
+注意：
+4、问题：编译时会提示找不到__shfl_xor和__shfl_down。
+   解决：需要手动修改CUDA C/C++中的Code Generation为compute_30,sm_30或以上，原先的compute_20,sm_20要删掉。
+5、C/C++ -> 代码生成 -> 运行库 要改成 多线程(/MT)。-- 因为连接的dmlc-core的lib编译时选用的是/MT。
+6、链接器 -> 输入 -> 忽略特定的默认库 添加 %(IgnoreSpecificDefaultLibraries)。
+7、c_api_symbolic.cc存在同名文件，分别是mxnet的和nnvm的。所以会出现“对象被多次指定；已忽略多余的指定  ->  导致无法解释标识符”。
+   解决：输出文件->对象文件名: $(IntDir)/%(RelativeDir)/      ->    (注意中间和末尾都无空格，整个路径会直接套接，若有空格，则会出现路径不对)
+8、问题：出现说某些openmp函数重定义。
+   解决：C/C++ -> 语言 -> openmp支持 ：是。
+9、问题：fatal error C1002: 在第 2 遍中编译器的堆空间不足。
+   解决：配置属性 -> 常规 -> 全程序优化：否； C/C++ -> 优化 -> 全程序优化：否。
+
+dmlc(Release)
+1、配置属性 -> 常规 -> 全程序优化：否； C/C++ -> 优化 -> 全程序优化：否。
+2、C/C++ -> 优化 -> 内敛函数扩展：（/Ob2）
+3、C/C++ -> 优化 -> 启用内部函数：否
+4、C/C++ -> 代码生成 -> 运行库：多线程（/MT）
+5、C/C++ -> 语言 -> OpenMP支持：是。
+6、问题：无法将参数 1 从“const char *”转换为“LPCWSTR”
+   解决：工程属性->配置属性-->常规--->字符集---->使用多字节符字符集
+
+
+tvm
+1、对象被多次指定；已忽略多余的指定  ->  导致无法解释标识符。。
+   分析：包含多个内容不同的却具有相同文件名的源文件。
+   解决：输出文件->对象文件名: $(IntDir)/%(RelativeDir)/ 
+
+
+LLVM相关库：
+LLVMDemangle.lib
+LLVMSupport.lib
+LLVMTableGen.lib
+LLVMCore.lib
+LLVMIRReader.lib
+LLVMCodeGen.lib
+LLVMSelectionDAG.lib
+LLVMAsmPrinter.lib
+LLVMMIRParser.lib
+LLVMGlobalISel.lib
+LLVMBinaryFormat.lib
+LLVMBitReader.lib
+LLVMBitWriter.lib
+LLVMTransformUtils.lib
+LLVMInstrumentation.lib
+LLVMInstCombine.lib
+LLVMScalarOpts.lib
+LLVMipo.lib
+LLVMVectorize.lib
+LLVMObjCARCOpts.lib
+LLVMCoroutines.lib
+LLVMLinker.lib
+LLVMAnalysis.lib
+LLVMLTO.lib
+LLVMMC.lib
+LLVMMCParser.lib
+LLVMMCDisassembler.lib
+LLVMObject.lib
+LLVMObjectYAML.lib
+LLVMOption.lib
+LLVMDebugInfoDWARF.lib
+LLVMDebugInfoMSF.lib
+LLVMDebugInfoCodeView.lib
+LLVMDebugInfoPDB.lib
+LLVMSymbolize.lib
+LLVMExecutionEngine.lib
+LLVMInterpreter.lib
+LLVMMCJIT.lib
+LLVMOrcJIT.lib
+LLVMRuntimeDyld.lib
+LLVMTarget.lib
+LLVMAArch64CodeGen.lib
+LLVMAArch64Info.lib
+LLVMAArch64AsmParser.lib
+LLVMAArch64Disassembler.lib
+LLVMAArch64AsmPrinter.lib
+LLVMAArch64Desc.lib
+LLVMAArch64Utils.lib
+LLVMAMDGPUCodeGen.lib
+LLVMAMDGPUAsmParser.lib
+LLVMAMDGPUAsmPrinter.lib
+LLVMAMDGPUDisassembler.lib
+LLVMAMDGPUInfo.lib
+LLVMAMDGPUDesc.lib
+LLVMAMDGPUUtils.lib
+LLVMARMCodeGen.lib
+LLVMARMInfo.lib
+LLVMARMAsmParser.lib
+LLVMARMDisassembler.lib
+LLVMARMAsmPrinter.lib
+LLVMARMDesc.lib
+LLVMBPFCodeGen.lib
+LLVMBPFDisassembler.lib
+LLVMBPFAsmPrinter.lib
+LLVMBPFInfo.lib
+LLVMBPFDesc.lib
+LLVMHexagonCodeGen.lib
+LLVMHexagonAsmParser.lib
+LLVMHexagonInfo.lib
+LLVMHexagonDesc.lib
+LLVMHexagonDisassembler.lib
+LLVMLanaiCodeGen.lib
+LLVMLanaiAsmParser.lib
+LLVMLanaiInfo.lib
+LLVMLanaiDesc.lib
+LLVMLanaiAsmPrinter.lib
+LLVMLanaiDisassembler.lib
+LLVMMipsCodeGen.lib
+LLVMMipsAsmPrinter.lib
+LLVMMipsDisassembler.lib
+LLVMMipsInfo.lib
+LLVMMipsDesc.lib
+LLVMMipsAsmParser.lib
+LLVMMSP430CodeGen.lib
+LLVMMSP430AsmPrinter.lib
+LLVMMSP430Info.lib
+LLVMMSP430Desc.lib
+LLVMNVPTXCodeGen.lib
+LLVMNVPTXInfo.lib
+LLVMNVPTXAsmPrinter.lib
+LLVMNVPTXDesc.lib
+LLVMPowerPCCodeGen.lib
+LLVMPowerPCAsmParser.lib
+LLVMPowerPCDisassembler.lib
+LLVMPowerPCAsmPrinter.lib
+LLVMPowerPCInfo.lib
+LLVMPowerPCDesc.lib
+LLVMSparcCodeGen.lib
+LLVMSparcInfo.lib
+LLVMSparcDesc.lib
+LLVMSparcAsmPrinter.lib
+LLVMSparcAsmParser.lib
+LLVMSparcDisassembler.lib
+LLVMSystemZCodeGen.lib
+LLVMSystemZAsmParser.lib
+LLVMSystemZDisassembler.lib
+LLVMSystemZAsmPrinter.lib
+LLVMSystemZInfo.lib
+LLVMSystemZDesc.lib
+LLVMX86CodeGen.lib
+LLVMX86AsmParser.lib
+LLVMX86Disassembler.lib
+LLVMX86AsmPrinter.lib
+LLVMX86Desc.lib
+LLVMX86Info.lib
+LLVMX86Utils.lib
+LLVMXCoreCodeGen.lib
+LLVMXCoreDisassembler.lib
+LLVMXCoreAsmPrinter.lib
+LLVMXCoreInfo.lib
+LLVMXCoreDesc.lib
+LLVMAsmParser.lib
+LLVMLineEditor.lib
+LLVMProfileData.lib
+LLVMCoverage.lib
+LLVMPasses.lib
+LLVMDlltoolDriver.lib
+LLVMLibDriver.lib
+LLVMXRay.lib
+
+
+
+
+
+
