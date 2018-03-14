@@ -99,10 +99,15 @@ class MXInferencer
 {
 public:
   MXInferencer(int dev_type, int dev_id) 
-    : pred_hnd_(NULL), nd_hnd_(NULL), nd_data_(NULL), output_data_(NULL) {
+    : infer_hnd_(NULL), nd_hnd_(NULL), nd_data_(NULL), output_data_(NULL) {
     output_size_ = 0;
     dev_type_ = dev_type;
     dev_id_ = dev_id;
+
+    mean_scalar_[0] = 0;
+    mean_scalar_[1] = 0;
+    mean_scalar_[2] = 0;
+    scale_ = 1;
   };
   ~MXInferencer() {};
 
@@ -123,7 +128,10 @@ private:
   int dev_id_;
   int dev_type_;
 
-  PredictorHandle pred_hnd_;
+  float mean_scalar_[3];
+  float scale_;
+
+  PredictorHandle infer_hnd_;
   NDListHandle nd_hnd_; 
   // The memory in it is mallocated by MXNDListCreate, and released by MXNDListFree.
   const mx_float* nd_data_;
@@ -181,14 +189,16 @@ int MXInferencer::Initialize(std::string &json_file, std::string &param_file,
     input_keys,
     input_shape_indptr,
     input_shape_data,
-    &pred_hnd_);
+    &infer_hnd_);
 
   delete[]input_keys;
 
-  if (pred_hnd_ == NULL) {
+  if (infer_hnd_ == NULL) {
     std::cerr << "Error: MXPredCreate Failed!" << std::endl;
     return -1;
   }
+
+  return 0;
 }
 
 int MXInferencer::CleanUp() {
@@ -200,20 +210,20 @@ int MXInferencer::CleanUp() {
     free(output_data_);
 
   // Release Predictor
-  if (pred_hnd_)
-    MXPredFree(pred_hnd_);
+  if (infer_hnd_)
+    MXPredFree(infer_hnd_);
 
   return 0;
 }
 
 int MXInferencer::SetMeanFile(std::string &nd_file) {
-  if (pred_hnd_ == NULL) {
-    printf("Error: The handle is invalid! \n");
+  if (infer_hnd_ == NULL) {
+    printf("Error: The PredictorHandle handle is invalid! \n");
     return -1;
   }
   if (nd_hnd_ != NULL) {
-    // Clean the old Mean Data.
-    // ...
+    MXNDListFree(nd_hnd_);
+    nd_hnd_ = NULL;
   }
   BufferFile nd_buf(nd_file);
 
@@ -241,6 +251,9 @@ int MXInferencer::SetMeanFile(std::string &nd_file) {
 }
 
 // 注意 BGR 和 RGB 问题, 通道数问题
+// 扩展单通道输入
+// 扩展可选无均值输入
+// A BGR color 3 channels image as the input params.
 int MXInferencer::Inference(cv::Mat src) {  
   
   if (src.empty()) {
@@ -256,39 +269,39 @@ int MXInferencer::Inference(cv::Mat src) {
   cv::Mat input_img;
   resize(src, input_img, cv::Size(inshape_[3], inshape_[2]));
 
+  // RGB.
   mx_float* ptr_image_r = image_data.data();
   mx_float* ptr_image_g = image_data.data() + input_size_ / 3;
   mx_float* ptr_image_b = image_data.data() + input_size_ / 3 * 2;
 
-  float mean_b, mean_g, mean_r;
-  mean_b = mean_g = mean_r = DEFAULT_MEAN;
+  const mx_float* ptr_mean_r = nd_data_;
+  const mx_float* ptr_mean_g = nd_data_ + input_size_ / 3;
+  const mx_float* ptr_mean_b = nd_data_ + input_size_ / 3 * 2;
 
   for (int i = 0; i < input_img.rows; i++) {
     uchar* data = input_img.ptr<uchar>(i);
-
-    for (int j = 0; j < input_img.cols; j++) {
-      if (nd_data_) {
-        mean_r = *nd_data_;
-        if (inshape_[1] > 1) {
-          mean_g = *(nd_data_ + input_size_ / 3);
-          mean_b = *(nd_data_ + input_size_ / 3 * 2);
-        }
-        nd_data_++;
+    if (inshape_[1] == 1) {
+      for (int j = 0; j < input_img.cols; j++) {
+        *ptr_image_r++ = data[j] - *ptr_mean_r++;
       }
-      if (inshape_[1] > 1) {
-        *ptr_image_b++ = static_cast<mx_float>(*data++) - mean_b;
-        *ptr_image_g++ = static_cast<mx_float>(*data++) - mean_g;
-      }
-
-      *ptr_image_r++ = static_cast<mx_float>(*data++) - mean_r;;
     }
-  }
+    else if (inshape_[1] == 3) {
+      for (int j = 0; j < input_img.cols; j++) {
+        // The image which is readed by opencv is BGR color 3 channels by default.
+        *ptr_image_r++ = data[j * 3 + 2] - *ptr_mean_r++;
+        *ptr_image_g++ = data[j * 3 + 1] - *ptr_mean_g++;
+        *ptr_image_b++ = data[j * 3 + 0] - *ptr_mean_b++;
+      }
+    }
+  }  
 
   // Set Input Image
-  MXPredSetInput(pred_hnd_, "data", image_data.data(), input_size_);
+  MXPredSetInput(infer_hnd_, "data", image_data.data(), input_size_);
 
   // Do Predict Forward
-  MXPredForward(pred_hnd_);
+  MXPredForward(infer_hnd_);
+
+  return 0;
 }
 
 // 还要考虑多个输出的情况
@@ -299,7 +312,7 @@ int MXInferencer::GetNetOutput(int output_index, float **output_data, int *outpu
     mx_uint shape_len;
 
     // Get Output Result
-    MXPredGetOutputShape(pred_hnd_, output_index, &shape, &shape_len);
+    MXPredGetOutputShape(infer_hnd_, output_index, &shape, &shape_len);
 
     output_size_ = 1;
     for (mx_uint i = 0; i < shape_len; ++i)
@@ -309,7 +322,7 @@ int MXInferencer::GetNetOutput(int output_index, float **output_data, int *outpu
   }
 
   *output_size = output_size_;
-  MXPredGetOutput(pred_hnd_, output_index, output_data_, output_size_);
+  MXPredGetOutput(infer_hnd_, output_index, output_data_, output_size_);
 
   *output_data = output_data_;
   
