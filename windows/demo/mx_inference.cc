@@ -27,8 +27,6 @@
 #include <string>
 #include <vector>
 
-const mx_float DEFAULT_MEAN = 117.0;
-
 // Read file to buffer
 class BufferFile {
 public:
@@ -97,27 +95,32 @@ std::vector<std::string> LoadSynset(std::string synset_file) {
 
 class MXInferencer
 {
-public:
+public:  
+  enum MXTrainedImgFormat { eGrayScale, eRGB, eBGR };
   MXInferencer(int dev_type, int dev_id) 
-    : infer_hnd_(NULL), nd_hnd_(NULL), nd_data_(NULL), output_data_(NULL) {
+    : infer_hnd_(NULL), output_data_(NULL) {
     output_size_ = 0;
     dev_type_ = dev_type;
     dev_id_ = dev_id;
 
-    mean_scalar_[0] = 0;
-    mean_scalar_[1] = 0;
-    mean_scalar_[2] = 0;
-    scale_ = 1;
+    use_mean_file_ = false;
+    nd_hnd_ = NULL;
+    nd_data_ = NULL;
+
+    use_mean_value_ = false;
+    mean_value_[0] = 0;
+    mean_value_[1] = 0;
+    mean_value_[2] = 0;
   };
   ~MXInferencer() {};
 
 public:
   int Initialize(std::string &json_file, std::string &param_file,
-    std::vector<std::string> &input_nodes_name, std::vector<int> &input_shape);
+    std::vector<std::string> &input_nodes_name, std::vector<int> &input_shape, 
+    MXTrainedImgFormat trained_img_format, float input_scale = 1.0);
   int CleanUp();
 
-  int SetMeanFile(std::string &nd_file);
-  int SetInputAdjustment();
+  int SetInputMean(float *mean_value = NULL, const char *nd_file = NULL);
 
   int Inference(cv::Mat src);
   
@@ -125,16 +128,23 @@ public:
   int GetOutClassInfo(std::string &synset_file, float *data, int data_size);
 
 private:
+  enum MXShapeIndex { eNum, eChannel, eHeight, eWidth };
+
+private:
   int dev_id_;
   int dev_type_;
 
-  float mean_scalar_[3];
-  float scale_;
+  float input_scale_;
 
   PredictorHandle infer_hnd_;
-  NDListHandle nd_hnd_; 
+
+  NDListHandle nd_hnd_;
   // The memory in it is mallocated by MXNDListCreate, and released by MXNDListFree.
   const mx_float* nd_data_;
+  bool use_mean_file_;
+
+  float mean_value_[3];
+  bool use_mean_value_;
 
   // Shape: (num, channel, height, width)
   std::vector<int> inshape_;  
@@ -143,10 +153,16 @@ private:
   // 
   mx_float *output_data_;
   int output_size_;
+
+  //
+  cv::Mat input_img_;
+  cv::Mat src_ch_restrict_;
+  MXTrainedImgFormat trained_img_format_;
 };
 
 int MXInferencer::Initialize(std::string &json_file, std::string &param_file, 
-  std::vector<std::string> &input_nodes_name, std::vector<int> &input_shape) {
+  std::vector<std::string> &input_nodes_name, std::vector<int> &input_shape, 
+  MXTrainedImgFormat trained_img_format, float input_scale) {
 
   if (input_shape.size() != 4) {
     return -1;
@@ -169,15 +185,24 @@ int MXInferencer::Initialize(std::string &json_file, std::string &param_file,
     input_keys[i] = input_nodes_name[i].c_str();
   }
 
-  inshape_.assign(input_shape.begin(), input_shape.end());
+  trained_img_format_ = trained_img_format;
+  input_scale_ = input_scale;
+  inshape_.assign(input_shape.begin(), input_shape.end()); 
+  if ((trained_img_format_ == eGrayScale && inshape_[eChannel] != 1) ||
+    (trained_img_format_ != eGrayScale && inshape_[eChannel] != 3) ||
+    input_scale_ == 0) {
+    std::cerr << "Error: Please check the input params!" << std::endl;
+    return -1;
+  }
+
   input_size_ = inshape_[0] * inshape_[1] * inshape_[2] * inshape_[3];
 
   const mx_uint input_shape_indptr[2] = { 0, 4 };
   const mx_uint input_shape_data[4] = { 
-    static_cast<mx_uint>(inshape_[0]),
-    static_cast<mx_uint>(inshape_[1]),
-    static_cast<mx_uint>(inshape_[2]),
-    static_cast<mx_uint>(inshape_[3]) };
+    static_cast<mx_uint>(inshape_[eNum]),
+    static_cast<mx_uint>(inshape_[eChannel]),
+    static_cast<mx_uint>(inshape_[eHeight]),
+    static_cast<mx_uint>(inshape_[eWidth]) };
 
   // Create Predictor
   MXPredCreate((const char*)json_data.GetBuffer(),
@@ -216,46 +241,59 @@ int MXInferencer::CleanUp() {
   return 0;
 }
 
-int MXInferencer::SetMeanFile(std::string &nd_file) {
+int MXInferencer::SetInputMean(float *mean_value, const char *nd_file) {
+  if ((mean_value == NULL && nd_file == NULL) ||
+    (mean_value != NULL && nd_file != NULL)) {
+    printf("Error: Please check the input params! \n");
+    return -1;
+  }
+
   if (infer_hnd_ == NULL) {
     printf("Error: The PredictorHandle handle is invalid! \n");
     return -1;
   }
-  if (nd_hnd_ != NULL) {
-    MXNDListFree(nd_hnd_);
-    nd_hnd_ = NULL;
+
+  if (mean_value != NULL) {
+    for (int i = 0; i < inshape_[eChannel]; i++) {
+      mean_value_[i] = mean_value[i];
+    }
+    use_mean_value_ = true;
   }
-  BufferFile nd_buf(nd_file);
+  else {
+    if (nd_hnd_ != NULL) {
+      MXNDListFree(nd_hnd_);
+      nd_hnd_ = NULL;
+    }
+    BufferFile nd_buf(nd_file);
 
-  if (nd_buf.GetLength() <= 0) {
-    printf("Error: Mean file is empty!\n");
-    return -1;
+    if (nd_buf.GetLength() <= 0) {
+      printf("Error: Mean file is empty!\n");
+      return -1;
+    }
+    mx_uint nd_index = 0;
+    mx_uint nd_len;
+    const mx_uint* nd_shape = 0;
+    const char* nd_key = 0;
+    mx_uint nd_ndim = 0;
+
+    MXNDListCreate((const char*)nd_buf.GetBuffer(),
+      nd_buf.GetLength(),
+      &nd_hnd_, &nd_len);
+
+    if (nd_hnd_ == NULL) {
+      return -1;
+    }
+
+    MXNDListGet(nd_hnd_, nd_index, &nd_key, &nd_data_, &nd_shape, &nd_ndim);
+
+    use_mean_file_ = true;
   }
-  mx_uint nd_index = 0;
-  mx_uint nd_len;
-  const mx_uint* nd_shape = 0;
-  const char* nd_key = 0;
-  mx_uint nd_ndim = 0;
-
-  MXNDListCreate((const char*)nd_buf.GetBuffer(),
-    nd_buf.GetLength(),
-    &nd_hnd_, &nd_len);
-
-  if (nd_hnd_ == NULL) {
-    return -1;
-  }
-
-  MXNDListGet(nd_hnd_, nd_index, &nd_key, &nd_data_, &nd_shape, &nd_ndim);
 
   return 0;
 }
 
-// 注意 BGR 和 RGB 问题, 通道数问题
-// 扩展单通道输入
 // 扩展可选无均值输入
-// A BGR color 3 channels image as the input params.
 int MXInferencer::Inference(cv::Mat src) {  
-  
   if (src.empty()) {
     std::cerr << "Error: Input image is empty!\n";
     return -1;
@@ -263,37 +301,74 @@ int MXInferencer::Inference(cv::Mat src) {
   // Read Image Data
   std::vector<mx_float> image_data = std::vector<mx_float>(input_size_);
 
-  // Read all kinds of file into a BGR color 3 channels image
-  //cv::Mat im_ori = cv::imread(image_file, cv::IMREAD_COLOR);
+  // Convert channel and size.
+  if (src.channels() == 3 && inshape_[eChannel] == 1)
+    cv::cvtColor(src, src_ch_restrict_, cv::COLOR_BGR2GRAY);
+  else if (src.channels() == 4 && inshape_[eChannel] == 1)
+    cv::cvtColor(src, src_ch_restrict_, cv::COLOR_BGRA2GRAY);
+  else if (src.channels() == 4 && inshape_[eChannel] == 3)
+    cv::cvtColor(src, src_ch_restrict_, cv::COLOR_BGRA2BGR);
+  else if (src.channels() == 1 && inshape_[eChannel] == 3)
+    cv::cvtColor(src, src_ch_restrict_, cv::COLOR_GRAY2BGR);
+  else
+    src_ch_restrict_ = src;
 
-  cv::Mat input_img;
-  resize(src, input_img, cv::Size(inshape_[3], inshape_[2]));
+  resize(src_ch_restrict_, input_img_, cv::Size(inshape_[eWidth], inshape_[eHeight]));
 
-  // RGB.
-  mx_float* ptr_image_r = image_data.data();
-  mx_float* ptr_image_g = image_data.data() + input_size_ / 3;
-  mx_float* ptr_image_b = image_data.data() + input_size_ / 3 * 2;
+  // Preprocess.
+  if (use_mean_file_) { 
+    mx_float* ptr_image_c0 = image_data.data();
+    mx_float* ptr_image_c1 = image_data.data() + input_size_ / 3;
+    mx_float* ptr_image_c2 = image_data.data() + input_size_ / 3 * 2;
 
-  const mx_float* ptr_mean_r = nd_data_;
-  const mx_float* ptr_mean_g = nd_data_ + input_size_ / 3;
-  const mx_float* ptr_mean_b = nd_data_ + input_size_ / 3 * 2;
+    const mx_float* ptr_mean_c0 = nd_data_;
+    const mx_float* ptr_mean_c1 = nd_data_ + input_size_ / 3;
+    const mx_float* ptr_mean_c2 = nd_data_ + input_size_ / 3 * 2;
 
-  for (int i = 0; i < input_img.rows; i++) {
-    uchar* data = input_img.ptr<uchar>(i);
-    if (inshape_[1] == 1) {
-      for (int j = 0; j < input_img.cols; j++) {
-        *ptr_image_r++ = data[j] - *ptr_mean_r++;
+    for (int i = 0; i < input_img_.rows; i++) {
+      uchar* data = input_img_.ptr<uchar>(i);
+      if (inshape_[eChannel] == 1) {
+        for (int j = 0; j < input_img_.cols; j++) {
+          *ptr_image_c0++ = data[j] - *ptr_mean_c0++;
+        }
+      }
+      else if (inshape_[eChannel] == 3) {
+        for (int j = 0; j < input_img_.cols; j++) {
+          *ptr_image_c1++ = data[j * 3 + 1] - *ptr_mean_c1++;
+          // The BGR format is read in opencv.
+          if (trained_img_format_ == eBGR) {
+            *ptr_image_c0++ = data[j * 3 + 0] - *ptr_mean_c0++;
+            *ptr_image_c2++ = data[j * 3 + 2] - *ptr_mean_c2++;
+          }
+          else if (trained_img_format_ == eRGB) {
+            *ptr_image_c0++ = data[j * 3 + 2] - *ptr_mean_c0++;
+            *ptr_image_c2++ = data[j * 3 + 0] - *ptr_mean_c2++;
+          }
+        }
+      }
+    }  
+  }
+  else if (use_mean_value_) {
+    if (inshape_[eChannel] == 1) {
+      for (int i = 0; i < image_data.size(); i++) {
+        image_data[i] -= mean_value_[0];
       }
     }
-    else if (inshape_[1] == 3) {
-      for (int j = 0; j < input_img.cols; j++) {
-        // The image which is readed by opencv is BGR color 3 channels by default.
-        *ptr_image_r++ = data[j * 3 + 2] - *ptr_mean_r++;
-        *ptr_image_g++ = data[j * 3 + 1] - *ptr_mean_g++;
-        *ptr_image_b++ = data[j * 3 + 0] - *ptr_mean_b++;
+    else if (inshape_[eChannel] == 3) {
+      mx_float* ptr_image_c0 = image_data.data();
+      mx_float* ptr_image_c1 = image_data.data() + input_size_ / 3;
+      mx_float* ptr_image_c2 = image_data.data() + input_size_ / 3 * 2;
+
+      for (int i = 0; i < input_img_.rows; i++) {
+        for (int j = 0; j < input_img_.cols; j++) {
+          *ptr_image_c0++ -= mean_value_[0];
+          *ptr_image_c1++ -= mean_value_[1];
+          *ptr_image_c2++ -= mean_value_[2];
+        }
       }
     }
-  }  
+  }
+  // *input_scale
 
   // Set Input Image
   MXPredSetInput(infer_hnd_, "data", image_data.data(), input_size_);
@@ -352,7 +427,6 @@ int MXInferencer::GetOutClassInfo(std::string &synset_file, float *data, int dat
 
   printf("Best Result: [%s] id = %d, accuracy = %.8f\n",
     synset[best_idx].c_str(), best_idx, best_accuracy);
-
   
   return 0;
 }
@@ -369,23 +443,24 @@ int main(int argc, char* argv[]) {
 
   std::string synset_file = "D://Documents//GitHub//test-material//model//Inception//synset.txt";
   std::string nd_file = "D://Documents//GitHub//test-material//model//Inception//mean_224.nd";
-
+  
   int dev_type = 2; // 1: cpu, 2: gpu
   int dev_id = 0;
   MXInferencer *mx_infer = new MXInferencer(dev_type, dev_id);
-
+  
   std::vector<std::string> input_nodes_name;
   input_nodes_name.push_back("data");
   std::vector<int> input_shape;
-  input_shape.push_back(1); // num
-  input_shape.push_back(3); // channel
+  input_shape.push_back(1);   // num
+  input_shape.push_back(3);   // channel
   input_shape.push_back(224); // height
   input_shape.push_back(224); // width
+  float input_scale = 1.0;
 
-  mx_infer->Initialize(json_file, param_file, input_nodes_name, input_shape);
+  mx_infer->Initialize(json_file, param_file, input_nodes_name, input_shape, mx_infer->eRGB, input_scale);
 
-  mx_infer->SetMeanFile(nd_file);
-
+  mx_infer->SetInputMean(NULL, nd_file.c_str());
+  
   cv::Mat src = cv::imread(test_file);
   mx_infer->Inference(src);
 
