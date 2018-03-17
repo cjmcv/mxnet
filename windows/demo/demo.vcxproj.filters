@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="image-classification-predict.cc">
+    <ClCompile Include="mx_inference.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

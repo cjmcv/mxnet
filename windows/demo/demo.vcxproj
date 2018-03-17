@@ -18,6 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mx_inference.cc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{662077F0-D97C-446B-8870-B2C5DED8D7B8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -146,9 +149,6 @@
       <AdditionalLibraryDirectories>C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/win32;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/win32/$(Configuration);C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x64;C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/lib/x64/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="image-classification-predict.cc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

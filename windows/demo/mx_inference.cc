@@ -128,6 +128,8 @@ public:
   int GetOutClassInfo(std::string &synset_file, float *data, int data_size);
 
 private:
+  int SubtractMeanFile(std::vector<mx_float> &dst);
+  int SubtractMeanValue(std::vector<mx_float> &dst);
   enum MXShapeIndex { eNum, eChannel, eHeight, eWidth };
 
 private:
@@ -178,8 +180,6 @@ int MXInferencer::Initialize(std::string &json_file, std::string &param_file,
 
   mx_uint num_input_nodes = input_nodes_name.size();
 
-  //const char* input_key[1] = { "data" };
-  //const char** input_keys = input_key;
   const char **input_keys = new const char *[num_input_nodes];
   for (int i = 0; i < num_input_nodes; i++) {
     input_keys[i] = input_nodes_name[i].c_str();
@@ -292,6 +292,72 @@ int MXInferencer::SetInputMean(float *mean_value, const char *nd_file) {
   return 0;
 }
 
+int MXInferencer::SubtractMeanFile(std::vector<mx_float> &dst) {
+  mx_float* ptr_image_c0 = dst.data();
+  mx_float* ptr_image_c1 = dst.data() + input_size_ / 3;
+  mx_float* ptr_image_c2 = dst.data() + input_size_ / 3 * 2;
+
+  const mx_float* ptr_mean_c0 = nd_data_;
+  const mx_float* ptr_mean_c1 = nd_data_ + input_size_ / 3;
+  const mx_float* ptr_mean_c2 = nd_data_ + input_size_ / 3 * 2;
+
+  for (int i = 0; i < input_img_.rows; i++) {
+    uchar* data = input_img_.ptr<uchar>(i);
+    if (inshape_[eChannel] == 1) {
+      for (int j = 0; j < input_img_.cols; j++) {
+        *ptr_image_c0++ = data[j] - *ptr_mean_c0++;
+      }
+    }
+    else if (inshape_[eChannel] == 3) {
+      for (int j = 0; j < input_img_.cols; j++) {
+        *ptr_image_c1++ = data[j * 3 + 1] - *ptr_mean_c1++;
+        // The BGR format is read in opencv.
+        if (trained_img_format_ == eBGR) {
+          *ptr_image_c0++ = data[j * 3 + 0] - *ptr_mean_c0++;
+          *ptr_image_c2++ = data[j * 3 + 2] - *ptr_mean_c2++;
+        }
+        else if (trained_img_format_ == eRGB) {
+          *ptr_image_c0++ = data[j * 3 + 2] - *ptr_mean_c0++;
+          *ptr_image_c2++ = data[j * 3 + 0] - *ptr_mean_c2++;
+        }
+      }
+    }
+  }
+
+  return 0;
+}
+
+int MXInferencer::SubtractMeanValue(std::vector<mx_float> &dst) {
+  mx_float* ptr_image_c0 = dst.data();
+  mx_float* ptr_image_c1 = dst.data() + input_size_ / 3;
+  mx_float* ptr_image_c2 = dst.data() + input_size_ / 3 * 2;
+
+  for (int i = 0; i < input_img_.rows; i++) {
+    uchar* data = input_img_.ptr<uchar>(i);
+    if (inshape_[eChannel] == 1) {
+      for (int j = 0; j < input_img_.cols; j++) {
+        *ptr_image_c0++ = data[j] - mean_value_[0];
+      }
+    }
+    else if (inshape_[eChannel] == 3) {
+      for (int j = 0; j < input_img_.cols; j++) {
+        *ptr_image_c1++ = data[j * 3 + 1] - mean_value_[1];
+        // The BGR format is read in opencv.
+        if (trained_img_format_ == eBGR) {
+          *ptr_image_c0++ = data[j * 3 + 0] - mean_value_[0];
+          *ptr_image_c2++ = data[j * 3 + 2] - mean_value_[2];
+        }
+        else if (trained_img_format_ == eRGB) {
+          *ptr_image_c0++ = data[j * 3 + 2] - mean_value_[0];
+          *ptr_image_c2++ = data[j * 3 + 0] - mean_value_[2];
+        }
+      }
+    }
+  }
+
+  return 0;
+}
+
 // 扩展可选无均值输入
 int MXInferencer::Inference(cv::Mat src) {  
   if (src.empty()) {
@@ -316,59 +382,17 @@ int MXInferencer::Inference(cv::Mat src) {
   resize(src_ch_restrict_, input_img_, cv::Size(inshape_[eWidth], inshape_[eHeight]));
 
   // Preprocess.
-  if (use_mean_file_) { 
-    mx_float* ptr_image_c0 = image_data.data();
-    mx_float* ptr_image_c1 = image_data.data() + input_size_ / 3;
-    mx_float* ptr_image_c2 = image_data.data() + input_size_ / 3 * 2;
-
-    const mx_float* ptr_mean_c0 = nd_data_;
-    const mx_float* ptr_mean_c1 = nd_data_ + input_size_ / 3;
-    const mx_float* ptr_mean_c2 = nd_data_ + input_size_ / 3 * 2;
-
-    for (int i = 0; i < input_img_.rows; i++) {
-      uchar* data = input_img_.ptr<uchar>(i);
-      if (inshape_[eChannel] == 1) {
-        for (int j = 0; j < input_img_.cols; j++) {
-          *ptr_image_c0++ = data[j] - *ptr_mean_c0++;
-        }
-      }
-      else if (inshape_[eChannel] == 3) {
-        for (int j = 0; j < input_img_.cols; j++) {
-          *ptr_image_c1++ = data[j * 3 + 1] - *ptr_mean_c1++;
-          // The BGR format is read in opencv.
-          if (trained_img_format_ == eBGR) {
-            *ptr_image_c0++ = data[j * 3 + 0] - *ptr_mean_c0++;
-            *ptr_image_c2++ = data[j * 3 + 2] - *ptr_mean_c2++;
-          }
-          else if (trained_img_format_ == eRGB) {
-            *ptr_image_c0++ = data[j * 3 + 2] - *ptr_mean_c0++;
-            *ptr_image_c2++ = data[j * 3 + 0] - *ptr_mean_c2++;
-          }
-        }
-      }
-    }  
+  if (use_mean_file_) {
+    SubtractMeanFile(image_data);
   }
   else if (use_mean_value_) {
-    if (inshape_[eChannel] == 1) {
-      for (int i = 0; i < image_data.size(); i++) {
-        image_data[i] -= mean_value_[0];
-      }
-    }
-    else if (inshape_[eChannel] == 3) {
-      mx_float* ptr_image_c0 = image_data.data();
-      mx_float* ptr_image_c1 = image_data.data() + input_size_ / 3;
-      mx_float* ptr_image_c2 = image_data.data() + input_size_ / 3 * 2;
-
-      for (int i = 0; i < input_img_.rows; i++) {
-        for (int j = 0; j < input_img_.cols; j++) {
-          *ptr_image_c0++ -= mean_value_[0];
-          *ptr_image_c1++ -= mean_value_[1];
-          *ptr_image_c2++ -= mean_value_[2];
-        }
-      }
+    SubtractMeanValue(image_data);
+  }
+  if (input_scale_ != 1.0) {
+    for (int i = 0; i < image_data.size(); i++) {
+      image_data[i] *= input_scale_;
     }
   }
-  // *input_scale
 
   // Set Input Image
   MXPredSetInput(infer_hnd_, "data", image_data.data(), input_size_);
