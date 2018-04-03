@@ -193,9 +193,6 @@
     <Filter Include="Include\src\operator">
       <UniqueIdentifier>{0B806873-191B-32CA-B63B-9402F86E9A86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\src\optimizer">
-      <UniqueIdentifier>{62CCC6B4-E0D0-3B84-B3C8-0101D09F9956}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\src\storage">
       <UniqueIdentifier>{D55FC04D-63D5-39EC-80B9-7F54D92A1CE3}</UniqueIdentifier>
     </Filter>
@@ -1076,9 +1073,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\operator\swapaxis-inl.h">
       <Filter>Include\src\operator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\optimizer\sgd-inl.h">
-      <Filter>Include\src\optimizer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\storage\cpu_device_storage.h">
       <Filter>Include\src\storage</Filter>

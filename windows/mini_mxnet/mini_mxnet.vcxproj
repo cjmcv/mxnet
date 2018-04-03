@@ -289,7 +289,6 @@
     <ClInclude Include="..\..\src\operator\tensor\square_sum-inl.h" />
     <ClInclude Include="..\..\src\operator\tensor\util\tensor_util-inl.cuh" />
     <ClInclude Include="..\..\src\operator\tensor\util\tensor_util-inl.h" />
-    <ClInclude Include="..\..\src\optimizer\sgd-inl.h" />
     <ClInclude Include="..\..\src\storage\cpu_device_storage.h" />
     <ClInclude Include="..\..\src\storage\cpu_shared_storage_manager.h" />
     <ClInclude Include="..\..\src\storage\gpu_device_storage.h" />
