@@ -33,7 +33,7 @@
 #include <mxnet/operator.h>
 #include <mxnet/io.h>
 #include <mxnet/c_api.h>
-#include <mxnet/kvstore.h>
+//#include <mxnet/kvstore.h>
 #include <mxnet/rtc.h>
 #include <mxnet/storage.h>
 #include <vector>
@@ -741,302 +741,302 @@ int MXDataIterGetPadNum(DataIterHandle handle, int *pad) {
   API_END();
 }
 
-int MXKVStoreCreate(const char *type,
-                    KVStoreHandle *out) {
-  API_BEGIN();
-  *out = KVStore::Create(type);
-  API_END();
-}
-
-int MXKVStoreSetGradientCompression(KVStoreHandle handle, mx_uint num_params,
-                                    const char** keys, const char** vals) {
-  API_BEGIN();
-  std::vector<std::pair<std::string, std::string> > params;
-  for (mx_uint i = 0; i < num_params; ++i) {
-    std::pair<std::string, std::string> p;
-    p.first = keys[i];
-    p.second = vals[i];
-    params.push_back(p);
-  }
-  static_cast<KVStore*>(handle)->SetGradientCompression(params);
-  API_END();
-}
-
-int MXKVStoreFree(KVStoreHandle handle) {
-  API_BEGIN();
-  delete static_cast<KVStore*>(handle);
-  API_END();
-}
-
-int MXKVStoreInit(KVStoreHandle handle,
-                  mx_uint num,
-                  const int* keys,
-                  NDArrayHandle* vals) {
-  API_BEGIN();
-  std::vector<int> v_keys(num);
-  std::vector<NDArray> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = *static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Init(v_keys, v_vals);
-  API_END();
-}
-
-int MXKVStoreInitEx(KVStoreHandle handle,
-                  mx_uint num,
-                  const char** keys,
-                  NDArrayHandle* vals) {
-  API_BEGIN();
-  std::vector<std::string> v_keys(num);
-  std::vector<NDArray> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = *static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Init(v_keys, v_vals);
-  API_END();
-}
-
-int MXKVStorePush(KVStoreHandle handle,
-                  mx_uint num,
-                  const int* keys,
-                  NDArrayHandle* vals,
-                  int priority) {
-  API_BEGIN();
-  std::vector<int> v_keys(num);
-  std::vector<NDArray> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = *static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Push(v_keys, v_vals, priority);
-  API_END();
-}
-
-int MXKVStorePushEx(KVStoreHandle handle,
-                  mx_uint num,
-                  const char** keys,
-                  NDArrayHandle* vals,
-                  int priority) {
-  API_BEGIN();
-  std::vector<std::string> v_keys(num);
-  std::vector<NDArray> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = *static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Push(v_keys, v_vals, priority);
-  API_END();
-}
-
-int MXKVStorePull(KVStoreHandle handle,
-                  mx_uint num,
-                  const int* keys,
-                  NDArrayHandle* vals,
-                  int priority) {
-  API_BEGIN();
-  std::vector<int> v_keys(num);
-  std::vector<NDArray*> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Pull(v_keys, v_vals, priority);
-  API_END();
-}
-
-int MXKVStorePullEx(KVStoreHandle handle,
-                  mx_uint num,
-                  const char** keys,
-                  NDArrayHandle* vals,
-                  int priority) {
-  API_BEGIN();
-  std::vector<std::string> v_keys(num);
-  std::vector<NDArray*> v_vals(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_vals[i] = static_cast<NDArray*>(vals[i]);
-  }
-  static_cast<KVStore*>(handle)->Pull(v_keys, v_vals, priority);
-  API_END();
-}
-
-int MXKVStorePullRowSparse(KVStoreHandle handle,
-                           mx_uint num,
-                           const int* keys,
-                           NDArrayHandle* vals,
-                           const NDArrayHandle* row_ids,
-                           int priority) {
-  API_BEGIN();
-  std::vector<int> v_keys(num);
-  std::vector<std::pair<NDArray*, NDArray>> v_val_rowids(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_val_rowids[i] = std::make_pair(static_cast<NDArray*>(vals[i]),
-                                     *static_cast<NDArray*>(row_ids[i]));
-  }
-  static_cast<KVStore*>(handle)->PullRowSparse(v_keys, v_val_rowids, priority);
-  API_END();
-}
-
-int MXKVStorePullRowSparseEx(KVStoreHandle handle,
-                             mx_uint num,
-                             const char** keys,
-                             NDArrayHandle* vals,
-                             const NDArrayHandle* row_ids,
-                             int priority) {
-  API_BEGIN();
-  std::vector<std::string> v_keys(num);
-  std::vector<std::pair<NDArray*, NDArray>> v_val_rowids(num);
-  for (mx_uint i = 0; i < num; ++i) {
-    v_keys[i] = keys[i];
-    v_val_rowids[i] = std::make_pair(static_cast<NDArray*>(vals[i]),
-                                     *static_cast<NDArray*>(row_ids[i]));
-  }
-  static_cast<KVStore*>(handle)->PullRowSparse(v_keys, v_val_rowids, priority);
-  API_END();
-}
-
-void MXKVStoreSetUpdaterImpl(KVStoreHandle handle,
-                             MXKVStoreUpdater updater,
-                             void* updater_handle) {
-  MXKVStoreUpdater * updater_temp = updater;
-  void* updater_handle_temp = updater_handle;
-  std::function<void(int, const NDArray&, NDArray*)> updt
-  = [updater_temp, updater_handle_temp](int key, const NDArray& recv, NDArray* local) {
-    NDArray* recv_copy = new NDArray();
-    *recv_copy = recv;
-    NDArray* local_copy = new NDArray();
-    *local_copy = *local;
-    updater_temp(key, recv_copy, local_copy, updater_handle_temp);
-  };
-  static_cast<KVStore*>(handle)->set_updater(updt);
-}
-
-int MXKVStoreSetUpdater(KVStoreHandle handle,
-                        MXKVStoreUpdater updater,
-                        void* updater_handle) {
-  API_BEGIN();
-  MXKVStoreSetUpdaterImpl(handle, updater, updater_handle);
-  API_END();
-}
-
-int MXKVStoreSetUpdaterEx(KVStoreHandle handle,
-                          MXKVStoreUpdater updater,
-                          MXKVStoreStrUpdater str_updater,
-                          void* updater_handle) {
-  API_BEGIN();
-  // set updater with int keys
-  MXKVStoreSetUpdaterImpl(handle, updater, updater_handle);
-  // set updater with string keys
-  MXKVStoreStrUpdater * updater_temp = str_updater;
-  void* updater_handle_temp = updater_handle;
-  std::function<void(const std::string&, const NDArray&, NDArray*)> updt
-  = [updater_temp, updater_handle_temp]
-    (const std::string& key, const NDArray& recv, NDArray* local) {
-    NDArray* recv_copy = new NDArray();
-    *recv_copy = recv;
-    NDArray* local_copy = new NDArray();
-    *local_copy = *local;
-    updater_temp(key.c_str(), recv_copy, local_copy, updater_handle_temp);
-  };
-  static_cast<KVStore*>(handle)->set_updater(updt);
-  API_END();
-}
-
-int MXKVStoreGetRank(KVStoreHandle handle, int *rank) {
-  API_BEGIN();
-  *rank = static_cast<KVStore*>(handle)->get_rank();
-  API_END();
-}
-
-int MXKVStoreGetGroupSize(KVStoreHandle handle, int *size) {
-  API_BEGIN();
-  *size = static_cast<KVStore*>(handle)->get_group_size();
-  API_END();
-}
-
-int MXKVStoreBarrier(KVStoreHandle handle) {
-  API_BEGIN();
-  static_cast<KVStore*>(handle)->Barrier();
-  API_END();
-}
-
-int MXKVStoreSetBarrierBeforeExit(KVStoreHandle handle,
-                                  const int barrier_before_exit) {
-  API_BEGIN();
-  static_cast<KVStore*>(handle)->set_barrier_before_exit(barrier_before_exit);
-  API_END();
-}
-
-int MXInitPSEnv(mx_uint num_vars,
-                const char **keys,
-                const char **vals) {
-  API_BEGIN();
-  std::unordered_map<std::string, std::string> kwargs;
-  for (mx_uint i = 0; i < num_vars; ++i) {
-    kwargs[std::string(keys[i])] = std::string(vals[i]);
-  }
-  KVStore::InitPSEnv(kwargs);
-  API_END();
-}
-
-int MXKVStoreIsWorkerNode(int *ret) {
-  API_BEGIN();
-  *ret = KVStore::IsWorkerNode();
-  API_END();
-}
-
-int MXKVStoreIsServerNode(int *ret) {
-  API_BEGIN();
-  *ret = KVStore::IsServerNode();
-  API_END();
-}
-
-int MXKVStoreIsSchedulerNode(int *ret) {
-  API_BEGIN();
-  *ret = KVStore::IsSchedulerNode();
-  API_END();
-}
-
-int MXKVStoreRunServer(KVStoreHandle handle,
-                       MXKVStoreServerController controller,
-                       void *controller_handle) {
-  API_BEGIN();
-  MXKVStoreServerController *controller_temp = controller;
-  void *controller_handle_temp = controller_handle;
-  auto ctrl = [controller_temp, controller_handle_temp](int head, const std::string& body) {
-      controller_temp(head, body.c_str(), controller_handle_temp);
-  };
-  static_cast<KVStore*>(handle)->RunServer(ctrl);
-  API_END();
-}
-
-int MXKVStoreSendCommmandToServers(KVStoreHandle handle,
-                                   int cmd_id,
-                                   const char* cmd_body) {
-  API_BEGIN();
-  static_cast<KVStore*>(handle)->SendCommandToServers(
-      cmd_id, std::string(cmd_body));
-  API_END();
-}
-
-int MXKVStoreGetType(KVStoreHandle handle,
-                     const char** type) {
-  API_BEGIN();
-  *CHECK_NOTNULL(type) = static_cast<KVStore*>(handle)->type().c_str();
-  API_END();
-}
-
-int MXKVStoreGetNumDeadNode(KVStoreHandle handle,
-                            const int node_id,
-                            int *number,
-                            const int timeout_sec) {
-  API_BEGIN();
-  *number = static_cast<KVStore*>(handle)->get_num_dead_node(node_id, timeout_sec);
-  API_END();
-}
+//int MXKVStoreCreate(const char *type,
+//                    KVStoreHandle *out) {
+//  API_BEGIN();
+//  *out = KVStore::Create(type);
+//  API_END();
+//}
+//
+//int MXKVStoreSetGradientCompression(KVStoreHandle handle, mx_uint num_params,
+//                                    const char** keys, const char** vals) {
+//  API_BEGIN();
+//  std::vector<std::pair<std::string, std::string> > params;
+//  for (mx_uint i = 0; i < num_params; ++i) {
+//    std::pair<std::string, std::string> p;
+//    p.first = keys[i];
+//    p.second = vals[i];
+//    params.push_back(p);
+//  }
+//  static_cast<KVStore*>(handle)->SetGradientCompression(params);
+//  API_END();
+//}
+//
+//int MXKVStoreFree(KVStoreHandle handle) {
+//  API_BEGIN();
+//  delete static_cast<KVStore*>(handle);
+//  API_END();
+//}
+//
+//int MXKVStoreInit(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const int* keys,
+//                  NDArrayHandle* vals) {
+//  API_BEGIN();
+//  std::vector<int> v_keys(num);
+//  std::vector<NDArray> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = *static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Init(v_keys, v_vals);
+//  API_END();
+//}
+//
+//int MXKVStoreInitEx(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const char** keys,
+//                  NDArrayHandle* vals) {
+//  API_BEGIN();
+//  std::vector<std::string> v_keys(num);
+//  std::vector<NDArray> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = *static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Init(v_keys, v_vals);
+//  API_END();
+//}
+//
+//int MXKVStorePush(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const int* keys,
+//                  NDArrayHandle* vals,
+//                  int priority) {
+//  API_BEGIN();
+//  std::vector<int> v_keys(num);
+//  std::vector<NDArray> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = *static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Push(v_keys, v_vals, priority);
+//  API_END();
+//}
+//
+//int MXKVStorePushEx(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const char** keys,
+//                  NDArrayHandle* vals,
+//                  int priority) {
+//  API_BEGIN();
+//  std::vector<std::string> v_keys(num);
+//  std::vector<NDArray> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = *static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Push(v_keys, v_vals, priority);
+//  API_END();
+//}
+//
+//int MXKVStorePull(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const int* keys,
+//                  NDArrayHandle* vals,
+//                  int priority) {
+//  API_BEGIN();
+//  std::vector<int> v_keys(num);
+//  std::vector<NDArray*> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Pull(v_keys, v_vals, priority);
+//  API_END();
+//}
+//
+//int MXKVStorePullEx(KVStoreHandle handle,
+//                  mx_uint num,
+//                  const char** keys,
+//                  NDArrayHandle* vals,
+//                  int priority) {
+//  API_BEGIN();
+//  std::vector<std::string> v_keys(num);
+//  std::vector<NDArray*> v_vals(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_vals[i] = static_cast<NDArray*>(vals[i]);
+//  }
+//  static_cast<KVStore*>(handle)->Pull(v_keys, v_vals, priority);
+//  API_END();
+//}
+//
+//int MXKVStorePullRowSparse(KVStoreHandle handle,
+//                           mx_uint num,
+//                           const int* keys,
+//                           NDArrayHandle* vals,
+//                           const NDArrayHandle* row_ids,
+//                           int priority) {
+//  API_BEGIN();
+//  std::vector<int> v_keys(num);
+//  std::vector<std::pair<NDArray*, NDArray>> v_val_rowids(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_val_rowids[i] = std::make_pair(static_cast<NDArray*>(vals[i]),
+//                                     *static_cast<NDArray*>(row_ids[i]));
+//  }
+//  static_cast<KVStore*>(handle)->PullRowSparse(v_keys, v_val_rowids, priority);
+//  API_END();
+//}
+//
+//int MXKVStorePullRowSparseEx(KVStoreHandle handle,
+//                             mx_uint num,
+//                             const char** keys,
+//                             NDArrayHandle* vals,
+//                             const NDArrayHandle* row_ids,
+//                             int priority) {
+//  API_BEGIN();
+//  std::vector<std::string> v_keys(num);
+//  std::vector<std::pair<NDArray*, NDArray>> v_val_rowids(num);
+//  for (mx_uint i = 0; i < num; ++i) {
+//    v_keys[i] = keys[i];
+//    v_val_rowids[i] = std::make_pair(static_cast<NDArray*>(vals[i]),
+//                                     *static_cast<NDArray*>(row_ids[i]));
+//  }
+//  static_cast<KVStore*>(handle)->PullRowSparse(v_keys, v_val_rowids, priority);
+//  API_END();
+//}
+//
+//void MXKVStoreSetUpdaterImpl(KVStoreHandle handle,
+//                             MXKVStoreUpdater updater,
+//                             void* updater_handle) {
+//  MXKVStoreUpdater * updater_temp = updater;
+//  void* updater_handle_temp = updater_handle;
+//  std::function<void(int, const NDArray&, NDArray*)> updt
+//  = [updater_temp, updater_handle_temp](int key, const NDArray& recv, NDArray* local) {
+//    NDArray* recv_copy = new NDArray();
+//    *recv_copy = recv;
+//    NDArray* local_copy = new NDArray();
+//    *local_copy = *local;
+//    updater_temp(key, recv_copy, local_copy, updater_handle_temp);
+//  };
+//  static_cast<KVStore*>(handle)->set_updater(updt);
+//}
+//
+//int MXKVStoreSetUpdater(KVStoreHandle handle,
+//                        MXKVStoreUpdater updater,
+//                        void* updater_handle) {
+//  API_BEGIN();
+//  MXKVStoreSetUpdaterImpl(handle, updater, updater_handle);
+//  API_END();
+//}
+//
+//int MXKVStoreSetUpdaterEx(KVStoreHandle handle,
+//                          MXKVStoreUpdater updater,
+//                          MXKVStoreStrUpdater str_updater,
+//                          void* updater_handle) {
+//  API_BEGIN();
+//  // set updater with int keys
+//  MXKVStoreSetUpdaterImpl(handle, updater, updater_handle);
+//  // set updater with string keys
+//  MXKVStoreStrUpdater * updater_temp = str_updater;
+//  void* updater_handle_temp = updater_handle;
+//  std::function<void(const std::string&, const NDArray&, NDArray*)> updt
+//  = [updater_temp, updater_handle_temp]
+//    (const std::string& key, const NDArray& recv, NDArray* local) {
+//    NDArray* recv_copy = new NDArray();
+//    *recv_copy = recv;
+//    NDArray* local_copy = new NDArray();
+//    *local_copy = *local;
+//    updater_temp(key.c_str(), recv_copy, local_copy, updater_handle_temp);
+//  };
+//  static_cast<KVStore*>(handle)->set_updater(updt);
+//  API_END();
+//}
+//
+//int MXKVStoreGetRank(KVStoreHandle handle, int *rank) {
+//  API_BEGIN();
+//  *rank = static_cast<KVStore*>(handle)->get_rank();
+//  API_END();
+//}
+//
+//int MXKVStoreGetGroupSize(KVStoreHandle handle, int *size) {
+//  API_BEGIN();
+//  *size = static_cast<KVStore*>(handle)->get_group_size();
+//  API_END();
+//}
+//
+//int MXKVStoreBarrier(KVStoreHandle handle) {
+//  API_BEGIN();
+//  static_cast<KVStore*>(handle)->Barrier();
+//  API_END();
+//}
+//
+//int MXKVStoreSetBarrierBeforeExit(KVStoreHandle handle,
+//                                  const int barrier_before_exit) {
+//  API_BEGIN();
+//  static_cast<KVStore*>(handle)->set_barrier_before_exit(barrier_before_exit);
+//  API_END();
+//}
+//
+//int MXInitPSEnv(mx_uint num_vars,
+//                const char **keys,
+//                const char **vals) {
+//  API_BEGIN();
+//  std::unordered_map<std::string, std::string> kwargs;
+//  for (mx_uint i = 0; i < num_vars; ++i) {
+//    kwargs[std::string(keys[i])] = std::string(vals[i]);
+//  }
+//  KVStore::InitPSEnv(kwargs);
+//  API_END();
+//}
+//
+//int MXKVStoreIsWorkerNode(int *ret) {
+//  API_BEGIN();
+//  *ret = KVStore::IsWorkerNode();
+//  API_END();
+//}
+//
+//int MXKVStoreIsServerNode(int *ret) {
+//  API_BEGIN();
+//  *ret = KVStore::IsServerNode();
+//  API_END();
+//}
+//
+//int MXKVStoreIsSchedulerNode(int *ret) {
+//  API_BEGIN();
+//  *ret = KVStore::IsSchedulerNode();
+//  API_END();
+//}
+//
+//int MXKVStoreRunServer(KVStoreHandle handle,
+//                       MXKVStoreServerController controller,
+//                       void *controller_handle) {
+//  API_BEGIN();
+//  MXKVStoreServerController *controller_temp = controller;
+//  void *controller_handle_temp = controller_handle;
+//  auto ctrl = [controller_temp, controller_handle_temp](int head, const std::string& body) {
+//      controller_temp(head, body.c_str(), controller_handle_temp);
+//  };
+//  static_cast<KVStore*>(handle)->RunServer(ctrl);
+//  API_END();
+//}
+//
+//int MXKVStoreSendCommmandToServers(KVStoreHandle handle,
+//                                   int cmd_id,
+//                                   const char* cmd_body) {
+//  API_BEGIN();
+//  static_cast<KVStore*>(handle)->SendCommandToServers(
+//      cmd_id, std::string(cmd_body));
+//  API_END();
+//}
+//
+//int MXKVStoreGetType(KVStoreHandle handle,
+//                     const char** type) {
+//  API_BEGIN();
+//  *CHECK_NOTNULL(type) = static_cast<KVStore*>(handle)->type().c_str();
+//  API_END();
+//}
+//
+//int MXKVStoreGetNumDeadNode(KVStoreHandle handle,
+//                            const int node_id,
+//                            int *number,
+//                            const int timeout_sec) {
+//  API_BEGIN();
+//  *number = static_cast<KVStore*>(handle)->get_num_dead_node(node_id, timeout_sec);
+//  API_END();
+//}
 
 struct MXRecordIOContext {
   dmlc::RecordIOWriter *writer;

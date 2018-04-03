@@ -132,14 +132,6 @@
     <ClInclude Include="..\..\src\io\iter_sparse.h" />
     <ClInclude Include="..\..\src\io\iter_sparse_batchloader.h" />
     <ClInclude Include="..\..\src\io\iter_sparse_prefetcher.h" />
-    <ClInclude Include="..\..\src\kvstore\comm.h" />
-    <ClInclude Include="..\..\src\kvstore\gradient_compression-inl.h" />
-    <ClInclude Include="..\..\src\kvstore\gradient_compression.h" />
-    <ClInclude Include="..\..\src\kvstore\kvstore_dist.h" />
-    <ClInclude Include="..\..\src\kvstore\kvstore_dist_server.h" />
-    <ClInclude Include="..\..\src\kvstore\kvstore_local.h" />
-    <ClInclude Include="..\..\src\kvstore\kvstore_nccl.h" />
-    <ClInclude Include="..\..\src\kvstore\kvstore_utils.h" />
     <ClInclude Include="..\..\src\ndarray\ndarray_function-inl.cuh" />
     <ClInclude Include="..\..\src\ndarray\ndarray_function-inl.h" />
     <ClInclude Include="..\..\src\ndarray\ndarray_function.h" />
@@ -309,8 +301,6 @@
   <ItemGroup>
     <CudaCompile Include="..\..\src\common\random_generator.cu" />
     <CudaCompile Include="..\..\src\common\utils.cu" />
-    <CudaCompile Include="..\..\src\kvstore\gradient_compression.cu" />
-    <CudaCompile Include="..\..\src\kvstore\kvstore_utils.cu" />
     <CudaCompile Include="..\..\src\ndarray\ndarray_function.cu" />
     <CudaCompile Include="..\..\src\operator\batch_norm_v1.cu" />
     <CudaCompile Include="..\..\src\operator\bilinear_sampler.cu" />
@@ -446,9 +436,6 @@
     <ClCompile Include="..\..\src\io\iter_image_recordio_2.cc" />
     <ClCompile Include="..\..\src\io\iter_libsvm.cc" />
     <ClCompile Include="..\..\src\io\iter_mnist.cc" />
-    <ClCompile Include="..\..\src\kvstore\gradient_compression.cc" />
-    <ClCompile Include="..\..\src\kvstore\kvstore.cc" />
-    <ClCompile Include="..\..\src\kvstore\kvstore_utils.cc" />
     <ClCompile Include="..\..\src\ndarray\ndarray.cc" />
     <ClCompile Include="..\..\src\ndarray\ndarray_function.cc" />
     <ClCompile Include="..\..\src\nnvm\legacy_json_util.cc" />
@@ -680,6 +667,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <OpenMPSupport>true</OpenMPSupport>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

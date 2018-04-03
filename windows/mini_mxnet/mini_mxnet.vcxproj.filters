@@ -76,9 +76,6 @@
     <Filter Include="CUDA\src\common">
       <UniqueIdentifier>{300DF88F-CC04-31E2-B8C3-FE36BD4BB676}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CUDA\src\kvstore">
-      <UniqueIdentifier>{9C8899C1-070B-3D5F-B8E5-22EDAAED1548}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CUDA\src\ndarray">
       <UniqueIdentifier>{8B319342-9DF6-309E-BD20-225A6DE1704C}</UniqueIdentifier>
     </Filter>
@@ -117,9 +114,6 @@
     </Filter>
     <Filter Include="Source\src\io">
       <UniqueIdentifier>{848C8572-09F2-38ED-89F0-70A1B8FE4930}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\src\kvstore">
-      <UniqueIdentifier>{FD34A61B-685D-3ED8-8F7F-D4EEAB333FCA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\src\ndarray">
       <UniqueIdentifier>{88AFCACF-D6ED-3C1F-B703-51715C847707}</UniqueIdentifier>
@@ -192,9 +186,6 @@
     </Filter>
     <Filter Include="Include\src\io">
       <UniqueIdentifier>{7D0C454C-DFEC-3FC9-BF6D-BB233F17275F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\src\kvstore">
-      <UniqueIdentifier>{34E39641-1128-3A9E-8D23-140174F9CB1B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\src\ndarray">
       <UniqueIdentifier>{09DCE631-14F6-310E-96EB-9185639B0357}</UniqueIdentifier>
@@ -696,30 +687,6 @@
     <ClInclude Include="..\..\src\io\iter_sparse_prefetcher.h">
       <Filter>Include\src\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\comm.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\gradient_compression.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\gradient_compression-inl.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\kvstore_dist.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\kvstore_dist_server.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\kvstore_local.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\kvstore_nccl.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\kvstore\kvstore_utils.h">
-      <Filter>Include\src\kvstore</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ndarray\ndarray_function.h">
       <Filter>Include\src\ndarray</Filter>
     </ClInclude>
@@ -1148,12 +1115,6 @@
     <CudaCompile Include="..\..\src\common\utils.cu">
       <Filter>CUDA\src\common</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\..\src\kvstore\gradient_compression.cu">
-      <Filter>CUDA\src\kvstore</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\src\kvstore\kvstore_utils.cu">
-      <Filter>CUDA\src\kvstore</Filter>
-    </CudaCompile>
     <CudaCompile Include="..\..\src\ndarray\ndarray_function.cu">
       <Filter>CUDA\src\ndarray</Filter>
     </CudaCompile>
@@ -1551,15 +1512,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\io\iter_mnist.cc">
       <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\kvstore\gradient_compression.cc">
-      <Filter>Source\src\kvstore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\kvstore\kvstore.cc">
-      <Filter>Source\src\kvstore</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\kvstore\kvstore_utils.cc">
-      <Filter>Source\src\kvstore</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ndarray\ndarray.cc">
       <Filter>Source\src\ndarray</Filter>
