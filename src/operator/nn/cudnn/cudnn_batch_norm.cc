@@ -87,7 +87,7 @@ NNVM_REGISTER_OP(CuDNNBatchNorm)
 })
 .set_attr<nnvm::FInferShape>("FInferShape", BatchNormShape)
 .set_attr<FCompute>("FCompute<cpu>", BatchNormCompute_CPU)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseInOut{"_backward_CuDNNBatchNorm"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseInOut{"_backward_CuDNNBatchNorm"})
 .add_argument("data", "NDArray-or-Symbol", "Input data to batch normalization")
 .add_argument("gamma", "NDArray-or-Symbol", "gamma array")
 .add_argument("beta", "NDArray-or-Symbol", "beta array")
@@ -105,14 +105,14 @@ NNVM_REGISTER_OP(CuDNNBatchNorm)
     }
   });
 
-NNVM_REGISTER_OP(_backward_CuDNNBatchNorm)
-.set_num_outputs(5)
-.set_attr<nnvm::FMutateInputs>("FMutateInputs", [](const nnvm::NodeAttrs& attrs) {
-  return std::vector<uint32_t>{6, 7};
-})
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr_parser(ParamParser<BatchNormParam>)
-.set_attr<FCompute>("FCompute<cpu>", BatchNormGradCompute_CPU);
+//NNVM_REGISTER_OP(_backward_CuDNNBatchNorm)
+//.set_num_outputs(5)
+//.set_attr<nnvm::FMutateInputs>("FMutateInputs", [](const nnvm::NodeAttrs& attrs) {
+//  return std::vector<uint32_t>{6, 7};
+//})
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr_parser(ParamParser<BatchNormParam>)
+//.set_attr<FCompute>("FCompute<cpu>", BatchNormGradCompute_CPU);
 
 #endif  // CUDNN_MAJOR >= 4
 

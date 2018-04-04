@@ -62,17 +62,17 @@ Example::
   sum = [0, 5, 0, 25, 0]
 )code" ADD_FILELINE)
 .set_attr<FInferStorageType>("FInferStorageType", SquareSumForwardInferStorageType)
-.set_attr<FComputeEx>("FComputeEx<cpu>", SquareSumOpForwardEx<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_square_sum"});
+.set_attr<FComputeEx>("FComputeEx<cpu>", SquareSumOpForwardEx<cpu>);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_square_sum"});
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_square_sum)
-.set_num_inputs(2)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<FInferStorageType>("FInferStorageType", SquareSumBackwardInferStorageType)
-.set_attr<FComputeEx>("FComputeEx<cpu>", SquareSumOpBackwardEx<cpu>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_square_sum)
+//.set_num_inputs(2)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//.set_attr<FInferStorageType>("FInferStorageType", SquareSumBackwardInferStorageType)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", SquareSumOpBackwardEx<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

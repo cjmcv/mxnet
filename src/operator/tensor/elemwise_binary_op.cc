@@ -51,34 +51,34 @@ bool ElemwiseBinaryOp::SparseSparseWithDenseResult(const nnvm::NodeAttrs& attrs,
   return dispatched;
 }
 
-bool ElemwiseBinaryOp::BackwardUseInStorageType(const nnvm::NodeAttrs& attrs,
-                                                const int dev_mask,
-                                                DispatchMode* dispatch_mode,
-                                                std::vector<int> *in_attrs,
-                                                std::vector<int> *out_attrs) {
-  using namespace common;
-  CHECK_EQ(in_attrs->size(), 3U);
-  CHECK_EQ(out_attrs->size(), 2U);
-  bool dispatched = false;
-  const bool invalid_ctx = dev_mask != mshadow::cpu::kDevMask;
-  const auto dispatch_ex = invalid_ctx ? DispatchMode::kFComputeFallback :
-                           DispatchMode::kFComputeEx;
-  if (!dispatched && common::ContainsOnlyStorage(*in_attrs, kDefaultStorage)) {
-    dispatched = storage_type_assign(out_attrs, kDefaultStorage,
-                                     dispatch_mode, DispatchMode::kFCompute);
-  }
-  if (!dispatched) {
-    if (common::ContainsOnlyStorage(*in_attrs, kRowSparseStorage)
-      && common::ContainsOnlyStorage(*out_attrs, kRowSparseStorage)) {
-      dispatched = storage_type_assign(out_attrs, kRowSparseStorage,
-                                       dispatch_mode, dispatch_ex);
-    }
-  }
-  if (!dispatched) {
-    dispatched = dispatch_fallback(out_attrs, dispatch_mode);
-  }
-  return dispatched;
-}
+//bool ElemwiseBinaryOp::BackwardUseInStorageType(const nnvm::NodeAttrs& attrs,
+//                                                const int dev_mask,
+//                                                DispatchMode* dispatch_mode,
+//                                                std::vector<int> *in_attrs,
+//                                                std::vector<int> *out_attrs) {
+//  using namespace common;
+//  CHECK_EQ(in_attrs->size(), 3U);
+//  CHECK_EQ(out_attrs->size(), 2U);
+//  bool dispatched = false;
+//  const bool invalid_ctx = dev_mask != mshadow::cpu::kDevMask;
+//  const auto dispatch_ex = invalid_ctx ? DispatchMode::kFComputeFallback :
+//                           DispatchMode::kFComputeEx;
+//  if (!dispatched && common::ContainsOnlyStorage(*in_attrs, kDefaultStorage)) {
+//    dispatched = storage_type_assign(out_attrs, kDefaultStorage,
+//                                     dispatch_mode, DispatchMode::kFCompute);
+//  }
+//  if (!dispatched) {
+//    if (common::ContainsOnlyStorage(*in_attrs, kRowSparseStorage)
+//      && common::ContainsOnlyStorage(*out_attrs, kRowSparseStorage)) {
+//      dispatched = storage_type_assign(out_attrs, kRowSparseStorage,
+//                                       dispatch_mode, dispatch_ex);
+//    }
+//  }
+//  if (!dispatched) {
+//    dispatched = dispatch_fallback(out_attrs, dispatch_mode);
+//  }
+//  return dispatched;
+//}
 
 }  // namespace op
 }  // namespace mxnet

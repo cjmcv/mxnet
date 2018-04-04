@@ -40,8 +40,8 @@ NNVM_REGISTER_OP(pick)
 .set_attr<FCompute>("FCompute<gpu>", PickOpForward<gpu>);
 
 
-NNVM_REGISTER_OP(_backward_pick)
-.set_attr<FCompute>("FCompute<gpu>", PickOpBackward<gpu>);
+//NNVM_REGISTER_OP(_backward_pick)
+//.set_attr<FCompute>("FCompute<gpu>", PickOpBackward<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

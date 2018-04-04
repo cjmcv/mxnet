@@ -130,15 +130,15 @@ void BatchNormForwardImpl(mshadow::Stream<cpu> *stream,
                           const std::vector<TBlob> &out_data,
                           const std::vector<TBlob> &aux_states);
 
-template <typename xpu, typename DType, typename AccReal>
-void BatchNormBackwardImpl(mshadow::Stream<cpu> *stream,
-                           const OpContext &ctx, const BatchNormParam& param,
-                           const std::vector<TBlob> &out_grad,
-                           const std::vector<TBlob> &in_data,
-                           const std::vector<TBlob> &out_data,
-                           const std::vector<OpReqType> &req,
-                           const std::vector<TBlob> &in_grad,
-                           const std::vector<TBlob> &aux_states);
+//template <typename xpu, typename DType, typename AccReal>
+//void BatchNormBackwardImpl(mshadow::Stream<cpu> *stream,
+//                           const OpContext &ctx, const BatchNormParam& param,
+//                           const std::vector<TBlob> &out_grad,
+//                           const std::vector<TBlob> &in_data,
+//                           const std::vector<TBlob> &out_data,
+//                           const std::vector<OpReqType> &req,
+//                           const std::vector<TBlob> &in_grad,
+//                           const std::vector<TBlob> &aux_states);
 
 #if MXNET_USE_CUDA
 template <typename xpu, typename DType, typename AccReal>
@@ -148,15 +148,15 @@ void BatchNormForwardImpl(mshadow::Stream<gpu> *stream,
                           const std::vector<OpReqType> &req,
                           const std::vector<TBlob> &out_data,
                           const std::vector<TBlob> &aux_states);
-template <typename xpu, typename DType, typename AccReal>
-void BatchNormBackwardImpl(mshadow::Stream<gpu> *stream,
-                           const OpContext &ctx, const BatchNormParam& param,
-                           const std::vector<TBlob> &out_grad,
-                           const std::vector<TBlob> &in_data,
-                           const std::vector<TBlob> &out_data,
-                           const std::vector<OpReqType> &req,
-                           const std::vector<TBlob> &in_grad,
-                           const std::vector<TBlob> &aux_states);
+//template <typename xpu, typename DType, typename AccReal>
+//void BatchNormBackwardImpl(mshadow::Stream<gpu> *stream,
+//                           const OpContext &ctx, const BatchNormParam& param,
+//                           const std::vector<TBlob> &out_grad,
+//                           const std::vector<TBlob> &in_data,
+//                           const std::vector<TBlob> &out_data,
+//                           const std::vector<OpReqType> &req,
+//                           const std::vector<TBlob> &in_grad,
+//                           const std::vector<TBlob> &aux_states);
 #endif  // MXNET_USE_CUDA
 
 /*!
@@ -194,50 +194,50 @@ void BatchNormForward(const OpContext &ctx, const BatchNormParam& param,
                                             out_data, aux_states);
 }
 
-/*!
- * \brief Perform a Backward Operation, write gradient to the in_grad.
- *
- * \note
- * Convention:
- *   out_grad.size() == OperatorProperty.NumVisibleOutputs()
- *   out_data.size() == OperatorProperty.NumOutputs()
- * out_data can contain additional invisible returns that remembers the
- * state carried from the Forward pass. For example mask in the dropout.
- * The gradients are passed from visible returns in this function.
- *
- * \par
- * Not all the TBlobs in the arguments will be available
- * if you override the DeclareBackwardDependency of corresponding OperatorProperty class.
- * Only the dependencies you declared will be available at corresponding position,
- * the rest of the parameters are simply dummy where you will get a nullptr.
- * You will be safe if you use the default DeclareBackwardDependency.
- * But only declare what you need will give engine more chance for optimization.
- *
- * \param ctx runtime context available to this call
- * \param out_grad the gradient value we get from of the Operator.
- * \param in_data the array of input data.
- * \param out_data the array of output data.
- * \param req request types of the saving operation, can be all types.
- * \param in_grad the array of gradient we need to write to.
- * \param aux_states Auxiliary states of operator. Normally operator doesn't need
- * \sa OperatorProperty, OpReqType, OpContext
- */
-template <typename xpu, typename DType, typename AccReal>
-void BatchNormBackward(const OpContext &ctx, const BatchNormParam& param,
-                       const std::vector<TBlob> &out_grad,
-                       const std::vector<TBlob> &in_data,
-                       const std::vector<TBlob> &out_data,
-                       const std::vector<OpReqType> &req,
-                       const std::vector<TBlob> &in_grad,
-                       const std::vector<TBlob> &aux_states) {
-  CHECK_EQ(out_grad.size(), param.output_mean_var ? 3U : 1U);
-  CHECK_EQ(in_data.size(), 3U);
-  CHECK_EQ(out_data.size(), 3U);
-  CHECK_EQ(in_grad.size(), 3U);
-  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
-  BatchNormBackwardImpl<xpu, DType, AccReal>(s, ctx, param, out_grad, in_data,
-                                             out_data, req, in_grad, aux_states);
-}
+///*!
+// * \brief Perform a Backward Operation, write gradient to the in_grad.
+// *
+// * \note
+// * Convention:
+// *   out_grad.size() == OperatorProperty.NumVisibleOutputs()
+// *   out_data.size() == OperatorProperty.NumOutputs()
+// * out_data can contain additional invisible returns that remembers the
+// * state carried from the Forward pass. For example mask in the dropout.
+// * The gradients are passed from visible returns in this function.
+// *
+// * \par
+// * Not all the TBlobs in the arguments will be available
+// * if you override the DeclareBackwardDependency of corresponding OperatorProperty class.
+// * Only the dependencies you declared will be available at corresponding position,
+// * the rest of the parameters are simply dummy where you will get a nullptr.
+// * You will be safe if you use the default DeclareBackwardDependency.
+// * But only declare what you need will give engine more chance for optimization.
+// *
+// * \param ctx runtime context available to this call
+// * \param out_grad the gradient value we get from of the Operator.
+// * \param in_data the array of input data.
+// * \param out_data the array of output data.
+// * \param req request types of the saving operation, can be all types.
+// * \param in_grad the array of gradient we need to write to.
+// * \param aux_states Auxiliary states of operator. Normally operator doesn't need
+// * \sa OperatorProperty, OpReqType, OpContext
+// */
+//template <typename xpu, typename DType, typename AccReal>
+//void BatchNormBackward(const OpContext &ctx, const BatchNormParam& param,
+//                       const std::vector<TBlob> &out_grad,
+//                       const std::vector<TBlob> &in_data,
+//                       const std::vector<TBlob> &out_data,
+//                       const std::vector<OpReqType> &req,
+//                       const std::vector<TBlob> &in_grad,
+//                       const std::vector<TBlob> &aux_states) {
+//  CHECK_EQ(out_grad.size(), param.output_mean_var ? 3U : 1U);
+//  CHECK_EQ(in_data.size(), 3U);
+//  CHECK_EQ(out_data.size(), 3U);
+//  CHECK_EQ(in_grad.size(), 3U);
+//  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
+//  BatchNormBackwardImpl<xpu, DType, AccReal>(s, ctx, param, out_grad, in_data,
+//                                             out_data, req, in_grad, aux_states);
+//}
 
 template<typename xpu>
 void BatchNormCompute(const nnvm::NodeAttrs& attrs,
@@ -256,30 +256,30 @@ void BatchNormCompute(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void BatchNormGradCompute(const nnvm::NodeAttrs& attrs,
-                          const OpContext& ctx, const std::vector<TBlob>& inputs,
-                          const std::vector<OpReqType>& req,
-                          const std::vector<TBlob>& outputs) {
-  CHECK_EQ(inputs.size(), 11U);
-  const BatchNormParam& param = nnvm::get<BatchNormParam>(attrs.parsed);
-  int num_out_grads = param.output_mean_var ? 3U : 1U;
-  int in_data_start = 3;
-  int aux_states_start = in_data_start + batchnorm::kInMovingMean;
-  int out_data_start = in_data_start + batchnorm::kInMovingVar + 1;
-  std::vector<TBlob> out_grad(inputs.begin(), inputs.begin() + num_out_grads);
-  std::vector<TBlob> in_data(inputs.begin() + in_data_start,
-                             inputs.begin() + aux_states_start);
-  std::vector<TBlob> aux_states(inputs.begin() + aux_states_start,
-                                inputs.begin() + out_data_start);
-  std::vector<TBlob> out_data(inputs.begin() + out_data_start, inputs.end());
-  std::vector<TBlob> in_grad(outputs.begin(), outputs.begin() + 3);
-
-  MSHADOW_REAL_TYPE_SWITCH_EX(out_grad[0].type_flag_, DType, AccReal, {
-    BatchNormBackward<xpu, DType, AccReal>(ctx, param, out_grad, in_data, out_data, req,
-                                           in_grad, aux_states);
-  });
-}
+//template<typename xpu>
+//void BatchNormGradCompute(const nnvm::NodeAttrs& attrs,
+//                          const OpContext& ctx, const std::vector<TBlob>& inputs,
+//                          const std::vector<OpReqType>& req,
+//                          const std::vector<TBlob>& outputs) {
+//  CHECK_EQ(inputs.size(), 11U);
+//  const BatchNormParam& param = nnvm::get<BatchNormParam>(attrs.parsed);
+//  int num_out_grads = param.output_mean_var ? 3U : 1U;
+//  int in_data_start = 3;
+//  int aux_states_start = in_data_start + batchnorm::kInMovingMean;
+//  int out_data_start = in_data_start + batchnorm::kInMovingVar + 1;
+//  std::vector<TBlob> out_grad(inputs.begin(), inputs.begin() + num_out_grads);
+//  std::vector<TBlob> in_data(inputs.begin() + in_data_start,
+//                             inputs.begin() + aux_states_start);
+//  std::vector<TBlob> aux_states(inputs.begin() + aux_states_start,
+//                                inputs.begin() + out_data_start);
+//  std::vector<TBlob> out_data(inputs.begin() + out_data_start, inputs.end());
+//  std::vector<TBlob> in_grad(outputs.begin(), outputs.begin() + 3);
+//
+//  MSHADOW_REAL_TYPE_SWITCH_EX(out_grad[0].type_flag_, DType, AccReal, {
+//    BatchNormBackward<xpu, DType, AccReal>(ctx, param, out_grad, in_data, out_data, req,
+//                                           in_grad, aux_states);
+//  });
+//}
 
 #if DMLC_USE_CXX11
 

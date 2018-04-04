@@ -187,131 +187,131 @@ void BatchNormForwardImpl(mshadow::Stream<cpu> *,
   }
 }
 
-template <typename xpu, typename DType, typename AccReal>
-void BatchNormBackwardImpl(mshadow::Stream<cpu> *,
-                           const OpContext &ctx, const BatchNormParam& param_,
-                           const std::vector<TBlob> &out_grad,
-                           const std::vector<TBlob> &in_data,
-                           const std::vector<TBlob> &out_data,
-                           const std::vector<OpReqType> &req,
-                           const std::vector<TBlob> &in_grad,
-                           const std::vector<TBlob> &aux_states) {
-  // Input Data
-  batchnorm::BNTensor3<DType> inputData(in_data[batchnorm::kData], param_.axis);
-  const TBlob &weights   = in_data[batchnorm::kGamma];
-
-  // Input Grad
-  batchnorm::BNTensor3<DType> gradIn(in_grad[batchnorm::kData], param_.axis);
-  const TBlob &gradWeight = in_grad[batchnorm::kGamma];
-  const TBlob &gradBias   = in_grad[batchnorm::kBeta];
-
-  // Aux (Moving)
-  const TBlob &runningMean = aux_states[batchnorm::kMovingMean];
-  const TBlob &runningVariance = aux_states[batchnorm::kMovingVar];
-
-  // Output
-  batchnorm::BNTensor3<DType> gradOut(out_grad[batchnorm::kOut], param_.axis);
-  const TBlob &saveMean = out_data[batchnorm::kMean];
-  const TBlob &saveStd  = out_data[batchnorm::kVar];
-
-  const size_t channelCount = inputData.ChannelCount();
-  const size_t itemCount    = inputData.Size() / channelCount;
-
-  // Avoid multiple dptr() call within the channel loop
-  AccReal *runningMeanDataPtr = runningMean.dptr<AccReal>();
-  AccReal *runningVarDataPtr  = runningVariance.dptr<AccReal>();
-  const AccReal *saveMeanDataPtr = saveMean.dptr<AccReal>();
-  const AccReal *saveInvStdDataPtr = saveStd.dptr<AccReal>();
-  AccReal *gradWeightData = gradWeight.dptr<AccReal>();
-  AccReal *gradBiasData = gradBias.dptr<AccReal>();
-
-  const bool is_train_and_not_global_stats = ctx.is_train && !param_.use_global_stats;
-
-  #pragma omp parallel for
-  for (int channel = 0; channel < static_cast<int>(channelCount); ++channel) {
-    const AccReal *weight = weights.dptr<AccReal>();
-    const AccReal w = !param_.fix_gamma ? weight[channel] : AccReal(1);
-    AccReal mean, invstd;
-    if (is_train_and_not_global_stats) {
-      mean = saveMeanDataPtr[channel];
-      invstd = saveInvStdDataPtr[channel];
-      const AccReal variance = INVSTD_TO_VARIANCE(invstd, param_.eps);
-
-      // update running averages
-      runningMeanDataPtr[channel] = runningMeanDataPtr[channel] * param_.momentum
-                                    + mean * (AccReal(1) - param_.momentum);
-
-      runningVarDataPtr[channel] = runningVarDataPtr[channel] * param_.momentum
-                                   + variance * (AccReal(1) - param_.momentum);
-
-    } else {
-      mean = runningMeanDataPtr[channel];
-      invstd = VARIANCE_TO_INVSTD(runningVarDataPtr[channel], param_.eps);
-    }
-
-    // sumGradOut over all gradOutput in feature plane
-    AccReal sumGradOut = 0;
-    ForEachFast(gradOut, static_cast<size_t>(channel),
-                [&sumGradOut](const DType *gradOut_data) {
-                  sumGradOut += *gradOut_data;
-                });
-
-    // dot product of the Q(X) and gradOuput
-    AccReal dotp = 0;
-    ForEachFast(inputData, gradOut, static_cast<size_t>(channel),
-                [&dotp, mean](const DType *thisInputData, const DType *gradOut_data) {
-                  dotp += (*thisInputData - mean) * (*gradOut_data);
-                });
-
-    if (!gradIn.IsEmpty() && IsBNWriting(req[batchnorm::kData])) {  // if there's a grad input
-      if (is_train_and_not_global_stats) {
-        // when in training mode
-        // Q(X) = X - E[x] ; i.e. input centered to zero mean
-        // Y = Q(X) / σ    ; i.e. BN output before weight and bias
-        // dL/dX = (Q(dL/dY) - dot(Y, dL/dY) * Y) / σ * w
-
-        // projection of gradOutput on to output scaled by std
-        const AccReal k = dotp * invstd * invstd / itemCount;
-        ForEachFast(inputData, gradIn, static_cast<size_t>(channel),
-                    [&mean, &k](const DType *inputDataPtr, DType *gradIn_data) {
-                      *gradIn_data = (*inputDataPtr - mean) * k;
-                    });
-
-        const AccReal iw = invstd * w;
-        const AccReal gradMean = sumGradOut / itemCount;
-        ForEachFast(gradOut, gradIn, static_cast<size_t>(channel),
-                    [iw, gradMean](const DType *gradOut_data, DType *gradIn_data) {
-                      *gradIn_data = (*gradOut_data - gradMean - *gradIn_data) * iw;
-                    });
-      } else {
-        // when in evaluation mode
-        // Q(X) = X - running_mean  ; i.e. input centered to zero mean
-        // Y = Q(X) / running_std    ; i.e. BN output before weight and bias
-        // dL/dX = w / running_std
-        const AccReal iw = invstd * w;
-        ForEachFast(gradOut, gradIn, static_cast<size_t>(channel),
-                    [iw](const DType *gradOut_data, DType *gradIn_data) {
-                      *gradIn_data = *gradOut_data * iw;
-                    });
-      }
-    }
-
-    // May want to make this a param eventually
-    const AccReal scale = 1.0f;
-
-    if (IsBNWriting(req[batchnorm::kGamma])) {
-      if (!param_.fix_gamma) {
-        gradWeightData[channel] = scale * dotp * invstd;
-      } else {
-        gradWeightData[channel] = AccReal(0);
-      }
-    }
-
-    if (IsBNWriting(req[batchnorm::kBeta])) {
-      gradBiasData[channel] = scale * sumGradOut;
-    }
-  }
-}
+//template <typename xpu, typename DType, typename AccReal>
+//void BatchNormBackwardImpl(mshadow::Stream<cpu> *,
+//                           const OpContext &ctx, const BatchNormParam& param_,
+//                           const std::vector<TBlob> &out_grad,
+//                           const std::vector<TBlob> &in_data,
+//                           const std::vector<TBlob> &out_data,
+//                           const std::vector<OpReqType> &req,
+//                           const std::vector<TBlob> &in_grad,
+//                           const std::vector<TBlob> &aux_states) {
+//  // Input Data
+//  batchnorm::BNTensor3<DType> inputData(in_data[batchnorm::kData], param_.axis);
+//  const TBlob &weights   = in_data[batchnorm::kGamma];
+//
+//  // Input Grad
+//  batchnorm::BNTensor3<DType> gradIn(in_grad[batchnorm::kData], param_.axis);
+//  const TBlob &gradWeight = in_grad[batchnorm::kGamma];
+//  const TBlob &gradBias   = in_grad[batchnorm::kBeta];
+//
+//  // Aux (Moving)
+//  const TBlob &runningMean = aux_states[batchnorm::kMovingMean];
+//  const TBlob &runningVariance = aux_states[batchnorm::kMovingVar];
+//
+//  // Output
+//  batchnorm::BNTensor3<DType> gradOut(out_grad[batchnorm::kOut], param_.axis);
+//  const TBlob &saveMean = out_data[batchnorm::kMean];
+//  const TBlob &saveStd  = out_data[batchnorm::kVar];
+//
+//  const size_t channelCount = inputData.ChannelCount();
+//  const size_t itemCount    = inputData.Size() / channelCount;
+//
+//  // Avoid multiple dptr() call within the channel loop
+//  AccReal *runningMeanDataPtr = runningMean.dptr<AccReal>();
+//  AccReal *runningVarDataPtr  = runningVariance.dptr<AccReal>();
+//  const AccReal *saveMeanDataPtr = saveMean.dptr<AccReal>();
+//  const AccReal *saveInvStdDataPtr = saveStd.dptr<AccReal>();
+//  AccReal *gradWeightData = gradWeight.dptr<AccReal>();
+//  AccReal *gradBiasData = gradBias.dptr<AccReal>();
+//
+//  const bool is_train_and_not_global_stats = ctx.is_train && !param_.use_global_stats;
+//
+//  #pragma omp parallel for
+//  for (int channel = 0; channel < static_cast<int>(channelCount); ++channel) {
+//    const AccReal *weight = weights.dptr<AccReal>();
+//    const AccReal w = !param_.fix_gamma ? weight[channel] : AccReal(1);
+//    AccReal mean, invstd;
+//    if (is_train_and_not_global_stats) {
+//      mean = saveMeanDataPtr[channel];
+//      invstd = saveInvStdDataPtr[channel];
+//      const AccReal variance = INVSTD_TO_VARIANCE(invstd, param_.eps);
+//
+//      // update running averages
+//      runningMeanDataPtr[channel] = runningMeanDataPtr[channel] * param_.momentum
+//                                    + mean * (AccReal(1) - param_.momentum);
+//
+//      runningVarDataPtr[channel] = runningVarDataPtr[channel] * param_.momentum
+//                                   + variance * (AccReal(1) - param_.momentum);
+//
+//    } else {
+//      mean = runningMeanDataPtr[channel];
+//      invstd = VARIANCE_TO_INVSTD(runningVarDataPtr[channel], param_.eps);
+//    }
+//
+//    // sumGradOut over all gradOutput in feature plane
+//    AccReal sumGradOut = 0;
+//    ForEachFast(gradOut, static_cast<size_t>(channel),
+//                [&sumGradOut](const DType *gradOut_data) {
+//                  sumGradOut += *gradOut_data;
+//                });
+//
+//    // dot product of the Q(X) and gradOuput
+//    AccReal dotp = 0;
+//    ForEachFast(inputData, gradOut, static_cast<size_t>(channel),
+//                [&dotp, mean](const DType *thisInputData, const DType *gradOut_data) {
+//                  dotp += (*thisInputData - mean) * (*gradOut_data);
+//                });
+//
+//    if (!gradIn.IsEmpty() && IsBNWriting(req[batchnorm::kData])) {  // if there's a grad input
+//      if (is_train_and_not_global_stats) {
+//        // when in training mode
+//        // Q(X) = X - E[x] ; i.e. input centered to zero mean
+//        // Y = Q(X) / σ    ; i.e. BN output before weight and bias
+//        // dL/dX = (Q(dL/dY) - dot(Y, dL/dY) * Y) / σ * w
+//
+//        // projection of gradOutput on to output scaled by std
+//        const AccReal k = dotp * invstd * invstd / itemCount;
+//        ForEachFast(inputData, gradIn, static_cast<size_t>(channel),
+//                    [&mean, &k](const DType *inputDataPtr, DType *gradIn_data) {
+//                      *gradIn_data = (*inputDataPtr - mean) * k;
+//                    });
+//
+//        const AccReal iw = invstd * w;
+//        const AccReal gradMean = sumGradOut / itemCount;
+//        ForEachFast(gradOut, gradIn, static_cast<size_t>(channel),
+//                    [iw, gradMean](const DType *gradOut_data, DType *gradIn_data) {
+//                      *gradIn_data = (*gradOut_data - gradMean - *gradIn_data) * iw;
+//                    });
+//      } else {
+//        // when in evaluation mode
+//        // Q(X) = X - running_mean  ; i.e. input centered to zero mean
+//        // Y = Q(X) / running_std    ; i.e. BN output before weight and bias
+//        // dL/dX = w / running_std
+//        const AccReal iw = invstd * w;
+//        ForEachFast(gradOut, gradIn, static_cast<size_t>(channel),
+//                    [iw](const DType *gradOut_data, DType *gradIn_data) {
+//                      *gradIn_data = *gradOut_data * iw;
+//                    });
+//      }
+//    }
+//
+//    // May want to make this a param eventually
+//    const AccReal scale = 1.0f;
+//
+//    if (IsBNWriting(req[batchnorm::kGamma])) {
+//      if (!param_.fix_gamma) {
+//        gradWeightData[channel] = scale * dotp * invstd;
+//      } else {
+//        gradWeightData[channel] = AccReal(0);
+//      }
+//    }
+//
+//    if (IsBNWriting(req[batchnorm::kBeta])) {
+//      gradBiasData[channel] = scale * sumGradOut;
+//    }
+//  }
+//}
 
 DMLC_REGISTER_PARAMETER(BatchNormParam);
 
@@ -408,40 +408,40 @@ void BatchNormComputeExCPU(const nnvm::NodeAttrs &attrs,
   FallBackCompute(BatchNormCompute<cpu>, attrs, ctx, inputs, req, outputs);
 }
 
-void BatchNormGradComputeExCPU(const nnvm::NodeAttrs &attrs,
-                               const OpContext &ctx,
-                               const std::vector<NDArray> &inputs,
-                               const std::vector<OpReqType> &req,
-                               const std::vector<NDArray> &outputs) {
-  CHECK_EQ(inputs.size(), 11U);
-  const BatchNormParam &param = nnvm::get<BatchNormParam>(attrs.parsed);
-  int num_out_grads = param.output_mean_var ? 3U : 1U;
-  int in_data_start = 3;
-  int aux_states_start = in_data_start + batchnorm::kInMovingMean;
-  int out_data_start = in_data_start + batchnorm::kInMovingVar + 1;
-
-  TShape shape = inputs[0].shape();
-  // MKLDNN batchnorm only works well on the special MKLDNN layout.
-  if (SupportMKLDNNBN(inputs[0], param)
-      && (inputs[in_data_start].IsMKLDNNData() || inputs[0].IsMKLDNNData())) {
-    std::vector<NDArray> out_grad(inputs.begin(), inputs.begin() + num_out_grads);
-    std::vector<NDArray> in_data(inputs.begin() + in_data_start,
-                                 inputs.begin() + aux_states_start);
-    std::vector<NDArray> aux_states(inputs.begin() + aux_states_start,
-                                    inputs.begin() + out_data_start);
-    std::vector<NDArray> out_data(inputs.begin() + out_data_start, inputs.end());
-    std::vector<NDArray> in_grad(outputs.begin(), outputs.begin() + 3);
-
-    if (inputs[0].dtype() == mshadow::kFloat32) {
-      MKLDNN_OPCHECK_INIT(true, outputs.size(), inputs, outputs);
-      MKLDNNBatchNormBackward<float>(ctx, param, out_grad, in_data,
-                                     out_data, req, in_grad, aux_states);
-      MKLDNN_OPCHECK_RUN(BatchNormGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
-      return;
-    }
-  }
-  FallBackCompute(BatchNormGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
-}
+//void BatchNormGradComputeExCPU(const nnvm::NodeAttrs &attrs,
+//                               const OpContext &ctx,
+//                               const std::vector<NDArray> &inputs,
+//                               const std::vector<OpReqType> &req,
+//                               const std::vector<NDArray> &outputs) {
+//  CHECK_EQ(inputs.size(), 11U);
+//  const BatchNormParam &param = nnvm::get<BatchNormParam>(attrs.parsed);
+//  int num_out_grads = param.output_mean_var ? 3U : 1U;
+//  int in_data_start = 3;
+//  int aux_states_start = in_data_start + batchnorm::kInMovingMean;
+//  int out_data_start = in_data_start + batchnorm::kInMovingVar + 1;
+//
+//  TShape shape = inputs[0].shape();
+//  // MKLDNN batchnorm only works well on the special MKLDNN layout.
+//  if (SupportMKLDNNBN(inputs[0], param)
+//      && (inputs[in_data_start].IsMKLDNNData() || inputs[0].IsMKLDNNData())) {
+//    std::vector<NDArray> out_grad(inputs.begin(), inputs.begin() + num_out_grads);
+//    std::vector<NDArray> in_data(inputs.begin() + in_data_start,
+//                                 inputs.begin() + aux_states_start);
+//    std::vector<NDArray> aux_states(inputs.begin() + aux_states_start,
+//                                    inputs.begin() + out_data_start);
+//    std::vector<NDArray> out_data(inputs.begin() + out_data_start, inputs.end());
+//    std::vector<NDArray> in_grad(outputs.begin(), outputs.begin() + 3);
+//
+//    if (inputs[0].dtype() == mshadow::kFloat32) {
+//      MKLDNN_OPCHECK_INIT(true, outputs.size(), inputs, outputs);
+//      MKLDNNBatchNormBackward<float>(ctx, param, out_grad, in_data,
+//                                     out_data, req, in_grad, aux_states);
+//      MKLDNN_OPCHECK_RUN(BatchNormGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//      return;
+//    }
+//  }
+//  FallBackCompute(BatchNormGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//}
 #endif
 
 static inline bool BatchNormStorageType(const nnvm::NodeAttrs &attrs,
@@ -465,26 +465,26 @@ static inline bool BatchNormStorageType(const nnvm::NodeAttrs &attrs,
                              dispatch_mode, wanted_mode);
 }
 
-static inline bool backward_BatchNormStorageType(const nnvm::NodeAttrs &attrs,
-                                                 const int dev_mask,
-                                                 DispatchMode *dispatch_mode,
-                                                 std::vector<int> *in_attrs,
-                                                 std::vector<int> *out_attrs) {
-  CHECK_EQ(in_attrs->size(), 11);
-  CHECK_EQ(out_attrs->size(), 5);
-  DispatchMode wanted_mode;
-#if MXNET_USE_MKLDNN == 1
-  if (dev_mask == mshadow::cpu::kDevMask)
-    wanted_mode = DispatchMode::kFComputeEx;
-  else
-#endif
-    wanted_mode = DispatchMode::kFCompute;
-  for (int& v : *in_attrs) {
-    if (v == - 1) v = kDefaultStorage;
-  }
-  return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
-                             dispatch_mode, wanted_mode);
-}
+//static inline bool backward_BatchNormStorageType(const nnvm::NodeAttrs &attrs,
+//                                                 const int dev_mask,
+//                                                 DispatchMode *dispatch_mode,
+//                                                 std::vector<int> *in_attrs,
+//                                                 std::vector<int> *out_attrs) {
+//  CHECK_EQ(in_attrs->size(), 11);
+//  CHECK_EQ(out_attrs->size(), 5);
+//  DispatchMode wanted_mode;
+//#if MXNET_USE_MKLDNN == 1
+//  if (dev_mask == mshadow::cpu::kDevMask)
+//    wanted_mode = DispatchMode::kFComputeEx;
+//  else
+//#endif
+//    wanted_mode = DispatchMode::kFCompute;
+//  for (int& v : *in_attrs) {
+//    if (v == - 1) v = kDefaultStorage;
+//  }
+//  return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
+//                             dispatch_mode, wanted_mode);
+//}
 
 NNVM_REGISTER_OP(BatchNorm)
 .describe(R"code(Batch normalization.
@@ -558,7 +558,7 @@ then set ``gamma`` to 1 and its gradient to 0.
 #if MXNET_USE_MKLDNN == 1
 .set_attr<FComputeEx>("FComputeEx<cpu>", BatchNormComputeExCPU)
 #endif
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseInOut{"_backward_BatchNorm"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseInOut{"_backward_BatchNorm"})
 #if MXNET_USE_MKLDNN == 1
 .set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
   return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
@@ -581,20 +581,20 @@ then set ``gamma`` to 1 and its gradient to 0.
     }
   });
 
-NNVM_REGISTER_OP(_backward_BatchNorm)
-.set_num_outputs(5)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FInferStorageType>("FInferStorageType", backward_BatchNormStorageType)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-})
-#endif
-.set_attr_parser(ParamParser<BatchNormParam>)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FComputeEx>("FComputeEx<cpu>", BatchNormGradComputeExCPU)
-#endif
-.set_attr<FCompute>("FCompute<cpu>", BatchNormGradCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_BatchNorm)
+//.set_num_outputs(5)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FInferStorageType>("FInferStorageType", backward_BatchNormStorageType)
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//#endif
+//.set_attr_parser(ParamParser<BatchNormParam>)
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FComputeEx>("FComputeEx<cpu>", BatchNormGradComputeExCPU)
+//#endif
+//.set_attr<FCompute>("FCompute<cpu>", BatchNormGradCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

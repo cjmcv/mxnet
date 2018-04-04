@@ -186,22 +186,22 @@ void ActivationCompute(const nnvm::NodeAttrs& attrs,
   ActivationComputeImpl<xpu>(param, ctx, inputs[0], req[0], outputs[0]);
 }
 
-template<typename xpu>
-void ActivationGradCompute(const nnvm::NodeAttrs& attrs,
-    const OpContext& ctx,
-    const std::vector<TBlob>& inputs,
-    const std::vector<OpReqType>& req,
-    const std::vector<TBlob>& outputs) {
-#if MXNET_USE_CUDNN == 1
-  CHECK_EQ(inputs.size(), 3U);
-#else
-  CHECK_EQ(inputs.size(), 2U);
-#endif
-  CHECK_EQ(outputs.size(), 1U);
-  CHECK_EQ(req.size(), 1U);
-  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
-  ActivationGradComputeImpl<xpu>(param, ctx, inputs[0], inputs[1], req[0], outputs[0]);
-}
+//template<typename xpu>
+//void ActivationGradCompute(const nnvm::NodeAttrs& attrs,
+//    const OpContext& ctx,
+//    const std::vector<TBlob>& inputs,
+//    const std::vector<OpReqType>& req,
+//    const std::vector<TBlob>& outputs) {
+//#if MXNET_USE_CUDNN == 1
+//  CHECK_EQ(inputs.size(), 3U);
+//#else
+//  CHECK_EQ(inputs.size(), 2U);
+//#endif
+//  CHECK_EQ(outputs.size(), 1U);
+//  CHECK_EQ(req.size(), 1U);
+//  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
+//  ActivationGradComputeImpl<xpu>(param, ctx, inputs[0], inputs[1], req[0], outputs[0]);
+//}
 
 }  // namespace op
 }  // namespace mxnet

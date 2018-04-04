@@ -184,37 +184,37 @@ void FullyConnectedCompute(const nnvm::NodeAttrs& attrs,
   }
 }
 
-template<typename xpu>
-void FullyConnectedGradCompute(const nnvm::NodeAttrs& attrs,
-                               const OpContext& ctx,
-                               const std::vector<TBlob>& inputs,
-                               const std::vector<OpReqType>& req,
-                               const std::vector<TBlob>& outputs) {
-  const FullyConnectedParam& param = nnvm::get<FullyConnectedParam>(attrs.parsed);
-  uint32_t out_expected = param.no_bias ? 2 : 3;
-  CHECK_EQ(inputs.size(), 3U);
-  CHECK_EQ(outputs.size(), out_expected);
-  CHECK_EQ(req.size(), out_expected);
-
-  std::vector<TBlob> out_grad{inputs[0]};
-  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
-  int dtype = inputs[0].type_flag_;
-
-  switch (dtype) {
-  case mshadow::kFloat32:
-    FCBackward<xpu, float>(ctx, param, out_grad, in_data, req, outputs);
-    break;
-  case mshadow::kFloat64:
-    FCBackward<xpu, double>(ctx, param, out_grad, in_data, req, outputs);
-    break;
-  case mshadow::kFloat16:
-    LOG(FATAL) << "float16 fully connected layer is currently"
-                  "only supported by CuDNN version.";
-    break;
-  default:
-    LOG(FATAL) << "Unsupported type " << dtype;
-  }
-}
+//template<typename xpu>
+//void FullyConnectedGradCompute(const nnvm::NodeAttrs& attrs,
+//                               const OpContext& ctx,
+//                               const std::vector<TBlob>& inputs,
+//                               const std::vector<OpReqType>& req,
+//                               const std::vector<TBlob>& outputs) {
+//  const FullyConnectedParam& param = nnvm::get<FullyConnectedParam>(attrs.parsed);
+//  uint32_t out_expected = param.no_bias ? 2 : 3;
+//  CHECK_EQ(inputs.size(), 3U);
+//  CHECK_EQ(outputs.size(), out_expected);
+//  CHECK_EQ(req.size(), out_expected);
+//
+//  std::vector<TBlob> out_grad{inputs[0]};
+//  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
+//  int dtype = inputs[0].type_flag_;
+//
+//  switch (dtype) {
+//  case mshadow::kFloat32:
+//    FCBackward<xpu, float>(ctx, param, out_grad, in_data, req, outputs);
+//    break;
+//  case mshadow::kFloat64:
+//    FCBackward<xpu, double>(ctx, param, out_grad, in_data, req, outputs);
+//    break;
+//  case mshadow::kFloat16:
+//    LOG(FATAL) << "float16 fully connected layer is currently"
+//                  "only supported by CuDNN version.";
+//    break;
+//  default:
+//    LOG(FATAL) << "Unsupported type " << dtype;
+//  }
+//}
 
 }  // namespace op
 }  // namespace mxnet

@@ -43,17 +43,17 @@
   .add_argument("label", "NDArray-or-Symbol", "Input label to the function.")  \
   .add_arguments(RegressionOutputParam::__FIELDS__())
 
-#define MXNET_OPERATOR_REGISTER_REGRESSION_BWD(__name$, __kernel$)         \
-  NNVM_REGISTER_OP(__name$)                                                \
-  .set_num_inputs(2)                                                       \
-  .set_num_outputs(2)                                                      \
-  .set_attr_parser(ParamParser<RegressionOutputParam>)                     \
-  .set_attr<nnvm::TIsBackward>("TIsBackward", true)                        \
-  .set_attr<nnvm::FInplaceOption>("FInplaceOption",                        \
-  [](const NodeAttrs& attrs){                                              \
-    return std::vector<std::pair<int, int> >{{1, 0}};                      \
-  })                                                                       \
-  .set_attr<FCompute>("FCompute<cpu>", RegressionBackward<cpu, __kernel$>)
+//#define MXNET_OPERATOR_REGISTER_REGRESSION_BWD(__name$, __kernel$)         \
+//  NNVM_REGISTER_OP(__name$)                                                \
+//  .set_num_inputs(2)                                                       \
+//  .set_num_outputs(2)                                                      \
+//  .set_attr_parser(ParamParser<RegressionOutputParam>)                     \
+//  .set_attr<nnvm::TIsBackward>("TIsBackward", true)                        \
+//  .set_attr<nnvm::FInplaceOption>("FInplaceOption",                        \
+//  [](const NodeAttrs& attrs){                                              \
+//    return std::vector<std::pair<int, int> >{{1, 0}};                      \
+//  })                                                                       \
+//  .set_attr<FCompute>("FCompute<cpu>", RegressionBackward<cpu, __kernel$>)
 
 namespace mxnet {
 namespace op {
@@ -79,7 +79,7 @@ The parameter `grad_scale` can be used to change this scale to `grad_scale/m`.
 
 )code" ADD_FILELINE);
 
-MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_linear_reg_out, mshadow_op::minus);
+//MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_linear_reg_out, mshadow_op::minus);
 
 MXNET_OPERATOR_REGISTER_REGRESSION_FWD(MAERegressionOutput,
   mshadow_op::identity, "_backward_mae_reg_out")
@@ -100,7 +100,7 @@ The parameter `grad_scale` can be used to change this scale to `grad_scale/m`.
 
 )code" ADD_FILELINE);
 
-MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_mae_reg_out, mshadow_op::minus_sign);
+//MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_mae_reg_out, mshadow_op::minus_sign);
 
 MXNET_OPERATOR_REGISTER_REGRESSION_FWD(LogisticRegressionOutput,
   mshadow_op::sigmoid, "_backward_logistic_reg_out")
@@ -121,7 +121,7 @@ The parameter `grad_scale` can be used to change this scale to `grad_scale/m`.
 
 )code" ADD_FILELINE);
 
-MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_logistic_reg_out, mshadow_op::minus);
+//MXNET_OPERATOR_REGISTER_REGRESSION_BWD(_backward_logistic_reg_out, mshadow_op::minus);
 
 }  // namespace op
 }  // namespace mxnet

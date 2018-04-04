@@ -46,15 +46,15 @@ class MultiProposalOp : public Operator{
     LOG(FATAL) << "not implemented";
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_states) {
-    LOG(FATAL) << "not implemented";
-  }
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_states) {
+  //  LOG(FATAL) << "not implemented";
+  //}
 
  private:
   MultiProposalParam param_;

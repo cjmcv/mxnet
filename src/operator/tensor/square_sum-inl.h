@@ -66,25 +66,25 @@ inline bool SquareSumForwardInferStorageType(const nnvm::NodeAttrs& attrs,
   return dispatched;
 }
 
-// infer storage function for _backward_square_sum operator on cpu
-inline bool SquareSumBackwardInferStorageType(const nnvm::NodeAttrs& attrs,
-                                              const int dev_mask,
-                                              DispatchMode* dispatch_mode,
-                                              std::vector<int>* in_attrs,
-                                              std::vector<int>* out_attrs) {
-  CHECK_EQ(in_attrs->size(), 2U);
-  CHECK_EQ(out_attrs->size(), 1U);
-  const auto& ograd_stype = in_attrs->at(0);
-  const auto& in_stype = in_attrs->at(1);
-  auto& grad_stype = out_attrs->at(0);
-  bool dispatched = false;
-  if (!dispatched && (ograd_stype == kDefaultStorage || ograd_stype == kRowSparseStorage) &&
-      in_stype == kRowSparseStorage) {
-    dispatched = storage_type_assign(&grad_stype, kRowSparseStorage,
-                                     dispatch_mode, DispatchMode::kFComputeEx);
-  }
-  return dispatched;
-}
+//// infer storage function for _backward_square_sum operator on cpu
+//inline bool SquareSumBackwardInferStorageType(const nnvm::NodeAttrs& attrs,
+//                                              const int dev_mask,
+//                                              DispatchMode* dispatch_mode,
+//                                              std::vector<int>* in_attrs,
+//                                              std::vector<int>* out_attrs) {
+//  CHECK_EQ(in_attrs->size(), 2U);
+//  CHECK_EQ(out_attrs->size(), 1U);
+//  const auto& ograd_stype = in_attrs->at(0);
+//  const auto& in_stype = in_attrs->at(1);
+//  auto& grad_stype = out_attrs->at(0);
+//  bool dispatched = false;
+//  if (!dispatched && (ograd_stype == kDefaultStorage || ograd_stype == kRowSparseStorage) &&
+//      in_stype == kRowSparseStorage) {
+//    dispatched = storage_type_assign(&grad_stype, kRowSparseStorage,
+//                                     dispatch_mode, DispatchMode::kFComputeEx);
+//  }
+//  return dispatched;
+//}
 
 /*!
  * \brief square sum of a rsp
@@ -487,27 +487,27 @@ void SquareSumOpForwardEx(const nnvm::NodeAttrs& attrs,
   }
 }
 
-template<typename xpu>
-void SquareSumOpBackwardEx(const nnvm::NodeAttrs& attrs,
-                           const OpContext& ctx,
-                           const std::vector<NDArray>& inputs,
-                           const std::vector<OpReqType>& req,
-                           const std::vector<NDArray>& outputs) {
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 1U);
-  CHECK_EQ(req.size(), 1U);
-  const NDArrayStorageType ograd_stype = inputs[0].storage_type();
-  const NDArrayStorageType input_stype = inputs[1].storage_type();
-  if (input_stype == kRowSparseStorage &&
-      (ograd_stype == kDefaultStorage || ograd_stype == kRowSparseStorage)) {
-    CHECK_EQ(inputs[1].shape().ndim(), 2U) << "_square_sum op only supports"
-                                              " 2D ndarray as input";
-    NDArray output = outputs[0];
-    SquareSumRspGradImpl<xpu>(attrs, ctx, inputs[0], inputs[1], req[0], &output);
-  } else {
-    LogUnimplementedOp(attrs, ctx, inputs, req, outputs);
-  }
-}
+//template<typename xpu>
+//void SquareSumOpBackwardEx(const nnvm::NodeAttrs& attrs,
+//                           const OpContext& ctx,
+//                           const std::vector<NDArray>& inputs,
+//                           const std::vector<OpReqType>& req,
+//                           const std::vector<NDArray>& outputs) {
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 1U);
+//  CHECK_EQ(req.size(), 1U);
+//  const NDArrayStorageType ograd_stype = inputs[0].storage_type();
+//  const NDArrayStorageType input_stype = inputs[1].storage_type();
+//  if (input_stype == kRowSparseStorage &&
+//      (ograd_stype == kDefaultStorage || ograd_stype == kRowSparseStorage)) {
+//    CHECK_EQ(inputs[1].shape().ndim(), 2U) << "_square_sum op only supports"
+//                                              " 2D ndarray as input";
+//    NDArray output = outputs[0];
+//    SquareSumRspGradImpl<xpu>(attrs, ctx, inputs[0], inputs[1], req[0], &output);
+//  } else {
+//    LogUnimplementedOp(attrs, ctx, inputs, req, outputs);
+//  }
+//}
 
 }  // namespace op
 }  // namespace mxnet

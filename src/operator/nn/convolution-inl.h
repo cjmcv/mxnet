@@ -398,22 +398,22 @@ void ConvolutionCompute(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void ConvolutionGradCompute(const nnvm::NodeAttrs& attrs,
-                            const OpContext& ctx, const std::vector<TBlob>& inputs,
-                            const std::vector<OpReqType>& req,
-                            const std::vector<TBlob>& outputs) {
-  const ConvolutionParam& param = nnvm::get<ConvolutionParam>(attrs.parsed);
-  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
-  const TBlob &out_grad = inputs[0];
-  const std::vector<TBlob> &in_grad = outputs;
-
-  MSHADOW_REAL_TYPE_SWITCH(out_grad.type_flag_, DType, {
-    ConvolutionOp<xpu, DType> op;
-    op.Init(param);
-    op.Backward(ctx, std::vector<TBlob>{out_grad}, in_data, req, in_grad);
-  });
-}
+//template<typename xpu>
+//void ConvolutionGradCompute(const nnvm::NodeAttrs& attrs,
+//                            const OpContext& ctx, const std::vector<TBlob>& inputs,
+//                            const std::vector<OpReqType>& req,
+//                            const std::vector<TBlob>& outputs) {
+//  const ConvolutionParam& param = nnvm::get<ConvolutionParam>(attrs.parsed);
+//  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
+//  const TBlob &out_grad = inputs[0];
+//  const std::vector<TBlob> &in_grad = outputs;
+//
+//  MSHADOW_REAL_TYPE_SWITCH(out_grad.type_flag_, DType, {
+//    ConvolutionOp<xpu, DType> op;
+//    op.Init(param);
+//    op.Backward(ctx, std::vector<TBlob>{out_grad}, in_data, req, in_grad);
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

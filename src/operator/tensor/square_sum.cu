@@ -55,8 +55,8 @@ void CheckSameIdx<gpu>(const OpContext& ctx,
 NNVM_REGISTER_OP(_square_sum)
 .set_attr<FComputeEx>("FComputeEx<gpu>", SquareSumOpForwardEx<gpu>);
 
-NNVM_REGISTER_OP(_backward_square_sum)
-.set_attr<FComputeEx>("FComputeEx<gpu>", SquareSumOpBackwardEx<gpu>);
+//NNVM_REGISTER_OP(_backward_square_sum)
+//.set_attr<FComputeEx>("FComputeEx<gpu>", SquareSumOpBackwardEx<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

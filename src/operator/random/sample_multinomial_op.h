@@ -162,31 +162,31 @@ void SampleMultinomialForward(const nnvm::NodeAttrs& attrs,
 }
 
 
-template<typename kernel, typename xpu>
-void SampleMultinomialBackward(const nnvm::NodeAttrs& attrs,
-                               const OpContext& ctx,
-                               const std::vector<TBlob>& inputs,
-                               const std::vector<OpReqType>& req,
-                               const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mxnet_op;
-  if (req[0] == kNullOp) return;
-
-  index_t K = outputs[0].shape_[outputs[0].ndim()-1];
-  index_t N = outputs[0].Size()/K;
-  index_t M = inputs[0].Size()/N;
-
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
-    if (req[0] != kAddTo) {
-      Tensor<xpu, 1, DType> out = outputs[0].FlatTo1D<xpu, DType>(s);
-      out = 0;
-    }
-    Kernel<kernel, xpu>::Launch(
-      s, N, K, M, inputs[0].dptr<DType>(), inputs[1].dptr<DType>(),
-      inputs[2].dptr<int>(), outputs[0].dptr<DType>());
-  });
-}
+//template<typename kernel, typename xpu>
+//void SampleMultinomialBackward(const nnvm::NodeAttrs& attrs,
+//                               const OpContext& ctx,
+//                               const std::vector<TBlob>& inputs,
+//                               const std::vector<OpReqType>& req,
+//                               const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mxnet_op;
+//  if (req[0] == kNullOp) return;
+//
+//  index_t K = outputs[0].shape_[outputs[0].ndim()-1];
+//  index_t N = outputs[0].Size()/K;
+//  index_t M = inputs[0].Size()/N;
+//
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
+//    if (req[0] != kAddTo) {
+//      Tensor<xpu, 1, DType> out = outputs[0].FlatTo1D<xpu, DType>(s);
+//      out = 0;
+//    }
+//    Kernel<kernel, xpu>::Launch(
+//      s, N, K, M, inputs[0].dptr<DType>(), inputs[1].dptr<DType>(),
+//      inputs[2].dptr<int>(), outputs[0].dptr<DType>());
+//  });
+//}
 
 
 }  // namespace op

@@ -101,13 +101,13 @@ Example::
 .set_attr<FComputeEx>("FComputeEx<cpu>", SoftmaxComputeExCPU)
 #endif
 .set_attr<FInferStorageType>("FInferStorageType", SoftmaxStorageType)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_softmax"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_softmax"})
 .add_arguments(SoftmaxParam::__FIELDS__());
 
-MXNET_OPERATOR_REGISTER_BINARY(_backward_softmax)
-.set_attr_parser(ParamParser<SoftmaxParam>)
-.set_attr<FCompute>("FCompute<cpu>", SoftmaxGradCompute<cpu, op::mshadow_op::mul,
-                                                        mxnet_op::softmax_bwd>);
+//MXNET_OPERATOR_REGISTER_BINARY(_backward_softmax)
+//.set_attr_parser(ParamParser<SoftmaxParam>)
+//.set_attr<FCompute>("FCompute<cpu>", SoftmaxGradCompute<cpu, op::mshadow_op::mul,
+//                                                        mxnet_op::softmax_bwd>);
 
 MXNET_OPERATOR_REGISTER_UNARY(log_softmax)
 .describe(R"code(Computes the log softmax of the input.
@@ -128,13 +128,13 @@ Examples::
 )code")
 .set_attr_parser(ParamParser<SoftmaxParam>)
 .set_attr<FCompute>("FCompute<cpu>", SoftmaxCompute<cpu, mxnet_op::log_softmax_fwd>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_log_softmax"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_log_softmax"})
 .add_arguments(SoftmaxParam::__FIELDS__());
 
-MXNET_OPERATOR_REGISTER_BINARY(_backward_log_softmax)
-.set_attr_parser(ParamParser<SoftmaxParam>)
-.set_attr<FCompute>("FCompute<cpu>", SoftmaxGradCompute<cpu, mshadow_op::left,
-                                                        mxnet_op::log_softmax_bwd>);
+//MXNET_OPERATOR_REGISTER_BINARY(_backward_log_softmax)
+//.set_attr_parser(ParamParser<SoftmaxParam>)
+//.set_attr<FCompute>("FCompute<cpu>", SoftmaxGradCompute<cpu, mshadow_op::left,
+//                                                        mxnet_op::log_softmax_bwd>);
 
 }  // namespace op
 }  // namespace mxnet

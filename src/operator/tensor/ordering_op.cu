@@ -31,8 +31,8 @@ namespace op {
 NNVM_REGISTER_OP(topk)
 .set_attr<FCompute>("FCompute<gpu>", TopK<gpu>);
 
-NNVM_REGISTER_OP(_backward_topk)
-.set_attr<FCompute>("FCompute<gpu>", TopKBackward_<gpu>);
+//NNVM_REGISTER_OP(_backward_topk)
+//.set_attr<FCompute>("FCompute<gpu>", TopKBackward_<gpu>);
 
 NNVM_REGISTER_OP(sort)
 .set_attr<FCompute>("FCompute<gpu>", Sort<gpu>);

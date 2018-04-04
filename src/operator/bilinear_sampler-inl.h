@@ -73,40 +73,40 @@ class BilinearSamplerOp : public Operator {
     BilinearSamplerForward(out, data, grid);
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    using namespace mshadow::expr;
-    CHECK_EQ(in_data.size(), 2U);
-    CHECK_NE(req[bs::kData], kWriteInplace);
-    CHECK_NE(req[bs::kGrid], kWriteInplace);
-    Stream<xpu> *s = ctx.get_stream<xpu>();
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  using namespace mshadow::expr;
+  //  CHECK_EQ(in_data.size(), 2U);
+  //  CHECK_NE(req[bs::kData], kWriteInplace);
+  //  CHECK_NE(req[bs::kGrid], kWriteInplace);
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
 
-    Tensor<xpu, 4, DType> data = in_data[bs::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> grid = in_data[bs::kGrid].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> gdata = in_grad[bs::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> ggrid = in_grad[bs::kGrid].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> grad = out_grad[bs::kOut].get<xpu, 4, DType>(s);
-    if (req[bs::kData] != kNullOp && req[bs::kGrid] != kNullOp) {
-      if (req[bs::kData] == kWriteTo) {
-        gdata = scalar<DType>(0.0f);
-      }
-      if (req[bs::kGrid] == kWriteTo) {
-        ggrid = scalar<DType>(0.0f);
-      }
-      BilinearSamplerBackward(gdata, ggrid, grad, data, grid);
-    } else if (req[bs::kData] == kNullOp && req[bs::kGrid] == kNullOp) {
-      return;
-    } else {
-      LOG(FATAL) << "Have not implemented the data req combinations! gdata_req="
-                 << req[bs::kData] << " ggrid_req=" << req[bs::kGrid];
-    }
-  }
+  //  Tensor<xpu, 4, DType> data = in_data[bs::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> grid = in_data[bs::kGrid].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> gdata = in_grad[bs::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> ggrid = in_grad[bs::kGrid].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> grad = out_grad[bs::kOut].get<xpu, 4, DType>(s);
+  //  if (req[bs::kData] != kNullOp && req[bs::kGrid] != kNullOp) {
+  //    if (req[bs::kData] == kWriteTo) {
+  //      gdata = scalar<DType>(0.0f);
+  //    }
+  //    if (req[bs::kGrid] == kWriteTo) {
+  //      ggrid = scalar<DType>(0.0f);
+  //    }
+  //    BilinearSamplerBackward(gdata, ggrid, grad, data, grid);
+  //  } else if (req[bs::kData] == kNullOp && req[bs::kGrid] == kNullOp) {
+  //    return;
+  //  } else {
+  //    LOG(FATAL) << "Have not implemented the data req combinations! gdata_req="
+  //               << req[bs::kData] << " ggrid_req=" << req[bs::kGrid];
+  //  }
+  //}
 
  private:
   BilinearSamplerParam param_;

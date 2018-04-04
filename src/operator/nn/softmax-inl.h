@@ -256,30 +256,30 @@ void SoftmaxCompute(const nnvm::NodeAttrs& attrs,
 }
 
 
-template<typename xpu, typename OP1, typename OP2>
-void SoftmaxGradCompute(const nnvm::NodeAttrs& attrs,
-                        const OpContext& ctx,
-                        const std::vector<TBlob>& inputs,
-                        const std::vector<OpReqType>& req,
-                        const std::vector<TBlob>& outputs) {
-  using namespace mxnet_op;
-  if (req[0] == kNullOp) return;
-  CHECK_NE(req[0], kAddTo);
-  const SoftmaxParam& param = nnvm::get<SoftmaxParam>(attrs.parsed);
-  int axis = CheckAxis(param.axis, inputs[0].ndim());
-  TShape shape = AxisShapeCompact(inputs[0].shape_, &axis, true);
-  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
-    if (shape.ndim() == 2) {
-      SoftmaxGrad<OP1, OP2>(ctx.get_stream<xpu>(), inputs[1].dptr<DType>(),
-                            inputs[0].dptr<DType>(), outputs[0].dptr<DType>(),
-                            shape.get<2>(), axis);
-    } else {
-      SoftmaxGrad<OP1, OP2>(ctx.get_stream<xpu>(), inputs[1].dptr<DType>(),
-                            inputs[0].dptr<DType>(), outputs[0].dptr<DType>(),
-                            shape.get<3>(), axis);
-    }
-  });
-}
+//template<typename xpu, typename OP1, typename OP2>
+//void SoftmaxGradCompute(const nnvm::NodeAttrs& attrs,
+//                        const OpContext& ctx,
+//                        const std::vector<TBlob>& inputs,
+//                        const std::vector<OpReqType>& req,
+//                        const std::vector<TBlob>& outputs) {
+//  using namespace mxnet_op;
+//  if (req[0] == kNullOp) return;
+//  CHECK_NE(req[0], kAddTo);
+//  const SoftmaxParam& param = nnvm::get<SoftmaxParam>(attrs.parsed);
+//  int axis = CheckAxis(param.axis, inputs[0].ndim());
+//  TShape shape = AxisShapeCompact(inputs[0].shape_, &axis, true);
+//  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
+//    if (shape.ndim() == 2) {
+//      SoftmaxGrad<OP1, OP2>(ctx.get_stream<xpu>(), inputs[1].dptr<DType>(),
+//                            inputs[0].dptr<DType>(), outputs[0].dptr<DType>(),
+//                            shape.get<2>(), axis);
+//    } else {
+//      SoftmaxGrad<OP1, OP2>(ctx.get_stream<xpu>(), inputs[1].dptr<DType>(),
+//                            inputs[0].dptr<DType>(), outputs[0].dptr<DType>(),
+//                            shape.get<3>(), axis);
+//    }
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

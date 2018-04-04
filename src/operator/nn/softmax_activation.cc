@@ -59,20 +59,20 @@ Example::
 )code" ADD_FILELINE)
 .set_attr_parser(ParamParser<SoftmaxActivationParam>)
 .set_attr<FCompute>("FCompute<cpu>", SoftmaxActivationCompute<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_SoftmaxActivation"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_SoftmaxActivation"})
 .add_arguments(SoftmaxActivationParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_SoftmaxActivation)
-.set_num_outputs(1)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs){
-  return std::vector<std::pair<int, int> >{{0, 0}};
-})
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-})
-.set_attr_parser(ParamParser<SoftmaxActivationParam>)
-.set_attr<FCompute>("FCompute<cpu>", SoftmaxActivationGradCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_SoftmaxActivation)
+//.set_num_outputs(1)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs){
+//  return std::vector<std::pair<int, int> >{{0, 0}};
+//})
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//.set_attr_parser(ParamParser<SoftmaxActivationParam>)
+//.set_attr<FCompute>("FCompute<cpu>", SoftmaxActivationGradCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

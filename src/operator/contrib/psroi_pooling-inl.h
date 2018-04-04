@@ -74,43 +74,43 @@ class PSROIPoolingOp : public Operator {
     PSROIPoolForward(out, data, bbox, param_.spatial_scale, param_.output_dim, param_.group_size);
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    CHECK_EQ(in_data.size(), 2);
-    CHECK_EQ(out_data.size(), 1);
-    CHECK_EQ(out_grad[psroipool::kOut].shape_[0], in_data[psroipool::kBox].shape_[0]);
-    CHECK_NE(req[psroipool::kData], kWriteInplace) <<
-      "ROIPooling: Backward doesn't support kWriteInplace.";
-    CHECK_NE(req[psroipool::kBox], kWriteInplace) <<
-      "ROIPooling: Backward doesn't support kWriteInplace.";
-    Stream<xpu> *s = ctx.get_stream<xpu>();
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  CHECK_EQ(in_data.size(), 2);
+  //  CHECK_EQ(out_data.size(), 1);
+  //  CHECK_EQ(out_grad[psroipool::kOut].shape_[0], in_data[psroipool::kBox].shape_[0]);
+  //  CHECK_NE(req[psroipool::kData], kWriteInplace) <<
+  //    "ROIPooling: Backward doesn't support kWriteInplace.";
+  //  CHECK_NE(req[psroipool::kBox], kWriteInplace) <<
+  //    "ROIPooling: Backward doesn't support kWriteInplace.";
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
 
-    Tensor<xpu, 4, DType> grad_out = out_grad[psroipool::kOut].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> bbox = in_data[psroipool::kBox].get<xpu, 2, DType>(s);
-    Tensor<xpu, 4, DType> grad_in = in_grad[psroipool::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> grad_roi = in_grad[psroipool::kBox].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 4, DType> grad_out = out_grad[psroipool::kOut].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> bbox = in_data[psroipool::kBox].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 4, DType> grad_in = in_grad[psroipool::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> grad_roi = in_grad[psroipool::kBox].get<xpu, 2, DType>(s);
 
-    CHECK_EQ(grad_out.CheckContiguous(), true);
-    CHECK_EQ(bbox.CheckContiguous(), true);
-    CHECK_EQ(grad_in.CheckContiguous(), true);
+  //  CHECK_EQ(grad_out.CheckContiguous(), true);
+  //  CHECK_EQ(bbox.CheckContiguous(), true);
+  //  CHECK_EQ(grad_in.CheckContiguous(), true);
 
-    if (kAddTo == req[psroipool::kData] || kWriteTo == req[psroipool::kData]) {
-      if (kWriteTo == req[psroipool::kData]) {
-        grad_in = 0.0f;
-      }
-      PSROIPoolBackwardAcc(grad_in, grad_out, bbox, param_.spatial_scale,
-                           param_.output_dim, param_.group_size);
-    }
-    if (kWriteTo == req[psroipool::kBox]) {
-      grad_roi = 0.0f;
-    }
-  }
+  //  if (kAddTo == req[psroipool::kData] || kWriteTo == req[psroipool::kData]) {
+  //    if (kWriteTo == req[psroipool::kData]) {
+  //      grad_in = 0.0f;
+  //    }
+  //    PSROIPoolBackwardAcc(grad_in, grad_out, bbox, param_.spatial_scale,
+  //                         param_.output_dim, param_.group_size);
+  //  }
+  //  if (kWriteTo == req[psroipool::kBox]) {
+  //    grad_roi = 0.0f;
+  //  }
+  //}
 
  private:
   PSROIPoolingParam param_;

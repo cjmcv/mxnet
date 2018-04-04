@@ -89,12 +89,12 @@ Example::
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_sum"});
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_sum"});
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_sum)
-.set_num_inputs(1)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseNone<cpu>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_sum)
+//.set_num_inputs(1)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseNone<cpu>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(mean)
 MXNET_ADD_SPARSE_OP_ALIAS(mean)
@@ -105,12 +105,12 @@ MXNET_ADD_SPARSE_OP_ALIAS(mean)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_mean"});
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_mean"});
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_mean)
-.set_num_inputs(1)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseNone<cpu, true>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_mean)
+//.set_num_inputs(1)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseNone<cpu, true>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(prod)
 .describe(get_reduce_axes_description("product", __LINE__))
@@ -118,12 +118,12 @@ MXNET_OPERATOR_REGISTER_REDUCE(prod)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_prod" });
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_prod" });
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_prod)
-.set_num_inputs(3)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut< cpu, mshadow_op::rdiv>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_prod)
+//.set_num_inputs(3)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut< cpu, mshadow_op::rdiv>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(nansum)
 .describe(R"code(Computes the sum of array elements over given axes treating Not a Numbers (``NaN``) as zero.
@@ -133,12 +133,12 @@ MXNET_OPERATOR_REGISTER_REDUCE(nansum)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_nansum" });
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_nansum" });
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_nansum)
-.set_num_inputs(3)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::nansum_grad>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_nansum)
+//.set_num_inputs(3)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::nansum_grad>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(nanprod)
 .describe(R"code(Computes the product of array elements over given axes treating Not a Numbers (``NaN``) as one.
@@ -148,12 +148,12 @@ MXNET_OPERATOR_REGISTER_REDUCE(nanprod)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_nanprod" });
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{ "_backward_nanprod" });
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_nanprod)
-.set_num_inputs(3)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::nanprod_grad>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_nanprod)
+//.set_num_inputs(3)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::nanprod_grad>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(max)
 .add_alias("max_axis")
@@ -162,12 +162,12 @@ MXNET_OPERATOR_REGISTER_REDUCE(max)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{"_backward_max"});
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{"_backward_max"});
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_max)
-.set_num_inputs(3)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::eq>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_max)
+//.set_num_inputs(3)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::eq>);
 
 MXNET_OPERATOR_REGISTER_REDUCE(min)
 .add_alias("min_axis")
@@ -176,12 +176,12 @@ MXNET_OPERATOR_REGISTER_REDUCE(min)
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{"_backward_min"});
+  });
+//.set_attr<nnvm::FGradient>("FGradient", ReduceGrad{"_backward_min"});
 
-MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_min)
-.set_num_inputs(3)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::eq>);
+//MXNET_OPERATOR_REGISTER_REDUCE_BACKWARD(_backward_min)
+//.set_num_inputs(3)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesBackwardUseInOut<cpu, mshadow_op::eq>);
 
 MXNET_OPERATOR_REGISTER_BROADCAST(broadcast_axis)
 .add_alias("broadcast_axes")
@@ -234,15 +234,15 @@ So with `shape=(2,0)`, we will obtain the same result as in the above example.
 .set_attr<nnvm::FInferShape>("FInferShape", BroadcastToShape)
 .set_attr<FCompute>("FCompute<cpu>", BroadcastCompute<cpu>);
 
-// backward op for broadcast.
-NNVM_REGISTER_OP(_broadcast_backward)
-.set_attr_parser(ParamParser<ReduceAxesParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", ReduceAxesCompute<cpu, mshadow::red::sum>)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  });
+//// backward op for broadcast.
+//NNVM_REGISTER_OP(_broadcast_backward)
+//.set_attr_parser(ParamParser<ReduceAxesParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", ReduceAxesCompute<cpu, mshadow::red::sum>)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  });
 
 NNVM_REGISTER_OP(norm)
 MXNET_ADD_SPARSE_OP_ALIAS(norm)

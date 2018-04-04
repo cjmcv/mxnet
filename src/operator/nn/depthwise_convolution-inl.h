@@ -199,80 +199,80 @@ void DepthwiseConv2dForwardGpu(mshadow::Stream<gpu> *stream,
   }
 }
 
-template<typename DType>
-void DepthwiseConv2dBackwardDataGpu(mshadow::Stream<gpu> *stream,
-                                    const DepthwiseArgs& args,
-                                    const std::vector<TBlob> &out_grad,
-                                    const std::vector<TBlob> &in_data,
-                                    const std::vector<TBlob> &in_grad) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  using namespace tf::depthwise_conv;
-  using namespace tf::depthwise_conv::cuda;
-  Tensor<gpu, 4, DType> out_g = out_grad[conv::kOut].get<gpu, 4, DType>(stream);
-  Tensor<gpu, 4, DType> weight = in_data[conv::kWeight].get<gpu, 4, DType>(stream);
-  Tensor<gpu, 4, DType> in_data_g = in_grad[conv::kData].get<gpu, 4, DType>(stream);
-  // select kernel
-  if (CanLaunchDepthwiseConv2dGPUSmall(args)) {
-    LaunchDepthwiseConv2dGPUSmall<DType, DIRECTION_BACKWARD>(
-        stream,
-        args,
-        out_g.dptr_,
-        weight.dptr_,
-        in_data_g.dptr_);
-  } else {
-    int num_in_grad = in_grad[conv::kData].shape_.Size();
-    auto s = mshadow::Stream<gpu>::GetStream(stream);
-    int block_num = std::min(num_in_grad/mshadow::cuda::kBaseThreadNum + 1,
-                             mshadow::cuda::kMaxGridNum);
-    DepthwiseConv2dBackwardDataKernel<DType>
-        <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
-                                                             out_g.dptr_,
-                                                             weight.dptr_,
-                                                             in_data_g.dptr_,
-                                                             num_in_grad);
-    MSHADOW_CUDA_POST_KERNEL_CHECK(DepthwiseConv2dBackwardDataKernel);
-  }
-}
-
-template<typename DType>
-void DepthwiseConv2dBackwardFilterGpu(mshadow::Stream<gpu> *stream,
-                                      const DepthwiseArgs& args,
-                                      const std::vector<TBlob> &out_grad,
-                                      const std::vector<TBlob> &in_data,
-                                      const std::vector<TBlob> &in_grad) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  using namespace tf::depthwise_conv;
-  Tensor<gpu, 4, DType> out_g = out_grad[conv::kOut].get<gpu, 4, DType>(stream);
-  Tensor<gpu, 4, DType> in_d = in_data[conv::kData].get<gpu, 4, DType>(stream);
-  Tensor<gpu, 4, DType> weight_grad = in_grad[conv::kWeight].get<gpu, 4, DType>(stream);
-  // select kernel
-  if (TryLaunchDepthwiseConv2dBackwardFilterGPUSmall<DType>(stream, args,
-                                                            out_g.dptr_,
-                                                            in_d.dptr_,
-                                                            weight_grad.dptr_)) {
-    return;
-  } else {
-    int num_out_grad = out_grad[conv::kOut].shape_.Size();
-    auto s = mshadow::Stream<gpu>::GetStream(stream);
-    int block_num = std::min(args.out_channel * args.batch, mshadow::cuda::kMaxGridNum);
-    if (args.filter_width == 3 && args.filter_height == 3) {
-      cuda::DepthwiseConv2dBackwardFilterKernel<DType, 3, 3>
-          <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
-                                                               out_g.dptr_,
-                                                               in_d.dptr_,
-                                                               weight_grad.dptr_);
-    } else {
-      cuda::DepthwiseConv2dBackwardFilterKernel<DType, -1, -1>
-          <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
-                                                               out_g.dptr_,
-                                                               in_d.dptr_,
-                                                               weight_grad.dptr_);
-    }
-    MSHADOW_CUDA_POST_KERNEL_CHECK(DepthwiseConv2dBackwardFilterKernel);
-  }
-}
+//template<typename DType>
+//void DepthwiseConv2dBackwardDataGpu(mshadow::Stream<gpu> *stream,
+//                                    const DepthwiseArgs& args,
+//                                    const std::vector<TBlob> &out_grad,
+//                                    const std::vector<TBlob> &in_data,
+//                                    const std::vector<TBlob> &in_grad) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  using namespace tf::depthwise_conv;
+//  using namespace tf::depthwise_conv::cuda;
+//  Tensor<gpu, 4, DType> out_g = out_grad[conv::kOut].get<gpu, 4, DType>(stream);
+//  Tensor<gpu, 4, DType> weight = in_data[conv::kWeight].get<gpu, 4, DType>(stream);
+//  Tensor<gpu, 4, DType> in_data_g = in_grad[conv::kData].get<gpu, 4, DType>(stream);
+//  // select kernel
+//  if (CanLaunchDepthwiseConv2dGPUSmall(args)) {
+//    LaunchDepthwiseConv2dGPUSmall<DType, DIRECTION_BACKWARD>(
+//        stream,
+//        args,
+//        out_g.dptr_,
+//        weight.dptr_,
+//        in_data_g.dptr_);
+//  } else {
+//    int num_in_grad = in_grad[conv::kData].shape_.Size();
+//    auto s = mshadow::Stream<gpu>::GetStream(stream);
+//    int block_num = std::min(num_in_grad/mshadow::cuda::kBaseThreadNum + 1,
+//                             mshadow::cuda::kMaxGridNum);
+//    DepthwiseConv2dBackwardDataKernel<DType>
+//        <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
+//                                                             out_g.dptr_,
+//                                                             weight.dptr_,
+//                                                             in_data_g.dptr_,
+//                                                             num_in_grad);
+//    MSHADOW_CUDA_POST_KERNEL_CHECK(DepthwiseConv2dBackwardDataKernel);
+//  }
+//}
+//
+//template<typename DType>
+//void DepthwiseConv2dBackwardFilterGpu(mshadow::Stream<gpu> *stream,
+//                                      const DepthwiseArgs& args,
+//                                      const std::vector<TBlob> &out_grad,
+//                                      const std::vector<TBlob> &in_data,
+//                                      const std::vector<TBlob> &in_grad) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  using namespace tf::depthwise_conv;
+//  Tensor<gpu, 4, DType> out_g = out_grad[conv::kOut].get<gpu, 4, DType>(stream);
+//  Tensor<gpu, 4, DType> in_d = in_data[conv::kData].get<gpu, 4, DType>(stream);
+//  Tensor<gpu, 4, DType> weight_grad = in_grad[conv::kWeight].get<gpu, 4, DType>(stream);
+//  // select kernel
+//  if (TryLaunchDepthwiseConv2dBackwardFilterGPUSmall<DType>(stream, args,
+//                                                            out_g.dptr_,
+//                                                            in_d.dptr_,
+//                                                            weight_grad.dptr_)) {
+//    return;
+//  } else {
+//    int num_out_grad = out_grad[conv::kOut].shape_.Size();
+//    auto s = mshadow::Stream<gpu>::GetStream(stream);
+//    int block_num = std::min(args.out_channel * args.batch, mshadow::cuda::kMaxGridNum);
+//    if (args.filter_width == 3 && args.filter_height == 3) {
+//      cuda::DepthwiseConv2dBackwardFilterKernel<DType, 3, 3>
+//          <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
+//                                                               out_g.dptr_,
+//                                                               in_d.dptr_,
+//                                                               weight_grad.dptr_);
+//    } else {
+//      cuda::DepthwiseConv2dBackwardFilterKernel<DType, -1, -1>
+//          <<<block_num, mshadow::cuda::kBaseThreadNum, 0, s>>>(args,
+//                                                               out_g.dptr_,
+//                                                               in_d.dptr_,
+//                                                               weight_grad.dptr_);
+//    }
+//    MSHADOW_CUDA_POST_KERNEL_CHECK(DepthwiseConv2dBackwardFilterKernel);
+//  }
+//}
 }  // namespace depthwise_conv
 
 template<typename DType>
@@ -297,49 +297,49 @@ void DepthwiseConvolutionOp<DType>::Forward(const OpContext &ctx,
   }
 }
 
-template<typename DType>
-void DepthwiseConvolutionOp<DType>::Backward(const OpContext &ctx,
-                                             const std::vector<TBlob> &out_grad,
-                                             const std::vector<TBlob> &in_data,
-                                             const std::vector<OpReqType> &req,
-                                             const std::vector<TBlob> &in_grad) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  auto stream = ctx.get_stream<gpu>();
-  // backward data
-  if (req[conv::kData] != kNullOp) {
-    if (req[conv::kData] != kAddTo) {
-      mshadow::Tensor<gpu, 4, DType> igrad = in_grad[conv::kData].get<gpu, 4, DType>(stream);
-      igrad = 0.0f;
-    }
-    depthwise_conv::DepthwiseConv2dBackwardDataGpu<DType>(stream,
-                                                          args_,
-                                                          out_grad,
-                                                          in_data,
-                                                          in_grad);
-  }
-
-  // backward filter
-  if (req[conv::kWeight] != kNullOp) {
-    if (req[conv::kWeight] != kAddTo) {
-      mshadow::Tensor<gpu, 4, DType> wgrad = in_grad[conv::kWeight].get<gpu, 4, DType>(stream);
-      wgrad = 0.0f;
-    }
-    depthwise_conv::DepthwiseConv2dBackwardFilterGpu<DType>(stream,
-                                                            args_,
-                                                            out_grad,
-                                                            in_data,
-                                                            in_grad);
-  }
-
-  // backward bias
-  if (bias_term_) {
-    Tensor<gpu, 1, DType> dbias = in_grad[conv::kBias].get<gpu, 1, DType>(stream);
-    Tensor<gpu, 3, DType> dout = out_grad[conv::kOut].get_with_shape<gpu, 3, DType>(
-        Shape3(args_.batch, args_.out_channel, args_.out_height * args_.out_width), stream);
-    ASSIGN_DISPATCH(dbias, req[conv::kBias], sumall_except_dim<1>(dout));
-  }
-}
+//template<typename DType>
+//void DepthwiseConvolutionOp<DType>::Backward(const OpContext &ctx,
+//                                             const std::vector<TBlob> &out_grad,
+//                                             const std::vector<TBlob> &in_data,
+//                                             const std::vector<OpReqType> &req,
+//                                             const std::vector<TBlob> &in_grad) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  auto stream = ctx.get_stream<gpu>();
+//  // backward data
+//  if (req[conv::kData] != kNullOp) {
+//    if (req[conv::kData] != kAddTo) {
+//      mshadow::Tensor<gpu, 4, DType> igrad = in_grad[conv::kData].get<gpu, 4, DType>(stream);
+//      igrad = 0.0f;
+//    }
+//    depthwise_conv::DepthwiseConv2dBackwardDataGpu<DType>(stream,
+//                                                          args_,
+//                                                          out_grad,
+//                                                          in_data,
+//                                                          in_grad);
+//  }
+//
+//  // backward filter
+//  if (req[conv::kWeight] != kNullOp) {
+//    if (req[conv::kWeight] != kAddTo) {
+//      mshadow::Tensor<gpu, 4, DType> wgrad = in_grad[conv::kWeight].get<gpu, 4, DType>(stream);
+//      wgrad = 0.0f;
+//    }
+//    depthwise_conv::DepthwiseConv2dBackwardFilterGpu<DType>(stream,
+//                                                            args_,
+//                                                            out_grad,
+//                                                            in_data,
+//                                                            in_grad);
+//  }
+//
+//  // backward bias
+//  if (bias_term_) {
+//    Tensor<gpu, 1, DType> dbias = in_grad[conv::kBias].get<gpu, 1, DType>(stream);
+//    Tensor<gpu, 3, DType> dout = out_grad[conv::kOut].get_with_shape<gpu, 3, DType>(
+//        Shape3(args_.batch, args_.out_channel, args_.out_height * args_.out_width), stream);
+//    ASSIGN_DISPATCH(dbias, req[conv::kBias], sumall_except_dim<1>(dout));
+//  }
+//}
 }  // namespace op
 }  // namespace mxnet
 #endif

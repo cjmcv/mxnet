@@ -321,126 +321,126 @@ class DeconvolutionOp {
     }
   }
 
-  void Backward(const OpContext &ctx,
-                const std::vector<TBlob> &out_grad,
-                const std::vector<TBlob> &in_data,
-                const std::vector<OpReqType> &req,
-                const std::vector<TBlob> &in_grad) {
-    using namespace mshadow;
-    using namespace mshadow::expr;
-    // TODO(bing): check the BLAS Handle, be careful
-    CHECK_EQ(out_grad.size(), 1U);
-    size_t expected = param_.no_bias == 0 ? 3 : 2;
-    CHECK_EQ(in_data.size(), expected);
-    CHECK_EQ(in_grad.size(), expected);
-    CHECK_EQ(req.size(), expected);
-    CHECK_EQ(in_data[deconv::kWeight].CheckContiguous(), true);
-    // get data
-    Stream<xpu> *s = ctx.get_stream<xpu>();
-    auto in_data_shape = in_data[deconv::kData].shape_;
-    Tensor<xpu, 4, DType> data = TBlobTo4DTensor(in_data[deconv::kData], s);
-    Tensor<xpu, 4, DType> grad = TBlobTo4DTensor(out_grad[deconv::kOut], s);
-    Tensor<xpu, 4, DType> gdata = TBlobTo4DTensor(in_grad[deconv::kData], s);
-
-    index_t o_pad[2], o_adj[2];
-    if (param_.kernel.ndim() == 2) {
-      param_.InferPad(TShape({in_data_shape[2], in_data_shape[3]}), o_pad, o_adj);
-    } else {
-      index_t o_pad_1D[1], o_adj_1D[1];
-      param_.InferPad({in_data_shape[2]}, o_pad_1D, o_adj_1D);
-      o_pad[0] = 0;
-      o_pad[1] = o_pad_1D[0];
-      o_adj[0] = 0;
-      o_adj[1] = o_adj_1D[0];
-    }
-    auto stride = param_.kernel.ndim() == 2 ? param_.stride : TShape({1, param_.stride[0]});
-    auto dilate = param_.kernel.ndim() == 2 ? param_.dilate : TShape({1, param_.dilate[0]});
-    auto kernel = param_.kernel.ndim() == 2 ? param_.kernel : TShape({1, param_.kernel[0]});
-    auto kernel_size = kernel.Size();
-
-    Shape<3> wmat_shape =
-        Shape3(param_.num_group,
-               data.shape_[1] / param_.num_group,
-               param_.num_filter / param_.num_group * kernel_size);
-    Tensor<xpu, 3, DType> wmat =
-        in_data[deconv::kWeight].get_with_shape<xpu, 3, DType>(wmat_shape, s);
-    Tensor<xpu, 3, DType> gwmat =
-        in_grad[deconv::kWeight].get_with_shape<xpu, 3, DType>(wmat_shape, s);
-#if defined(__CUDACC__)
-    CHECK_EQ(s->blas_handle_ownership_, Stream<xpu>::OwnHandle)
-        << "Must init CuBLAS handle in stream";
-#endif
-
-    const index_t nbatch = data.size(0);
-    Tensor<xpu, 1, DType> workspace =
-        ctx.requested[deconv::kTempSpace].get_space_typed<xpu, 1, DType>(
-            Shape1(this->InitTemp(grad.shape_, data.shape_)), s);
-    for (index_t i = 0; i < nbatch; i += nstep_) {
-      const index_t step = std::min(nstep_, nbatch - i);
-      Tensor<xpu, 2, DType> temp_col = Tensor<xpu, 2, DType>(
-                                           workspace.dptr_,
-                                           Shape2(shape_colunit_[0],
-                                           shape_colunit_[1] * step), s);
-      Tensor<xpu, 3, DType> temp_dst = Tensor<xpu, 3, DType>(
-                                           workspace.dptr_ + temp_col.shape_.Size(),
-                                           Shape3(shape_dstunit_[0],
-                                           shape_dstunit_[1],
-                                           shape_dstunit_[2] * step), s);
-      temp_dst = reshape(swapaxis<1, 0>(data.Slice(i, i + step)), temp_dst.shape_);
-      if (o_pad[0] == 0 && o_pad[1] == 0) {
-        temp_col = unpack_patch2col(grad.Slice(i, i + step),
-                                     kernel[0],
-                                     kernel[1],
-                                     stride[0],
-                                     stride[1],
-                                     dilate[0],
-                                     dilate[1]);
-      } else {
-        temp_col = unpack_patch2col(pad(grad.Slice(i, i + step), o_pad[0], o_pad[1]),
-                                     kernel[0],
-                                     kernel[1],
-                                     stride[0],
-                                     stride[1],
-                                     dilate[0],
-                                     dilate[1]);
-      }
-      const index_t gstride = temp_col.size(0) / param_.num_group;
-      for (uint32_t gid = 0; gid < param_.num_group; ++gid) {
-        Tensor<xpu, 2, DType> tmpc = temp_col.Slice(gstride * gid, gstride * (gid + 1));
-        if (i == 0) {
-          Tensor<xpu, 2, DType> tmp_gwmat = gwmat[gid];
-          // Legacy approach shown here for comparison:
-          //   Assign(tmp_gwmat, req[deconv::kWeight], dot(temp_dst[gid], tmpc.T()));
-          linalg_gemm(temp_dst[gid], tmpc, tmp_gwmat, false, true, s, req[deconv::kWeight]);
-        } else {
-          // Legacy approach shown here for comparison:
-          //   gwmat[gid] += dot(temp_dst[gid], tmpc.T());
-          linalg_gemm(temp_dst[gid], tmpc, gwmat[gid], false, true, s, kAddTo);
-        }
-      }
-      if (req[deconv::kData] == kWriteTo ||
-          req[deconv::kData] == kWriteInplace ||
-          req[deconv::kData] == kAddTo) {
-        for (uint32_t gid = 0; gid < param_.num_group; ++gid) {
-          Tensor<xpu, 2, DType> tmpc = temp_col.Slice(gstride * gid, gstride * (gid + 1));
-          // Legacy approach shown here for comparison:
-          //   temp_dst[gid] = dot(wmat[gid], tmpc);
-          linalg_gemm(wmat[gid], tmpc, temp_dst[gid], false, false, s);
-        }
-        Assign(gdata.Slice(i, i + step),
-               req[deconv::kData],
-               (swapaxis<1, 0>(reshape(temp_dst,
-                                      mshadow::Shape4(gdata.shape_[1],
-                                                      step,
-                                                      gdata.size(2),
-                                                      gdata.size(3))))));
-      }
-    }
-    if (!param_.no_bias) {
-      Tensor<xpu, 1, DType> gbias = in_grad[deconv::kBias].get<xpu, 1, DType>(s);
-      Assign(gbias, req[deconv::kBias], sumall_except_dim<1>(grad));
-    }
-  }
+//  void Backward(const OpContext &ctx,
+//                const std::vector<TBlob> &out_grad,
+//                const std::vector<TBlob> &in_data,
+//                const std::vector<OpReqType> &req,
+//                const std::vector<TBlob> &in_grad) {
+//    using namespace mshadow;
+//    using namespace mshadow::expr;
+//    // TODO(bing): check the BLAS Handle, be careful
+//    CHECK_EQ(out_grad.size(), 1U);
+//    size_t expected = param_.no_bias == 0 ? 3 : 2;
+//    CHECK_EQ(in_data.size(), expected);
+//    CHECK_EQ(in_grad.size(), expected);
+//    CHECK_EQ(req.size(), expected);
+//    CHECK_EQ(in_data[deconv::kWeight].CheckContiguous(), true);
+//    // get data
+//    Stream<xpu> *s = ctx.get_stream<xpu>();
+//    auto in_data_shape = in_data[deconv::kData].shape_;
+//    Tensor<xpu, 4, DType> data = TBlobTo4DTensor(in_data[deconv::kData], s);
+//    Tensor<xpu, 4, DType> grad = TBlobTo4DTensor(out_grad[deconv::kOut], s);
+//    Tensor<xpu, 4, DType> gdata = TBlobTo4DTensor(in_grad[deconv::kData], s);
+//
+//    index_t o_pad[2], o_adj[2];
+//    if (param_.kernel.ndim() == 2) {
+//      param_.InferPad(TShape({in_data_shape[2], in_data_shape[3]}), o_pad, o_adj);
+//    } else {
+//      index_t o_pad_1D[1], o_adj_1D[1];
+//      param_.InferPad({in_data_shape[2]}, o_pad_1D, o_adj_1D);
+//      o_pad[0] = 0;
+//      o_pad[1] = o_pad_1D[0];
+//      o_adj[0] = 0;
+//      o_adj[1] = o_adj_1D[0];
+//    }
+//    auto stride = param_.kernel.ndim() == 2 ? param_.stride : TShape({1, param_.stride[0]});
+//    auto dilate = param_.kernel.ndim() == 2 ? param_.dilate : TShape({1, param_.dilate[0]});
+//    auto kernel = param_.kernel.ndim() == 2 ? param_.kernel : TShape({1, param_.kernel[0]});
+//    auto kernel_size = kernel.Size();
+//
+//    Shape<3> wmat_shape =
+//        Shape3(param_.num_group,
+//               data.shape_[1] / param_.num_group,
+//               param_.num_filter / param_.num_group * kernel_size);
+//    Tensor<xpu, 3, DType> wmat =
+//        in_data[deconv::kWeight].get_with_shape<xpu, 3, DType>(wmat_shape, s);
+//    Tensor<xpu, 3, DType> gwmat =
+//        in_grad[deconv::kWeight].get_with_shape<xpu, 3, DType>(wmat_shape, s);
+//#if defined(__CUDACC__)
+//    CHECK_EQ(s->blas_handle_ownership_, Stream<xpu>::OwnHandle)
+//        << "Must init CuBLAS handle in stream";
+//#endif
+//
+//    const index_t nbatch = data.size(0);
+//    Tensor<xpu, 1, DType> workspace =
+//        ctx.requested[deconv::kTempSpace].get_space_typed<xpu, 1, DType>(
+//            Shape1(this->InitTemp(grad.shape_, data.shape_)), s);
+//    for (index_t i = 0; i < nbatch; i += nstep_) {
+//      const index_t step = std::min(nstep_, nbatch - i);
+//      Tensor<xpu, 2, DType> temp_col = Tensor<xpu, 2, DType>(
+//                                           workspace.dptr_,
+//                                           Shape2(shape_colunit_[0],
+//                                           shape_colunit_[1] * step), s);
+//      Tensor<xpu, 3, DType> temp_dst = Tensor<xpu, 3, DType>(
+//                                           workspace.dptr_ + temp_col.shape_.Size(),
+//                                           Shape3(shape_dstunit_[0],
+//                                           shape_dstunit_[1],
+//                                           shape_dstunit_[2] * step), s);
+//      temp_dst = reshape(swapaxis<1, 0>(data.Slice(i, i + step)), temp_dst.shape_);
+//      if (o_pad[0] == 0 && o_pad[1] == 0) {
+//        temp_col = unpack_patch2col(grad.Slice(i, i + step),
+//                                     kernel[0],
+//                                     kernel[1],
+//                                     stride[0],
+//                                     stride[1],
+//                                     dilate[0],
+//                                     dilate[1]);
+//      } else {
+//        temp_col = unpack_patch2col(pad(grad.Slice(i, i + step), o_pad[0], o_pad[1]),
+//                                     kernel[0],
+//                                     kernel[1],
+//                                     stride[0],
+//                                     stride[1],
+//                                     dilate[0],
+//                                     dilate[1]);
+//      }
+//      const index_t gstride = temp_col.size(0) / param_.num_group;
+//      for (uint32_t gid = 0; gid < param_.num_group; ++gid) {
+//        Tensor<xpu, 2, DType> tmpc = temp_col.Slice(gstride * gid, gstride * (gid + 1));
+//        if (i == 0) {
+//          Tensor<xpu, 2, DType> tmp_gwmat = gwmat[gid];
+//          // Legacy approach shown here for comparison:
+//          //   Assign(tmp_gwmat, req[deconv::kWeight], dot(temp_dst[gid], tmpc.T()));
+//          linalg_gemm(temp_dst[gid], tmpc, tmp_gwmat, false, true, s, req[deconv::kWeight]);
+//        } else {
+//          // Legacy approach shown here for comparison:
+//          //   gwmat[gid] += dot(temp_dst[gid], tmpc.T());
+//          linalg_gemm(temp_dst[gid], tmpc, gwmat[gid], false, true, s, kAddTo);
+//        }
+//      }
+//      if (req[deconv::kData] == kWriteTo ||
+//          req[deconv::kData] == kWriteInplace ||
+//          req[deconv::kData] == kAddTo) {
+//        for (uint32_t gid = 0; gid < param_.num_group; ++gid) {
+//          Tensor<xpu, 2, DType> tmpc = temp_col.Slice(gstride * gid, gstride * (gid + 1));
+//          // Legacy approach shown here for comparison:
+//          //   temp_dst[gid] = dot(wmat[gid], tmpc);
+//          linalg_gemm(wmat[gid], tmpc, temp_dst[gid], false, false, s);
+//        }
+//        Assign(gdata.Slice(i, i + step),
+//               req[deconv::kData],
+//               (swapaxis<1, 0>(reshape(temp_dst,
+//                                      mshadow::Shape4(gdata.shape_[1],
+//                                                      step,
+//                                                      gdata.size(2),
+//                                                      gdata.size(3))))));
+//      }
+//    }
+//    if (!param_.no_bias) {
+//      Tensor<xpu, 1, DType> gbias = in_grad[deconv::kBias].get<xpu, 1, DType>(s);
+//      Assign(gbias, req[deconv::kBias], sumall_except_dim<1>(grad));
+//    }
+//  }
 
  private:
   inline index_t InitTemp(const mshadow::Shape<4> &ishape,
@@ -507,31 +507,31 @@ void DeconvolutionCompute(const nnvm::NodeAttrs& attrs,
   _DeconvolutionCompute<xpu>(param, ctx, inputs, req, outputs);
 }
 
-template<typename xpu>
-void _DeconvolutionGradCompute(const DeconvolutionParam& param,
-                               const OpContext& ctx, const std::vector<TBlob>& inputs,
-                               const std::vector<OpReqType>& req,
-                               const std::vector<TBlob>& outputs) {
-  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
-  const TBlob &out_grad = inputs[0];
-  const std::vector<TBlob> &in_grad = outputs;
+//template<typename xpu>
+//void _DeconvolutionGradCompute(const DeconvolutionParam& param,
+//                               const OpContext& ctx, const std::vector<TBlob>& inputs,
+//                               const std::vector<OpReqType>& req,
+//                               const std::vector<TBlob>& outputs) {
+//  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
+//  const TBlob &out_grad = inputs[0];
+//  const std::vector<TBlob> &in_grad = outputs;
+//
+//  MSHADOW_REAL_TYPE_SWITCH(out_grad.type_flag_, DType, {
+//    DeconvolutionOp<xpu, DType> op;
+//    op.Init(param);
+//    op.Backward(ctx, std::vector<TBlob>{out_grad}, in_data, req, in_grad);
+//  });
+//}
 
-  MSHADOW_REAL_TYPE_SWITCH(out_grad.type_flag_, DType, {
-    DeconvolutionOp<xpu, DType> op;
-    op.Init(param);
-    op.Backward(ctx, std::vector<TBlob>{out_grad}, in_data, req, in_grad);
-  });
-}
 
-
-template<typename xpu>
-void DeconvolutionGradCompute(const nnvm::NodeAttrs& attrs,
-                              const OpContext& ctx, const std::vector<TBlob>& inputs,
-                              const std::vector<OpReqType>& req,
-                              const std::vector<TBlob>& outputs) {
-  const DeconvolutionParam& param = nnvm::get<DeconvolutionParam>(attrs.parsed);
-  _DeconvolutionGradCompute<xpu>(param, ctx, inputs, req, outputs);
-}
+//template<typename xpu>
+//void DeconvolutionGradCompute(const nnvm::NodeAttrs& attrs,
+//                              const OpContext& ctx, const std::vector<TBlob>& inputs,
+//                              const std::vector<OpReqType>& req,
+//                              const std::vector<TBlob>& outputs) {
+//  const DeconvolutionParam& param = nnvm::get<DeconvolutionParam>(attrs.parsed);
+//  _DeconvolutionGradCompute<xpu>(param, ctx, inputs, req, outputs);
+//}
 
 }  // namespace op
 }  // namespace mxnet

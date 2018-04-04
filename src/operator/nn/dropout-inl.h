@@ -302,27 +302,27 @@ void DropoutCompute(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void DropoutGradCompute(const nnvm::NodeAttrs& attrs,
-                        const OpContext& ctx,
-                        const std::vector<TBlob>& inputs,
-                        const std::vector<OpReqType>& req,
-                        const std::vector<TBlob>& outputs) {
-  const DropoutParam& param = nnvm::get<DropoutParam>(attrs.parsed);
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 1);
-  CHECK_EQ(req.size(), 1);
-  std::vector<TBlob> out_grads(2);
-  std::vector<TBlob> out_data(2);
-  out_grads[dropout::kOut] = inputs[0];
-  out_data[dropout::kMask] = inputs[1];
-
-  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
-    static thread_local DropoutOp<xpu, DType> op;
-    op.Init(param);
-    op.Backward(ctx, out_grads, out_data, req, outputs);
-  });
-}
+//template<typename xpu>
+//void DropoutGradCompute(const nnvm::NodeAttrs& attrs,
+//                        const OpContext& ctx,
+//                        const std::vector<TBlob>& inputs,
+//                        const std::vector<OpReqType>& req,
+//                        const std::vector<TBlob>& outputs) {
+//  const DropoutParam& param = nnvm::get<DropoutParam>(attrs.parsed);
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 1);
+//  CHECK_EQ(req.size(), 1);
+//  std::vector<TBlob> out_grads(2);
+//  std::vector<TBlob> out_data(2);
+//  out_grads[dropout::kOut] = inputs[0];
+//  out_data[dropout::kMask] = inputs[1];
+//
+//  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
+//    static thread_local DropoutOp<xpu, DType> op;
+//    op.Init(param);
+//    op.Backward(ctx, out_grads, out_data, req, outputs);
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

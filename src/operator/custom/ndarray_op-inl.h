@@ -63,13 +63,13 @@ class NDArrayOp : public Operator {
                        const std::vector<TBlob> &out_data,
                        const std::vector<TBlob> &aux_args);
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args);
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args);
 
  private:
   NDArrayOpParam param_;
@@ -160,27 +160,27 @@ class NDArrayOpProp : public OperatorProperty {
     return "_NDArray";
   }
 
-  std::vector<int> DeclareBackwardDependency(
-    const std::vector<int> &out_grad,
-    const std::vector<int> &in_data,
-    const std::vector<int> &out_data) const override {
-    int num_dep;
-    int *rdeps;
-    CHECK(param_.pinfo->declare_backward_dependency(out_grad.data(), in_data.data(),
-                                                    out_data.data(), &num_dep, &rdeps,
-                                                    param_.pinfo->p_declare_backward_dependency));
-    std::vector<int> deps;
-    deps.insert(deps.end(), rdeps, rdeps+num_dep);
-    return deps;
-  }
+  //std::vector<int> DeclareBackwardDependency(
+  //  const std::vector<int> &out_grad,
+  //  const std::vector<int> &in_data,
+  //  const std::vector<int> &out_data) const override {
+  //  int num_dep;
+  //  int *rdeps;
+  //  CHECK(param_.pinfo->declare_backward_dependency(out_grad.data(), in_data.data(),
+  //                                                  out_data.data(), &num_dep, &rdeps,
+  //                                                  param_.pinfo->p_declare_backward_dependency));
+  //  std::vector<int> deps;
+  //  deps.insert(deps.end(), rdeps, rdeps+num_dep);
+  //  return deps;
+  //}
 
-  std::vector<std::pair<int, void*> > BackwardInplaceOption(
-    const std::vector<int> &out_grad,
-    const std::vector<int> &in_data,
-    const std::vector<int> &out_data,
-    const std::vector<void*> &in_grad) const override {
-    return {};
-  }
+  //std::vector<std::pair<int, void*> > BackwardInplaceOption(
+  //  const std::vector<int> &out_grad,
+  //  const std::vector<int> &in_data,
+  //  const std::vector<int> &out_data,
+  //  const std::vector<void*> &in_grad) const override {
+  //  return {};
+  //}
 
   Operator* CreateOperator(Context ctx) const override;
 

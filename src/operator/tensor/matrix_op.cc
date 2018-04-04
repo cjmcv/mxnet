@@ -170,7 +170,7 @@ If the argument `reverse` is set to 1, then the special values are inferred from
 .set_attr_parser(ParamParser<ReshapeParam>)
 .set_attr<nnvm::FInferShape>("FInferShape", ReshapeShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_copy"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_copy"})
 .set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
 .set_attr<nnvm::FInplaceOption>("FInplaceOption",
   [](const NodeAttrs& attrs) {
@@ -260,7 +260,7 @@ Example::
 .set_attr<nnvm::FInferShape>("FInferShape", FlattenShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
 .set_attr<FInferStorageType>("FInferStorageType", FlattenStorageType)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{ "_backward_copy" })
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{ "_backward_copy" })
 .set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", FlattenEx)
 #if MXNET_USE_MKLDNN == 1
@@ -356,7 +356,7 @@ will return a new array with shape ``(2,1,3,4)``.
   [](const NodeAttrs& attrs){
     return std::vector<bool>{true};
   })
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_copy"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_copy"})
 .set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
 .add_argument("data", "NDArray-or-Symbol", "Source input")
 .add_arguments(ExpandDimParam::__FIELDS__());
@@ -417,16 +417,16 @@ Example::
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
 })
 .set_attr<FInferStorageType>("FInferStorageType", SliceForwardInferStorageType)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_slice"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_slice"})
 .set_attr<FCompute>("FCompute<cpu>", SliceOpForward<cpu>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", SliceEx<cpu>)
 .add_argument("data", "NDArray-or-Symbol", "Source input")
 .add_arguments(SliceParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_slice)
-.set_attr_parser(ParamParser<SliceParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", SliceOpBackward<cpu>);
+//NNVM_REGISTER_OP(_backward_slice)
+//.set_attr_parser(ParamParser<SliceParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", SliceOpBackward<cpu>);
 
 NNVM_REGISTER_OP(_slice_assign)
 .add_alias("_crop_assign")
@@ -502,16 +502,16 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", SliceAxisShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
 .set_attr<FCompute>("FCompute<cpu>", SliceAxis<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_slice_axis"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_slice_axis"})
 .add_argument("data", "NDArray-or-Symbol", "Source input")
 .add_arguments(SliceAxisParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_slice_axis)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<SliceAxisParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", SliceAxisGrad_<cpu>);
+//NNVM_REGISTER_OP(_backward_slice_axis)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<SliceAxisParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", SliceAxisGrad_<cpu>);
 
 NNVM_REGISTER_OP(clip)
 MXNET_ADD_SPARSE_OP_ALIAS(clip)
@@ -577,16 +577,16 @@ parameter values:
     }
     return dispatched;
   })
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_clip" })
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_clip" })
 .add_argument("data", "NDArray-or-Symbol", "Input array.")
 .add_arguments(ClipParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_clip)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<ClipParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", ClipGrad_<cpu>);
+//NNVM_REGISTER_OP(_backward_clip)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<ClipParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", ClipGrad_<cpu>);
 
 NNVM_REGISTER_OP(repeat)
 .describe(R"code(Repeats elements of an array.
@@ -623,20 +623,20 @@ The parameter ``axis`` specifies the axis along which to perform repeat::
 .set_attr<nnvm::FInferShape>("FInferShape", RepeatOpShape)
 .set_attr<nnvm::FInferType>("FInferType", RepeatOpType)
 .set_attr<FCompute>("FCompute<cpu>", RepeatOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_repeat"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_repeat"})
 .add_argument("data", "NDArray-or-Symbol", "Input data array")
 .add_arguments(RepeatParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_repeat)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<RepeatParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", RepeatOpBackward<cpu>)
-.set_attr<FResourceRequest>("FResourceRequest",
-[](const NodeAttrs& attrs) {
-  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
-});
+//NNVM_REGISTER_OP(_backward_repeat)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<RepeatParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", RepeatOpBackward<cpu>)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//[](const NodeAttrs& attrs) {
+//  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
+//});
 
 NNVM_REGISTER_OP(tile)
 .describe(R"code(Repeats the whole array multiple times.
@@ -684,20 +684,20 @@ three cases:
 .set_attr<nnvm::FInferShape>("FInferShape", TileOpShape)
 .set_attr<nnvm::FInferType>("FInferType", TileOpType)
 .set_attr<FCompute>("FCompute<cpu>", TileOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_tile"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_tile"})
 .add_argument("data", "NDArray-or-Symbol", "Input data array")
 .add_arguments(TileParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_tile)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<TileParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", TileOpBackward<cpu>)
-.set_attr<FResourceRequest>("FResourceRequest",
-[](const NodeAttrs& attrs) {
-  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
-});
+//NNVM_REGISTER_OP(_backward_tile)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<TileParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", TileOpBackward<cpu>)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//[](const NodeAttrs& attrs) {
+//  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
+//});
 
 NNVM_REGISTER_OP(reverse)
 .describe(R"code(Reverses the order of elements along given axis while preserving array shape.
@@ -730,20 +730,20 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", ElemwiseShape<1, 1>)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
 .set_attr<FCompute>("FCompute<cpu>", ReverseOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{ "_backward_reverse" })
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{ "_backward_reverse" })
 .add_argument("data", "NDArray-or-Symbol", "Input data array")
 .add_arguments(ReverseParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_reverse)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<ReverseParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FResourceRequest>("FResourceRequest",
-[](const NodeAttrs& attrs) {
-  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
-})
-.set_attr<FCompute>("FCompute<cpu>", ReverseOpForward<cpu>);
+//NNVM_REGISTER_OP(_backward_reverse)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<ReverseParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//[](const NodeAttrs& attrs) {
+//  return std::vector<ResourceRequest> {ResourceRequest::kTempSpace};
+//})
+//.set_attr<FCompute>("FCompute<cpu>", ReverseOpForward<cpu>);
 
 NNVM_REGISTER_OP(stack)
 .describe(R"code(Join a sequence of arrays along a new axis.
@@ -781,19 +781,19 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", StackOpShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<-1, 1>)
 .set_attr<FCompute>("FCompute<cpu>", StackOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_stack"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_stack"})
 .add_argument("data", "NDArray-or-Symbol[]", "List of arrays to stack")
 .add_arguments(StackParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_stack)
-.set_num_inputs(1)
-.set_num_outputs([](const nnvm::NodeAttrs& attrs) {
-    const StackParam& param = dmlc::get<StackParam>(attrs.parsed);
-    return static_cast<uint32_t>(param.num_args);
-  })
-.set_attr_parser(ParamParser<StackParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", StackOpBackward<cpu>);
+//NNVM_REGISTER_OP(_backward_stack)
+//.set_num_inputs(1)
+//.set_num_outputs([](const nnvm::NodeAttrs& attrs) {
+//    const StackParam& param = dmlc::get<StackParam>(attrs.parsed);
+//    return static_cast<uint32_t>(param.num_args);
+//  })
+//.set_attr_parser(ParamParser<StackParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", StackOpBackward<cpu>);
 
 NNVM_REGISTER_OP(squeeze)
 .describe(R"code(Remove single-dimensional entries from the shape of an array.
@@ -822,16 +822,16 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", SqueezeShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
 .set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_squeeze"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_squeeze"})
 .add_argument("data", "NDArray-or-Symbol[]", "data to squeeze")
 .add_arguments(StackParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_squeeze)
-.set_num_inputs(1)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<SqueezeParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_squeeze)
+//.set_num_inputs(1)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<SqueezeParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

@@ -202,39 +202,39 @@ void PoolingCompute(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void PoolingGradCompute(const nnvm::NodeAttrs& attrs,
-                        const OpContext& ctx,
-                        const std::vector<TBlob>& inputs,
-                        const std::vector<OpReqType>& req,
-                        const std::vector<TBlob>& outputs) {
-  const PoolingParam& param = nnvm::get<PoolingParam>(attrs.parsed);
-  CHECK_EQ(inputs.size(), GetNumBackInputs(param));
-  CHECK_EQ(outputs.size(), 1U);
-  CHECK_EQ(req.size(), 1U);
-  off_t ograd_idx, in_data_idx, out_data_idx;
-  // When MKLDNN is enabled, the input data may contains arrays for workspace.
-  if (GetNumBackInputs(param) == 5) {
-    ograd_idx = 0;
-    in_data_idx = 2;
-    out_data_idx = 3;
-  } else {
-    ograd_idx = 0;
-    in_data_idx = 1;
-    out_data_idx = 2;
-  }
-  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
-    if (pool_enum::kMaxPooling == param.pool_type
-        || pool_enum::kAvgPooling == param.pool_type
-        || pool_enum::kSumPooling == param.pool_type) {
-      GetPoolingOp<xpu, DType>(param).Backward(ctx, inputs[ograd_idx],
-                                               inputs[in_data_idx], inputs[out_data_idx],
-                                               req[0], outputs[0]);
-    } else {
-      LOG(FATAL) << "unknown pooling type";
-    }
-  });
-}
+//template<typename xpu>
+//void PoolingGradCompute(const nnvm::NodeAttrs& attrs,
+//                        const OpContext& ctx,
+//                        const std::vector<TBlob>& inputs,
+//                        const std::vector<OpReqType>& req,
+//                        const std::vector<TBlob>& outputs) {
+//  const PoolingParam& param = nnvm::get<PoolingParam>(attrs.parsed);
+//  CHECK_EQ(inputs.size(), GetNumBackInputs(param));
+//  CHECK_EQ(outputs.size(), 1U);
+//  CHECK_EQ(req.size(), 1U);
+//  off_t ograd_idx, in_data_idx, out_data_idx;
+//  // When MKLDNN is enabled, the input data may contains arrays for workspace.
+//  if (GetNumBackInputs(param) == 5) {
+//    ograd_idx = 0;
+//    in_data_idx = 2;
+//    out_data_idx = 3;
+//  } else {
+//    ograd_idx = 0;
+//    in_data_idx = 1;
+//    out_data_idx = 2;
+//  }
+//  MSHADOW_REAL_TYPE_SWITCH(inputs[0].type_flag_, DType, {
+//    if (pool_enum::kMaxPooling == param.pool_type
+//        || pool_enum::kAvgPooling == param.pool_type
+//        || pool_enum::kSumPooling == param.pool_type) {
+//      GetPoolingOp<xpu, DType>(param).Backward(ctx, inputs[ograd_idx],
+//                                               inputs[in_data_idx], inputs[out_data_idx],
+//                                               req[0], outputs[0]);
+//    } else {
+//      LOG(FATAL) << "unknown pooling type";
+//    }
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

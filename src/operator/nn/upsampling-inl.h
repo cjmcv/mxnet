@@ -205,24 +205,24 @@ void UpSamplingCompute(const nnvm::NodeAttrs& attrs,
   }
 }
 
-template<typename xpu>
-void UpSamplingGradCompute(const nnvm::NodeAttrs& attrs,
-                           const OpContext& ctx, const std::vector<TBlob>& inputs,
-                           const std::vector<OpReqType>& req,
-                           const std::vector<TBlob>& outputs) {
-  const UpSamplingParam& param = nnvm::get<UpSamplingParam>(attrs.parsed);
-  if (param.sample_type == up_enum::kNearest) {
-    MSHADOW_REAL_TYPE_SWITCH(inputs[deconv::kData].type_flag_, DType, {
-      CHECK_EQ(inputs.size(), 1U);
-      UpSamplingBackward<xpu, DType>(ctx, param, inputs[0], req, outputs);
-    });
-  } else if (param.sample_type == up_enum::kBilinear) {
-    DeconvolutionParam p = GetDeconvolutionParam(param);
-    _DeconvolutionGradCompute<xpu>(p, ctx, inputs, req, outputs);
-  } else {
-    LOG(FATAL) << "Unknown sample type";
-  }
-}
+//template<typename xpu>
+//void UpSamplingGradCompute(const nnvm::NodeAttrs& attrs,
+//                           const OpContext& ctx, const std::vector<TBlob>& inputs,
+//                           const std::vector<OpReqType>& req,
+//                           const std::vector<TBlob>& outputs) {
+//  const UpSamplingParam& param = nnvm::get<UpSamplingParam>(attrs.parsed);
+//  if (param.sample_type == up_enum::kNearest) {
+//    MSHADOW_REAL_TYPE_SWITCH(inputs[deconv::kData].type_flag_, DType, {
+//      CHECK_EQ(inputs.size(), 1U);
+//      UpSamplingBackward<xpu, DType>(ctx, param, inputs[0], req, outputs);
+//    });
+//  } else if (param.sample_type == up_enum::kBilinear) {
+//    DeconvolutionParam p = GetDeconvolutionParam(param);
+//    _DeconvolutionGradCompute<xpu>(p, ctx, inputs, req, outputs);
+//  } else {
+//    LOG(FATAL) << "Unknown sample type";
+//  }
+//}
 
 }  // namespace op
 }  // namespace mxnet

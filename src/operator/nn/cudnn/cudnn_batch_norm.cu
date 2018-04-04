@@ -58,31 +58,31 @@ static void BatchNormCompute_CuDNNv4(const nnvm::NodeAttrs& attrs,
 #endif
 }
 
-static void BatchNormGradCompute_CuDNNv4(const nnvm::NodeAttrs& attrs,
-    const OpContext& ctx, const std::vector<TBlob>& inputs,
-    const std::vector<OpReqType>& req,
-    const std::vector<TBlob>& outputs) {
-#if CUDNN_MAJOR >= 5
-  LOG(FATAL) << "CuDNNBatchNorm is merged into BatchNorm for cudnn version above v5."
-    "Use the later instead.";
-#else
-  CHECK_EQ(inputs.size(), 11U);
-  const BatchNormParam& param = nnvm::get<BatchNormParam>(attrs.parsed);
-  std::vector<TBlob> out_grad(1, inputs[0]);
-  std::vector<TBlob> in_data(inputs.begin() + 3, inputs.begin() + 6);
-  std::vector<TBlob> aux_states(inputs.begin() + 6, inputs.begin() + 8);
-  std::vector<TBlob> out_data(inputs.begin() + 8, inputs.end());
-  std::vector<TBlob> in_grad(outputs.begin(), outputs.begin() + 3);
-  GetCuDNNOp<float>(param).Backward(ctx, out_grad, in_data, out_data,
-      req, in_grad, aux_states);
-#endif
-}
+//static void BatchNormGradCompute_CuDNNv4(const nnvm::NodeAttrs& attrs,
+//    const OpContext& ctx, const std::vector<TBlob>& inputs,
+//    const std::vector<OpReqType>& req,
+//    const std::vector<TBlob>& outputs) {
+//#if CUDNN_MAJOR >= 5
+//  LOG(FATAL) << "CuDNNBatchNorm is merged into BatchNorm for cudnn version above v5."
+//    "Use the later instead.";
+//#else
+//  CHECK_EQ(inputs.size(), 11U);
+//  const BatchNormParam& param = nnvm::get<BatchNormParam>(attrs.parsed);
+//  std::vector<TBlob> out_grad(1, inputs[0]);
+//  std::vector<TBlob> in_data(inputs.begin() + 3, inputs.begin() + 6);
+//  std::vector<TBlob> aux_states(inputs.begin() + 6, inputs.begin() + 8);
+//  std::vector<TBlob> out_data(inputs.begin() + 8, inputs.end());
+//  std::vector<TBlob> in_grad(outputs.begin(), outputs.begin() + 3);
+//  GetCuDNNOp<float>(param).Backward(ctx, out_grad, in_data, out_data,
+//      req, in_grad, aux_states);
+//#endif
+//}
 
 NNVM_REGISTER_OP(CuDNNBatchNorm)
 .set_attr<FCompute>("FCompute<gpu>", BatchNormCompute_CuDNNv4);
 
-NNVM_REGISTER_OP(_backward_CuDNNBatchNorm)
-.set_attr<FCompute>("FCompute<gpu>", BatchNormGradCompute_CuDNNv4);
+//NNVM_REGISTER_OP(_backward_CuDNNBatchNorm)
+//.set_attr<FCompute>("FCompute<gpu>", BatchNormGradCompute_CuDNNv4);
 
 #endif  // CUDNN_MAJOR == 4
 }  // namespace op

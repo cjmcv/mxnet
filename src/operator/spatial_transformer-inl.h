@@ -112,37 +112,37 @@ class SpatialTransformerOp : public Operator {
     }
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    using namespace mshadow::expr;
-    CHECK_EQ(in_data.size(), 2U);
-    CHECK_EQ(out_data.size(), 3U);
-    Stream<xpu> *s = ctx.get_stream<xpu>();
-    Tensor<xpu, 4, DType> data = in_data[st::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> grad = out_grad[st::kOut].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> gdata = in_grad[st::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> grid_dst = out_data[st::kGridDst].get<xpu, 2, DType>(s);
-    Tensor<xpu, 3, DType> grid_src = out_data[st::kGridSrc].get<xpu, 3, DType>(s);
-    Shape<3> loc_shape = Shape3(data.size(0), 2, 3);
-    Tensor<xpu, 3, DType> gloc = in_grad[st::kLoc].get_with_shape<xpu, 3, DType>(loc_shape, s);
-    gdata = 0.0;
-    if (param_.sampler_type == st::kBilinear) {
-      BilinearSamplingBackward(gdata, grid_src, grad, data);
-    }
-    for (index_t batch = 0; batch < data.size(0); batch++) {
-        if (param_.transform_type == st::kAffine) {
-          // Legacy approach shown here for comparison:
-          //   gloc[batch] = dot(grid_src[batch], grid_dst.T());
-          linalg_gemm(grid_src[batch], grid_dst, gloc[batch], false, true, s);
-        }
-    }
-  }
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  using namespace mshadow::expr;
+  //  CHECK_EQ(in_data.size(), 2U);
+  //  CHECK_EQ(out_data.size(), 3U);
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
+  //  Tensor<xpu, 4, DType> data = in_data[st::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> grad = out_grad[st::kOut].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> gdata = in_grad[st::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> grid_dst = out_data[st::kGridDst].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 3, DType> grid_src = out_data[st::kGridSrc].get<xpu, 3, DType>(s);
+  //  Shape<3> loc_shape = Shape3(data.size(0), 2, 3);
+  //  Tensor<xpu, 3, DType> gloc = in_grad[st::kLoc].get_with_shape<xpu, 3, DType>(loc_shape, s);
+  //  gdata = 0.0;
+  //  if (param_.sampler_type == st::kBilinear) {
+  //    BilinearSamplingBackward(gdata, grid_src, grad, data);
+  //  }
+  //  for (index_t batch = 0; batch < data.size(0); batch++) {
+  //      if (param_.transform_type == st::kAffine) {
+  //        // Legacy approach shown here for comparison:
+  //        //   gloc[batch] = dot(grid_src[batch], grid_dst.T());
+  //        linalg_gemm(grid_src[batch], grid_dst, gloc[batch], false, true, s);
+  //      }
+  //  }
+  //}
 
  private:
   SpatialTransformerParam param_;
@@ -264,12 +264,12 @@ class SpatialTransformerProp : public OperatorProperty {
     return {ResourceRequest::kTempSpace};
   }
 
-  #if CUDNN_MAJOR >= 5
-  std::vector<ResourceRequest> BackwardResource(
-      const std::vector<TShape> &in_shape) const override {
-    return {ResourceRequest::kTempSpace};
-  }
-  #endif
+  //#if CUDNN_MAJOR >= 5
+  //std::vector<ResourceRequest> BackwardResource(
+  //    const std::vector<TShape> &in_shape) const override {
+  //  return {ResourceRequest::kTempSpace};
+  //}
+  //#endif
 
   Operator* CreateOperator(Context ctx) const override {
     LOG(FATAL) << "Not Implemented.";

@@ -116,7 +116,7 @@ Example::
   return true;
 })
 .set_attr<FCompute>("FCompute<cpu>", DropoutCompute<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", DropoutGrad{"_backward_Dropout"})
+//.set_attr<nnvm::FGradient>("FGradient", DropoutGrad{"_backward_Dropout"})
 .set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs){
   return std::vector<std::pair<int, int> >{{0, 0}};
 })
@@ -126,14 +126,14 @@ Example::
 .add_argument("data", "NDArray-or-Symbol", "Input array to which dropout will be applied.")
 .add_arguments(DropoutParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_Dropout)
-.set_num_outputs(1)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr_parser(ParamParser<DropoutParam>)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs){
-  return std::vector<std::pair<int, int> >{{0, 0}};
-})
-.set_attr<FCompute>("FCompute<cpu>", DropoutGradCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_Dropout)
+//.set_num_outputs(1)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr_parser(ParamParser<DropoutParam>)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs){
+//  return std::vector<std::pair<int, int> >{{0, 0}};
+//})
+//.set_attr<FCompute>("FCompute<cpu>", DropoutGradCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

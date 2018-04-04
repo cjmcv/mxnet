@@ -118,60 +118,60 @@ class DeformablePSROIPoolingOp : public Operator {
       param_.part_size, param_.sample_per_part, param_.trans_std);
   }
 
-  virtual void Backward(const OpContext &ctx,
-    const std::vector<TBlob> &out_grad,
-    const std::vector<TBlob> &in_data,
-    const std::vector<TBlob> &out_data,
-    const std::vector<OpReqType> &req,
-    const std::vector<TBlob> &in_grad,
-    const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    size_t in_expected = param_.no_trans ? 2 : 3;
-    size_t out_expected = 2;
-    CHECK_EQ(in_data.size(), in_expected);
-    CHECK_EQ(out_data.size(), out_expected);
-    CHECK_EQ(out_grad[deformablepsroipool::kOut].shape_[0],
-             in_data[deformablepsroipool::kBox].shape_[0]);
-    CHECK_EQ(out_data[deformablepsroipool::kTopCount].shape_[0],
-             in_data[deformablepsroipool::kBox].shape_[0]);
-    CHECK_NE(req[deformablepsroipool::kData], kWriteInplace) <<
-      "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
-    CHECK_NE(req[deformablepsroipool::kBox], kWriteInplace) <<
-      "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
-    // CHECK_NE(req[deformablepsroipool::kTrans], kWriteInplace) <<
-    //  "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
-    Stream<xpu> *s = ctx.get_stream<xpu>();
+  //virtual void Backward(const OpContext &ctx,
+  //  const std::vector<TBlob> &out_grad,
+  //  const std::vector<TBlob> &in_data,
+  //  const std::vector<TBlob> &out_data,
+  //  const std::vector<OpReqType> &req,
+  //  const std::vector<TBlob> &in_grad,
+  //  const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  size_t in_expected = param_.no_trans ? 2 : 3;
+  //  size_t out_expected = 2;
+  //  CHECK_EQ(in_data.size(), in_expected);
+  //  CHECK_EQ(out_data.size(), out_expected);
+  //  CHECK_EQ(out_grad[deformablepsroipool::kOut].shape_[0],
+  //           in_data[deformablepsroipool::kBox].shape_[0]);
+  //  CHECK_EQ(out_data[deformablepsroipool::kTopCount].shape_[0],
+  //           in_data[deformablepsroipool::kBox].shape_[0]);
+  //  CHECK_NE(req[deformablepsroipool::kData], kWriteInplace) <<
+  //    "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
+  //  CHECK_NE(req[deformablepsroipool::kBox], kWriteInplace) <<
+  //    "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
+  //  // CHECK_NE(req[deformablepsroipool::kTrans], kWriteInplace) <<
+  //  //  "DeformablePSROIPooling: Backward doesn't support kWriteInplace.";
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
 
-    Tensor<xpu, 4, DType> grad_out = out_grad[deformablepsroipool::kOut].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> data = in_data[deformablepsroipool::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> bbox = in_data[deformablepsroipool::kBox].get<xpu, 2, DType>(s);
-    Tensor<xpu, 4, DType> top_count = out_data[deformablepsroipool::kTopCount]
-                                        .get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> grad_in = in_grad[deformablepsroipool::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> grad_roi = in_grad[deformablepsroipool::kBox].get<xpu, 2, DType>(s);
-    Tensor<xpu, 4, DType> grad_trans;
-    Tensor<xpu, 4, DType> trans;
-    if (!param_.no_trans) {
-      CHECK_EQ(in_grad.size(), 3);
-      trans = in_data[deformablepsroipool::kTrans].get<xpu, 4, DType>(s);
-      grad_trans = in_grad[deformablepsroipool::kTrans].get<xpu, 4, DType>(s);
-    }
+  //  Tensor<xpu, 4, DType> grad_out = out_grad[deformablepsroipool::kOut].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> data = in_data[deformablepsroipool::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> bbox = in_data[deformablepsroipool::kBox].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 4, DType> top_count = out_data[deformablepsroipool::kTopCount]
+  //                                      .get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> grad_in = in_grad[deformablepsroipool::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> grad_roi = in_grad[deformablepsroipool::kBox].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 4, DType> grad_trans;
+  //  Tensor<xpu, 4, DType> trans;
+  //  if (!param_.no_trans) {
+  //    CHECK_EQ(in_grad.size(), 3);
+  //    trans = in_data[deformablepsroipool::kTrans].get<xpu, 4, DType>(s);
+  //    grad_trans = in_grad[deformablepsroipool::kTrans].get<xpu, 4, DType>(s);
+  //  }
 
-    CHECK_EQ(grad_out.CheckContiguous(), true);
-    CHECK_EQ(data.CheckContiguous(), true);
-    CHECK_EQ(bbox.CheckContiguous(), true);
-    CHECK_EQ(top_count.CheckContiguous(), true);
-    CHECK_EQ(grad_in.CheckContiguous(), true);
+  //  CHECK_EQ(grad_out.CheckContiguous(), true);
+  //  CHECK_EQ(data.CheckContiguous(), true);
+  //  CHECK_EQ(bbox.CheckContiguous(), true);
+  //  CHECK_EQ(top_count.CheckContiguous(), true);
+  //  CHECK_EQ(grad_in.CheckContiguous(), true);
 
-    Assign(grad_in, req[deformablepsroipool::kData], 0);
-    if (!param_.no_trans) {
-      Assign(grad_trans, req[deformablepsroipool::kTrans], 0);
-    }
-    DeformablePSROIPoolBackwardAcc(grad_in, grad_trans, grad_out, data, bbox, trans,
-      top_count, param_.no_trans, param_.spatial_scale, param_.output_dim, param_.group_size,
-      param_.pooled_size, param_.part_size, param_.sample_per_part, param_.trans_std);
-    Assign(grad_roi, req[deformablepsroipool::kBox], 0);
-  }
+  //  Assign(grad_in, req[deformablepsroipool::kData], 0);
+  //  if (!param_.no_trans) {
+  //    Assign(grad_trans, req[deformablepsroipool::kTrans], 0);
+  //  }
+  //  DeformablePSROIPoolBackwardAcc(grad_in, grad_trans, grad_out, data, bbox, trans,
+  //    top_count, param_.no_trans, param_.spatial_scale, param_.output_dim, param_.group_size,
+  //    param_.pooled_size, param_.part_size, param_.sample_per_part, param_.trans_std);
+  //  Assign(grad_roi, req[deformablepsroipool::kBox], 0);
+  //}
 
  private:
   DeformablePSROIPoolingParam param_;

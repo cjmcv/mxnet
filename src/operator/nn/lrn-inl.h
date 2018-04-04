@@ -82,26 +82,26 @@ void LRNForward(const nnvm::NodeAttrs& attrs, const OpContext &ctx,
   Assign(out, req[lrn_enum::kOut], data *  F<mshadow_op::power>(tmp_norm, -param_.beta));
 }
 
-template<typename xpu>
-void LRNBackward(const nnvm::NodeAttrs& attrs, const OpContext &ctx,
-                 const TBlob &out_grad, const TBlob &in_data,
-                 const TBlob &out_norm, const OpReqType &req,
-                 const TBlob &in_grad) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  const LRNParam& param_ = nnvm::get<LRNParam>(attrs.parsed);
-  const real_t salpha = param_.alpha / param_.nsize;
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  Tensor<xpu, 4> grad = out_grad.get<xpu, 4, real_t>(s);
-  Tensor<xpu, 4> tmp_norm = out_norm.get<xpu, 4, real_t>(s);
-  Tensor<xpu, 4> data = in_data.get<xpu, 4, real_t>(s);
-  Tensor<xpu, 4> grad_in = in_grad.get<xpu, 4, real_t>(s);
-  grad_in = grad * F<mshadow_op::power>(tmp_norm, -param_.beta);
-  grad_in += (- 2.0f * param_.beta * salpha) *
-      chpool<red::sum>(grad * data *
-                       F<mshadow_op::power>(tmp_norm, -param_.beta - 1.0f),
-                       param_.nsize)  * data;
-}
+//template<typename xpu>
+//void LRNBackward(const nnvm::NodeAttrs& attrs, const OpContext &ctx,
+//                 const TBlob &out_grad, const TBlob &in_data,
+//                 const TBlob &out_norm, const OpReqType &req,
+//                 const TBlob &in_grad) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  const LRNParam& param_ = nnvm::get<LRNParam>(attrs.parsed);
+//  const real_t salpha = param_.alpha / param_.nsize;
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  Tensor<xpu, 4> grad = out_grad.get<xpu, 4, real_t>(s);
+//  Tensor<xpu, 4> tmp_norm = out_norm.get<xpu, 4, real_t>(s);
+//  Tensor<xpu, 4> data = in_data.get<xpu, 4, real_t>(s);
+//  Tensor<xpu, 4> grad_in = in_grad.get<xpu, 4, real_t>(s);
+//  grad_in = grad * F<mshadow_op::power>(tmp_norm, -param_.beta);
+//  grad_in += (- 2.0f * param_.beta * salpha) *
+//      chpool<red::sum>(grad * data *
+//                       F<mshadow_op::power>(tmp_norm, -param_.beta - 1.0f),
+//                       param_.nsize)  * data;
+//}
 
 template<typename xpu>
 void LRNCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
@@ -111,16 +111,16 @@ void LRNCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
   LRNForward<xpu>(attrs, ctx, inputs, req, outputs);
 }
 
-template<typename xpu>
-void LRNGradCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
-                    const std::vector<TBlob>& inputs,
-                    const std::vector<OpReqType>& req,
-                    const std::vector<TBlob>& outputs) {
-  LRNBackward<xpu>(attrs, ctx, inputs[0],  // out_grad
-                   inputs[1],              // in_data
-                   inputs[2],              // out_norm
-                   req[lrn_enum::kData], outputs[lrn_enum::kData]);
-}
+//template<typename xpu>
+//void LRNGradCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
+//                    const std::vector<TBlob>& inputs,
+//                    const std::vector<OpReqType>& req,
+//                    const std::vector<TBlob>& outputs) {
+//  LRNBackward<xpu>(attrs, ctx, inputs[0],  // out_grad
+//                   inputs[1],              // in_data
+//                   inputs[2],              // out_norm
+//                   req[lrn_enum::kData], outputs[lrn_enum::kData]);
+//}
 
 }  // namespace op
 }  // namespace mxnet

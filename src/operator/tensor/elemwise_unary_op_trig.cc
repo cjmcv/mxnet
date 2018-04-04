@@ -29,9 +29,9 @@ namespace mxnet {
 namespace op {
 
 // sin
-MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(sin, cpu, mshadow_op::sin)
-MXNET_ADD_SPARSE_OP_ALIAS(sin)
-.describe(R"code(Computes the element-wise sine of the input array.
+  MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(sin, cpu, mshadow_op::sin)
+    MXNET_ADD_SPARSE_OP_ALIAS(sin)
+    .describe(R"code(Computes the element-wise sine of the input array.
 
 The input should be in radians (:math:`2\pi` rad equals 360 degrees).
 
@@ -43,10 +43,10 @@ The storage type of ``sin`` output depends upon the input storage type:
    - sin(default) = default
    - sin(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_sin" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_sin" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_sin, unary_bwd<mshadow_op::sin_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_sin, unary_bwd<mshadow_op::sin_grad>);
 
 // cos
 MXNET_OPERATOR_REGISTER_UNARY_WITH_SPARSE_DR(cos, cpu, mshadow_op::cos)
@@ -60,10 +60,10 @@ The input should be in radians (:math:`2\pi` rad equals 360 degrees).
 
 The storage type of ``cos`` output is always dense
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_cos"});
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_cos"});
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU(_backward_cos, unary_bwd<mshadow_op::cos_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU(_backward_cos, unary_bwd<mshadow_op::cos_grad>);
 
 // tan
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(tan, cpu, mshadow_op::tan)
@@ -80,10 +80,10 @@ The storage type of ``tan`` output depends upon the input storage type:
    - tan(default) = default
    - tan(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{ "_backward_tan" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{ "_backward_tan" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_tan, unary_bwd<mshadow_op::tan_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_tan, unary_bwd<mshadow_op::tan_grad>);
 
 // arcsin
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(arcsin, cpu, mshadow_op::arcsin)
@@ -101,11 +101,11 @@ The storage type of ``arcsin`` output depends upon the input storage type:
    - arcsin(default) = default
    - arcsin(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arcsin" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arcsin" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arcsin,
-                                                  unary_bwd<mshadow_op::arcsin_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arcsin,
+//                                                  unary_bwd<mshadow_op::arcsin_grad>);
 
 // arccos
 MXNET_OPERATOR_REGISTER_UNARY_WITH_SPARSE_DR(arccos, cpu, mshadow_op::arccos)
@@ -120,11 +120,11 @@ The output is in the closed interval :math:`[0, \pi]`
 
 The storage type of ``arccos`` output is always dense
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arccos" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arccos" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arccos,
-                                                  unary_bwd<mshadow_op::arccos_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arccos,
+//                                                  unary_bwd<mshadow_op::arccos_grad>);
 
 // arctan
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(arctan, cpu, mshadow_op::arctan)
@@ -141,11 +141,11 @@ The storage type of ``arctan`` output depends upon the input storage type:
    - arctan(default) = default
    - arctan(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arctan" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arctan" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arctan,
-                                                  unary_bwd<mshadow_op::arctan_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arctan,
+//                                                  unary_bwd<mshadow_op::arctan_grad>);
 
 // degrees
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(degrees, cpu, mshadow_op::degrees)
@@ -160,11 +160,11 @@ The storage type of ``degrees`` output depends upon the input storage type:
    - degrees(default) = default
    - degrees(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_degrees" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_degrees" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_degrees,
-                                                  unary_bwd<mshadow_op::degrees_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_degrees,
+//                                                  unary_bwd<mshadow_op::degrees_grad>);
 
 // radians
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(radians, cpu, mshadow_op::radians)
@@ -179,11 +179,11 @@ The storage type of ``radians`` output depends upon the input storage type:
    - radians(default) = default
    - radians(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_radians" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_radians" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_radians,
-                                                  unary_bwd<mshadow_op::radians_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_radians,
+//                                                  unary_bwd<mshadow_op::radians_grad>);
 
 // sinh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(sinh, cpu, mshadow_op::sinh)
@@ -198,10 +198,10 @@ The storage type of ``sinh`` output depends upon the input storage type:
    - sinh(default) = default
    - sinh(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_sinh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_sinh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_sinh, unary_bwd<mshadow_op::sinh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_sinh, unary_bwd<mshadow_op::sinh_grad>);
 
 // cosh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_SPARSE_DR(cosh, cpu, mshadow_op::cosh)
@@ -213,10 +213,10 @@ MXNET_ADD_SPARSE_OP_ALIAS(cosh)
 
 The storage type of ``cosh`` output is always dense
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_cosh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_cosh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU(_backward_cosh, unary_bwd<mshadow_op::cosh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU(_backward_cosh, unary_bwd<mshadow_op::cosh_grad>);
 
 // tanh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(tanh, cpu, mshadow_op::tanh)
@@ -231,10 +231,10 @@ The storage type of ``tanh`` output depends upon the input storage type:
    - tanh(default) = default
    - tanh(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{ "_backward_tanh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{ "_backward_tanh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_tanh, unary_bwd<mshadow_op::tanh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_tanh, unary_bwd<mshadow_op::tanh_grad>);
 
 // arcsinh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(arcsinh, cpu, mshadow_op::arcsinh)
@@ -247,11 +247,11 @@ The storage type of ``arcsinh`` output depends upon the input storage type:
    - arcsinh(default) = default
    - arcsinh(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arcsinh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arcsinh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arcsinh,
-                                                  unary_bwd<mshadow_op::arcsinh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arcsinh,
+//                                                  unary_bwd<mshadow_op::arcsinh_grad>);
 
 // arccosh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_SPARSE_DR(arccosh, cpu, mshadow_op::arccosh)
@@ -261,11 +261,11 @@ computed element-wise.
 
 The storage type of ``arccosh`` output is always dense
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arccosh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arccosh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arccosh,
-                                                  unary_bwd<mshadow_op::arccosh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arccosh,
+//                                                  unary_bwd<mshadow_op::arccosh_grad>);
 
 // arctanh
 MXNET_OPERATOR_REGISTER_UNARY_WITH_RSP(arctanh, cpu, mshadow_op::arctanh)
@@ -278,11 +278,11 @@ The storage type of ``arctanh`` output depends upon the input storage type:
    - arctanh(default) = default
    - arctanh(row_sparse) = row_sparse
 
-)code" ADD_FILELINE)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arctanh" });
+)code" ADD_FILELINE);
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{ "_backward_arctanh" });
 
-MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arctanh,
-                                                  unary_bwd<mshadow_op::arctanh_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY_WITH_SPARSE_CPU_DR(_backward_arctanh,
+//                                                  unary_bwd<mshadow_op::arctanh_grad>);
 
 
 }  // namespace op

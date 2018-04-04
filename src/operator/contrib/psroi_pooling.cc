@@ -49,16 +49,16 @@ inline void PSROIPoolForward(const Tensor<cpu, 4, DType> &out,
   return;
 }
 
-template<typename DType>
-inline void PSROIPoolBackwardAcc(const Tensor<cpu, 4, DType> &in_grad,
-                            const Tensor<cpu, 4, DType> &out_grad,
-                            const Tensor<cpu, 2, DType> &bbox,
-                            const float spatial_scale_,
-                            const int output_dim_,
-                            const int group_size_) {
-  // NOT_IMPLEMENTED;
-  return;
-}
+//template<typename DType>
+//inline void PSROIPoolBackwardAcc(const Tensor<cpu, 4, DType> &in_grad,
+//                            const Tensor<cpu, 4, DType> &out_grad,
+//                            const Tensor<cpu, 2, DType> &bbox,
+//                            const float spatial_scale_,
+//                            const int output_dim_,
+//                            const int group_size_) {
+//  // NOT_IMPLEMENTED;
+//  return;
+//}
 }  // namespace mshadow
 
 namespace mxnet {

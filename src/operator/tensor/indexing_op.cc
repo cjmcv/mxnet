@@ -69,113 +69,113 @@ void SparseEmbeddingOpForwardRspImpl<cpu>(const OpContext& ctx,
 }
 
 
-template<>
-inline void SparseEmbeddingOpBackwardRspImpl<cpu>(const OpContext& ctx,
-                                                  const TBlob& ograd,
-                                                  const TBlob& data,
-                                                  const OpReqType req,
-                                                  const NDArray& output) {
-  using namespace mshadow;
-  using namespace mxnet_op;
-  using namespace mshadow::expr;
-  using namespace rowsparse;
-  using nnvm::dim_t;
-  if (req == kNullOp) return;
-  CHECK_EQ(req, kWriteTo) << "SparseEmbedding layer doesn't support "
-                          << "weight gradient calculation with req != write";
+//template<>
+//inline void SparseEmbeddingOpBackwardRspImpl<cpu>(const OpContext& ctx,
+//                                                  const TBlob& ograd,
+//                                                  const TBlob& data,
+//                                                  const OpReqType req,
+//                                                  const NDArray& output) {
+//  using namespace mshadow;
+//  using namespace mxnet_op;
+//  using namespace mshadow::expr;
+//  using namespace rowsparse;
+//  using nnvm::dim_t;
+//  if (req == kNullOp) return;
+//  CHECK_EQ(req, kWriteTo) << "SparseEmbedding layer doesn't support "
+//                          << "weight gradient calculation with req != write";
+//
+//  // Request temporary storage for marking non-zero rows and prefix sum
+//  Stream<cpu> *s = ctx.get_stream<cpu>();
+//  dim_t num_rows = output.shape()[0];
+//  dim_t row_length = output.shape()[1];
+//  size_t workspace_size = num_rows * sizeof(dim_t);
+//  Tensor<cpu, 1, char> workspace =
+//    ctx.requested[embedding::kTempSpace].get_space_typed<cpu, 1, char>(
+//      Shape1(workspace_size), s);
+//  dim_t* row_flg = reinterpret_cast<dim_t*>(workspace.dptr_);
+//  // prefix sum array re-uses the row_flg array temp space
+//  dim_t* prefix_sum = row_flg;
+//  dim_t data_size = static_cast<dim_t>(data.shape_.Size());
+//
+//  MSHADOW_TYPE_SWITCH(data.type_flag_, IType, {
+//    MSHADOW_SGL_DBL_TYPE_SWITCH(ograd.type_flag_, DType, {
+//      MSHADOW_IDX_TYPE_SWITCH(output.aux_type(kIdx), RType, {
+//        // mark row flags
+//        Fill<false>(s, TBlob(row_flg, Shape1(num_rows), cpu::kDevMask), kWriteTo, 0);
+//        Kernel<MarkRowFlgKernel, cpu>::Launch(s, data_size, row_flg, data.dptr<IType>());
+//        // calculate inclusive prefix sum
+//        // TODO(haibin) ideally this is should be done in parallel
+//        prefix_sum[0] = row_flg[0];
+//        for (dim_t i = 1; i < num_rows; i++) {
+//          prefix_sum[i] = prefix_sum[i - 1] + row_flg[i];
+//        }
+//        // total number of non-zero rows
+//        dim_t nnr = prefix_sum[num_rows - 1];
+//        if (nnr == 0) {
+//          FillZerosRspImpl(s, output);
+//          return;
+//        }
+//        output.CheckAndAlloc({Shape1(nnr)});
+//        RType* grad_row_idx = output.aux_data(kIdx).dptr<RType>();
+//        // fill row_idx array of output matrix, using the row_flg values
+//        Kernel<FillRspRowIdxKernel, cpu>::Launch(s, num_rows,
+//            grad_row_idx, prefix_sum, num_rows);
+//        // prefill with zeros
+//        DType* grad_data = output.data().dptr<DType>();
+//        Fill<false>(s, TBlob(grad_data, Shape1(nnr * row_length),
+//            cpu::kDevMask), kWriteTo, 0);
+//        // add the final gradients
+//        const int num_threads = engine::OpenMP::Get()->GetRecommendedOMPThreadCount();
+//        dim_t segment_len = (nnr + num_threads - 1) / num_threads;
+//        Kernel<AddTakeGradRspKernel, cpu>::Launch(s, num_threads, grad_data, prefix_sum,
+//                                                  ograd.dptr<DType>(), row_length,
+//                                                  data.dptr<IType>(), data_size, segment_len,
+//                                                  num_rows);
+//      });
+//    });
+//  });
+//}
 
-  // Request temporary storage for marking non-zero rows and prefix sum
-  Stream<cpu> *s = ctx.get_stream<cpu>();
-  dim_t num_rows = output.shape()[0];
-  dim_t row_length = output.shape()[1];
-  size_t workspace_size = num_rows * sizeof(dim_t);
-  Tensor<cpu, 1, char> workspace =
-    ctx.requested[embedding::kTempSpace].get_space_typed<cpu, 1, char>(
-      Shape1(workspace_size), s);
-  dim_t* row_flg = reinterpret_cast<dim_t*>(workspace.dptr_);
-  // prefix sum array re-uses the row_flg array temp space
-  dim_t* prefix_sum = row_flg;
-  dim_t data_size = static_cast<dim_t>(data.shape_.Size());
 
-  MSHADOW_TYPE_SWITCH(data.type_flag_, IType, {
-    MSHADOW_SGL_DBL_TYPE_SWITCH(ograd.type_flag_, DType, {
-      MSHADOW_IDX_TYPE_SWITCH(output.aux_type(kIdx), RType, {
-        // mark row flags
-        Fill<false>(s, TBlob(row_flg, Shape1(num_rows), cpu::kDevMask), kWriteTo, 0);
-        Kernel<MarkRowFlgKernel, cpu>::Launch(s, data_size, row_flg, data.dptr<IType>());
-        // calculate inclusive prefix sum
-        // TODO(haibin) ideally this is should be done in parallel
-        prefix_sum[0] = row_flg[0];
-        for (dim_t i = 1; i < num_rows; i++) {
-          prefix_sum[i] = prefix_sum[i - 1] + row_flg[i];
-        }
-        // total number of non-zero rows
-        dim_t nnr = prefix_sum[num_rows - 1];
-        if (nnr == 0) {
-          FillZerosRspImpl(s, output);
-          return;
-        }
-        output.CheckAndAlloc({Shape1(nnr)});
-        RType* grad_row_idx = output.aux_data(kIdx).dptr<RType>();
-        // fill row_idx array of output matrix, using the row_flg values
-        Kernel<FillRspRowIdxKernel, cpu>::Launch(s, num_rows,
-            grad_row_idx, prefix_sum, num_rows);
-        // prefill with zeros
-        DType* grad_data = output.data().dptr<DType>();
-        Fill<false>(s, TBlob(grad_data, Shape1(nnr * row_length),
-            cpu::kDevMask), kWriteTo, 0);
-        // add the final gradients
-        const int num_threads = engine::OpenMP::Get()->GetRecommendedOMPThreadCount();
-        dim_t segment_len = (nnr + num_threads - 1) / num_threads;
-        Kernel<AddTakeGradRspKernel, cpu>::Launch(s, num_threads, grad_data, prefix_sum,
-                                                  ograd.dptr<DType>(), row_length,
-                                                  data.dptr<IType>(), data_size, segment_len,
-                                                  num_rows);
-      });
-    });
-  });
-}
+//template<typename DType, typename IType>
+//inline typename std::enable_if<(!std::is_same<DType, mshadow::half::half_t>::value), void>::type
+//GatherNDBackwardImpl(int N, int M, int K,
+//                     const mshadow::Shape<10> strides,
+//                     DType* out,
+//                     const DType* data,
+//                     const IType* indices,
+//                     mshadow::Stream<cpu> *s) {
+//#pragma omp parallel for
+//  for (int i = 0; i < N; i++) {
+//    int offset = 0;
+//    for (int j = 0; j < M; ++j) {
+//      offset += strides[j] * static_cast<int>(indices[j*N + i]);
+//    }
+//    for (int j = 0; j < K; ++j) {
+//#pragma omp atomic
+//      out[offset + j] += data[i * K + j];
+//    }
+//  }
+//}
 
-
-template<typename DType, typename IType>
-inline typename std::enable_if<(!std::is_same<DType, mshadow::half::half_t>::value), void>::type
-GatherNDBackwardImpl(int N, int M, int K,
-                     const mshadow::Shape<10> strides,
-                     DType* out,
-                     const DType* data,
-                     const IType* indices,
-                     mshadow::Stream<cpu> *s) {
-#pragma omp parallel for
-  for (int i = 0; i < N; i++) {
-    int offset = 0;
-    for (int j = 0; j < M; ++j) {
-      offset += strides[j] * static_cast<int>(indices[j*N + i]);
-    }
-    for (int j = 0; j < K; ++j) {
-#pragma omp atomic
-      out[offset + j] += data[i * K + j];
-    }
-  }
-}
-
-template<typename DType, typename IType>
-inline typename std::enable_if<std::is_same<DType, mshadow::half::half_t>::value, void>::type
-GatherNDBackwardImpl(int N, int M, int K,
-                     const mshadow::Shape<10> strides,
-                     DType* out,
-                     const DType* data,
-                     const IType* indices,
-                     mshadow::Stream<cpu> *s) {
-  for (int i = 0; i < N; i++) {
-    int offset = 0;
-    for (int j = 0; j < M; ++j) {
-      offset += strides[j] * static_cast<int>(indices[j*N + i]);
-    }
-    for (int j = 0; j < K; ++j) {
-      out[offset + j] += data[i * K + j];
-    }
-  }
-}
+//template<typename DType, typename IType>
+//inline typename std::enable_if<std::is_same<DType, mshadow::half::half_t>::value, void>::type
+//GatherNDBackwardImpl(int N, int M, int K,
+//                     const mshadow::Shape<10> strides,
+//                     DType* out,
+//                     const DType* data,
+//                     const IType* indices,
+//                     mshadow::Stream<cpu> *s) {
+//  for (int i = 0; i < N; i++) {
+//    int offset = 0;
+//    for (int j = 0; j < M; ++j) {
+//      offset += strides[j] * static_cast<int>(indices[j*N + i]);
+//    }
+//    for (int j = 0; j < K; ++j) {
+//      out[offset + j] += data[i * K + j];
+//    }
+//  }
+//}
 
 DMLC_REGISTER_PARAMETER(EmbeddingParam);
 DMLC_REGISTER_PARAMETER(TakeParam);
@@ -237,11 +237,11 @@ Examples::
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
   })
 .set_attr<FCompute>("FCompute<cpu>", EmbeddingOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    return MakeNonlossGradNode("_backward_Embedding", n, ograds,
-                               {n->inputs[0]}, n->attrs.dict);
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    return MakeNonlossGradNode("_backward_Embedding", n, ograds,
+//                               {n->inputs[0]}, n->attrs.dict);
+//  })
 .add_argument("data", "NDArray-or-Symbol", "The input array to the embedding operator.")
 .add_argument("weight", "NDArray-or-Symbol", "The embedding weight matrix.")
 .add_arguments(EmbeddingParam::__FIELDS__());
@@ -307,35 +307,35 @@ Examples::
 .set_attr<nnvm::FInferType>("FInferType", EmbeddingOpType)
 .set_attr<FInferStorageType>("FInferStorageType", SparseEmbeddingOpForwardStorageType)
 .set_attr<FComputeEx>("FComputeEx<cpu>", SparseEmbeddingOpForwardEx<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    return MakeNonlossGradNode("_backward_SparseEmbedding", n, ograds,
-                               {n->inputs[0]}, n->attrs.dict);
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    return MakeNonlossGradNode("_backward_SparseEmbedding", n, ograds,
+//                               {n->inputs[0]}, n->attrs.dict);
+//  })
 .add_argument("data", "NDArray-or-Symbol", "The input array to the embedding operator.")
 .add_argument("weight", "NDArray-or-Symbol", "The embedding weight matrix.")
 .add_arguments(EmbeddingParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_Embedding)
-.set_num_inputs(2)
-.set_num_outputs(2)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", EmbeddingOpBackward<cpu>);
+//NNVM_REGISTER_OP(_backward_Embedding)
+//.set_num_inputs(2)
+//.set_num_outputs(2)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", EmbeddingOpBackward<cpu>);
 
-NNVM_REGISTER_OP(_backward_SparseEmbedding)
-.set_num_inputs(2)
-.set_num_outputs(2)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<FInferStorageType>("FInferStorageType", SparseEmbeddingOpBackwardStorageType)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FComputeEx>("FComputeEx<cpu>", SparseEmbeddingOpBackwardEx<cpu>);
+//NNVM_REGISTER_OP(_backward_SparseEmbedding)
+//.set_num_inputs(2)
+//.set_num_outputs(2)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  })
+//.set_attr<FInferStorageType>("FInferStorageType", SparseEmbeddingOpBackwardStorageType)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", SparseEmbeddingOpBackwardEx<cpu>);
 
 NNVM_REGISTER_OP(take)
 .describe(R"code(Takes elements from an input array along the given axis.
@@ -383,24 +383,24 @@ Examples::
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
   })
 .set_attr<FCompute>("FCompute<cpu>", TakeOpForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n,  const std::vector<nnvm::NodeEntry>& ograds) {
-    return MakeNonlossGradNode("_backward_take", n, ograds,
-                               {n->inputs[1]}, n->attrs.dict);
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n,  const std::vector<nnvm::NodeEntry>& ograds) {
+//    return MakeNonlossGradNode("_backward_take", n, ograds,
+//                               {n->inputs[1]}, n->attrs.dict);
+//  })
 .add_argument("a", "NDArray-or-Symbol", "The input array.")
 .add_argument("indices", "NDArray-or-Symbol", "The indices of the values to be extracted.")
 .add_arguments(TakeParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_take)
-.set_num_inputs(2)
-.set_num_outputs(2)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", TakeOpBackward<cpu>);
+//NNVM_REGISTER_OP(_backward_take)
+//.set_num_inputs(2)
+//.set_num_outputs(2)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", TakeOpBackward<cpu>);
 
 
 NNVM_REGISTER_OP(batch_take)
@@ -516,22 +516,22 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", GatherNDShape)
 .set_attr<nnvm::FInferType>("FInferType", GatherNDType)
 .set_attr<FCompute>("FCompute<cpu>", GatherNDForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    auto p = nnvm::Node::Create();
-    p->attrs.op = nnvm::Op::Get("_backward_gather_nd");
-    p->attrs.name = n->attrs.name + "_backward";
-    p->inputs.push_back(ograds[0]);
-    p->inputs.push_back(n->inputs[1]);
-    p->control_deps.emplace_back(n);
-    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
-                         {n->inputs[1]}, nullptr, &n);
-
-    std::vector<nnvm::NodeEntry> ret;
-    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
-    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
-    return ret;
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    auto p = nnvm::Node::Create();
+//    p->attrs.op = nnvm::Op::Get("_backward_gather_nd");
+//    p->attrs.name = n->attrs.name + "_backward";
+//    p->inputs.push_back(ograds[0]);
+//    p->inputs.push_back(n->inputs[1]);
+//    p->control_deps.emplace_back(n);
+//    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
+//                         {n->inputs[1]}, nullptr, &n);
+//
+//    std::vector<nnvm::NodeEntry> ret;
+//    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
+//    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
+//    return ret;
+//  })
 .set_attr<nnvm::TIsBackward>("TIsBackward", true)
 .add_argument("data", "NDArray-or-Symbol", "data")
 .add_argument("indices", "NDArray-or-Symbol", "indices");
@@ -576,88 +576,88 @@ Examples::
 .set_attr<nnvm::FInferShape>("FInferShape", ScatterNDShape)
 .set_attr<nnvm::FInferType>("FInferType", ScatterNDType)
 .set_attr<FCompute>("FCompute<cpu>", ScatterNDForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    auto p = nnvm::Node::Create();
-    p->attrs.op = nnvm::Op::Get("gather_nd");
-    p->attrs.name = n->attrs.name + "_backward";
-    p->inputs.push_back(ograds[0]);
-    p->inputs.push_back(n->inputs[1]);
-    p->control_deps.emplace_back(n);
-    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
-                         {n->inputs[1]}, nullptr, &n);
-    std::vector<nnvm::NodeEntry> ret;
-    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
-    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
-    return ret;
-  })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    auto p = nnvm::Node::Create();
+//    p->attrs.op = nnvm::Op::Get("gather_nd");
+//    p->attrs.name = n->attrs.name + "_backward";
+//    p->inputs.push_back(ograds[0]);
+//    p->inputs.push_back(n->inputs[1]);
+//    p->control_deps.emplace_back(n);
+//    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
+//                         {n->inputs[1]}, nullptr, &n);
+//    std::vector<nnvm::NodeEntry> ret;
+//    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
+//    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
+//    return ret;
+//  })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
 .add_argument("data", "NDArray-or-Symbol", "data")
 .add_argument("indices", "NDArray-or-Symbol", "indices")
 .add_arguments(ScatterNDParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_gather_nd)
-.describe(R"code(Accumulates data according to indices and get the result. It's the backward of
-`gather_nd`.
-
-Given `data` with shape `(Y_0, ..., Y_{K-1}, X_M, ..., X_{N-1})` and indices with shape
-`(M, Y_0, ..., Y_{K-1})`, the output will have shape `(X_0, X_1, ..., X_{N-1})`,
-where `M <= N`. If `M == N`, data shape should simply be `(Y_0, ..., Y_{K-1})`.
-
-The elements in output is defined as follows::
-
-  output[indices[0, y_0, ..., y_{K-1}],
-         ...,
-         indices[M-1, y_0, ..., y_{K-1}],
-         x_M, ..., x_{N-1}] += data[y_0, ..., y_{K-1}, x_M, ..., x_{N-1}]
-
-all other entries in output are 0 or the original value if AddTo is triggered.
-
-Examples::
-
-  data = [2, 3, 0]
-  indices = [[1, 1, 0], [0, 1, 0]]
-  shape = (2, 2)
-  _backward_gather_nd(data, indices, shape) = [[0, 0], [2, 3]] # Same as scatter_nd
-
-  # The difference between scatter_nd and scatter_nd_acc is the latter will accumulate
-  #  the values that point to the same index.
-
-  data = [2, 3, 0]
-  indices = [[1, 1, 0], [1, 1, 0]]
-  shape = (2, 2)
-  _backward_gather_nd(data, indices, shape) = [[0, 0], [0, 5]]
-
-)code")
-.set_num_outputs(1)
-.set_num_inputs(2)
-.set_attr_parser(ParamParser<ScatterNDParam>)
-.set_attr<nnvm::FListInputNames>("FListInputNames",
-  [](const NodeAttrs& attrs) {
-    return std::vector<std::string>{"data", "indices"};
-  })
-.set_attr<nnvm::FInferShape>("FInferShape", ScatterNDShape)
-.set_attr<nnvm::FInferType>("FInferType", ScatterNDType)
-.set_attr<FCompute>("FCompute<cpu>", GatherNDBackward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    auto p = nnvm::Node::Create();
-    p->attrs.op = nnvm::Op::Get("gather_nd");
-    p->attrs.name = n->attrs.name + "_backward";
-    p->inputs.push_back(ograds[0]);
-    p->inputs.push_back(n->inputs[1]);
-    p->control_deps.emplace_back(n);
-    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
-                         {n->inputs[1]}, nullptr, &n);
-    std::vector<nnvm::NodeEntry> ret;
-    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
-    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
-    return ret;
-  })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.add_argument("data", "NDArray-or-Symbol", "data")
-.add_argument("indices", "NDArray-or-Symbol", "indices")
-.add_arguments(ScatterNDParam::__FIELDS__());
+//NNVM_REGISTER_OP(_backward_gather_nd)
+//.describe(R"code(Accumulates data according to indices and get the result. It's the backward of
+//`gather_nd`.
+//
+//Given `data` with shape `(Y_0, ..., Y_{K-1}, X_M, ..., X_{N-1})` and indices with shape
+//`(M, Y_0, ..., Y_{K-1})`, the output will have shape `(X_0, X_1, ..., X_{N-1})`,
+//where `M <= N`. If `M == N`, data shape should simply be `(Y_0, ..., Y_{K-1})`.
+//
+//The elements in output is defined as follows::
+//
+//  output[indices[0, y_0, ..., y_{K-1}],
+//         ...,
+//         indices[M-1, y_0, ..., y_{K-1}],
+//         x_M, ..., x_{N-1}] += data[y_0, ..., y_{K-1}, x_M, ..., x_{N-1}]
+//
+//all other entries in output are 0 or the original value if AddTo is triggered.
+//
+//Examples::
+//
+//  data = [2, 3, 0]
+//  indices = [[1, 1, 0], [0, 1, 0]]
+//  shape = (2, 2)
+//  _backward_gather_nd(data, indices, shape) = [[0, 0], [2, 3]] # Same as scatter_nd
+//
+//  # The difference between scatter_nd and scatter_nd_acc is the latter will accumulate
+//  #  the values that point to the same index.
+//
+//  data = [2, 3, 0]
+//  indices = [[1, 1, 0], [1, 1, 0]]
+//  shape = (2, 2)
+//  _backward_gather_nd(data, indices, shape) = [[0, 0], [0, 5]]
+//
+//)code")
+//.set_num_outputs(1)
+//.set_num_inputs(2)
+//.set_attr_parser(ParamParser<ScatterNDParam>)
+//.set_attr<nnvm::FListInputNames>("FListInputNames",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<std::string>{"data", "indices"};
+//  })
+//.set_attr<nnvm::FInferShape>("FInferShape", ScatterNDShape)
+//.set_attr<nnvm::FInferType>("FInferType", ScatterNDType)
+//.set_attr<FCompute>("FCompute<cpu>", GatherNDBackward<cpu>)
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    auto p = nnvm::Node::Create();
+//    p->attrs.op = nnvm::Op::Get("gather_nd");
+//    p->attrs.name = n->attrs.name + "_backward";
+//    p->inputs.push_back(ograds[0]);
+//    p->inputs.push_back(n->inputs[1]);
+//    p->control_deps.emplace_back(n);
+//    auto zero = MakeNode("zeros_like", n->attrs.name + "_backward_indices",
+//                         {n->inputs[1]}, nullptr, &n);
+//    std::vector<nnvm::NodeEntry> ret;
+//    ret.emplace_back(nnvm::NodeEntry{p, 0, 0});
+//    ret.emplace_back(nnvm::NodeEntry{zero, 0, 0});
+//    return ret;
+//  })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.add_argument("data", "NDArray-or-Symbol", "data")
+//.add_argument("indices", "NDArray-or-Symbol", "indices")
+//.add_arguments(ScatterNDParam::__FIELDS__());
 
 NNVM_REGISTER_OP(_scatter_set_nd)
 .describe(R"code(This operator has the same functionality as scatter_nd

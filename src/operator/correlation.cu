@@ -104,134 +104,134 @@ __global__ void CorrelateData(const int nthreads, int num, int topwidth,
     }  //  Aggregate result of  different threads
   }
 }
-//  == Correlation Backward Pass Kernel (For data1)
-template <typename Dtype>
-__global__ void CorrelateDataBackward0(const int nthreads, int num, int item,
-  int topwidth, int topheight, int topchannels,
-  int max_displacement, int neighborhood_grid_radius,
-  int neighborhood_grid_width, int kernel_radius, int stride1, int stride2,
-  int bottomwidth, int bottomheight, int pbottomwidth, int pbottomheight,
-  int bottomchannels, int bottomcount, int pad_size,
-  Dtype *bottom0diff, const Dtype *bottom1, const Dtype *topdiff) {
-  CUDA_KERNEL_LOOP(index, nthreads) {
-    int n = index % bottomchannels;  //  channels
-    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
-    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
-    //  Get X,Y ranges and clamp
-    //  round_off is a trick to enable integer division with ceil, even for negative numbers
-    //  We use a large offset, for the inner part not to become negative.
-    const int round_off = ROUND_OFF;
-    const int round_off_s1 = stride1 * round_off;
-    //  We add round_off before_s1 the int division and subtract round_off after it,
-    //  to ensure the formula matches ceil behavior:
-    int xmin = (l - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
-     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
-    int ymin = (m - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
-     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
-    //  Same here:
-    int xmax = (l - max_displacement + round_off_s1) / stride1 - round_off;
-    //  floor (l - max_displacement) / stride1
-    int ymax = (m - max_displacement + round_off_s1) / stride1 - round_off;
-    //  floor (m - max_displacement) / stride1
-    Dtype sum = 0;
-    if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth-1) && (ymin <= topheight-1)) {
-        xmin = max(0, xmin);
-        xmax = min(topwidth-1, xmax);
-        ymin = max(0, ymin);
-        ymax = min(topheight-1, ymax);
-        for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
-          for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
-            //  Get bottom1 data:
-            int s2o = stride2 * o;
-            int s2p = stride2 * p;
-            int idxbot1 = ((item * pbottomheight + (m + s2p)) * pbottomwidth + (l + s2o))\
-             * bottomchannels + n;
-            Dtype bot1tmp = bottom1[idxbot1];  // bottom1[l+s2o,m+s2p,n]
-            //  Index offset for topdiff in following loops:
-            int op = (p+neighborhood_grid_radius) * neighborhood_grid_width\
-             + (o + neighborhood_grid_radius);  //  index [o,p]
-            int idxopoffset = (item * topchannels + op);
-            for (int y = ymin; y <= ymax; y++) {
-              for (int x = xmin; x <= xmax; x++) {
-                int idxtopdiff = (idxopoffset * topheight + y) * topwidth + x;  //  topdiff[x,y,o,p]
-                sum += topdiff[idxtopdiff] * bot1tmp;
-              }
-            }
-          }
-        }
-    }
-    const int sumelems = (kernel_radius * 2 + 1) * (kernel_radius * 2+1) * bottomchannels;
-    const int bot0index = ((n * bottomheight) + (m-pad_size)) * bottomwidth + (l-pad_size);
-    bottom0diff[bot0index + item * bottomcount] = sum / static_cast<float>(sumelems);
-  }
-}
-// == Correlation Backward Pass Kernel (For Blob 1)
-template <typename Dtype>
-__global__ void CorrelateDataBackward1(const int nthreads,
-  int num, int item, int topwidth, int topheight, int topchannels,
-  int max_displacement, int neighborhood_grid_radius,
-  int neighborhood_grid_width, int kernel_radius, int stride1, int stride2,
-  int bottomwidth, int bottomheight, int pbottomwidth, int pbottomheight,
-  int bottomchannels, int bottomcount, int pad_size,
-  const Dtype *bottom0, Dtype *bottom1diff, const Dtype *topdiff) {
-  CUDA_KERNEL_LOOP(index, nthreads) {
-    //  int l = index % bottomwidth + pad_size; //w-pos
-    //  int m = (index / bottomwidth) % bottomheight + pad_size; //  h-pos
-    //  int n = (index / bottomwidth / bottomheight) % bottomchannels; //  channels
-    int n = index % bottomchannels;  //  channels
-    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
-    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
-    //  round_off is a trick to enable integer division with ceil, even for negative numbers
-    //  We use a large offset, for the inner part not to become negative.
-    const int round_off = ROUND_OFF;
-    const int round_off_s1 = stride1 * round_off;
-    Dtype sum = 0;
-    for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
-      for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
-        int s2o = stride2 * o;
-        int s2p = stride2 * p;
-        //  Get X,Y ranges and clamp
-        //  We add round_off before_s1 the int division and subtract round_off after it,
-        //  to ensure the formula matches ceil behavior:
-        int xmin = (l - 2*kernel_radius - max_displacement - s2o + round_off_s1 - 1)\
-         / stride1 + 1 - round_off;
-         // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
-        int ymin = (m - 2*kernel_radius - max_displacement - s2p + round_off_s1 - 1)\
-         / stride1 + 1 - round_off;
-        // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
-        //  Same here:
-        int xmax = (l - max_displacement - s2o + round_off_s1) / stride1 - round_off;
-        //  floor (l - max_displacement - s2o) / stride1
-        int ymax = (m - max_displacement - s2p + round_off_s1) / stride1 - round_off;
-        //  floor (m - max_displacement - s2p) / stride1
-        if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth - 1) && (ymin <= topheight - 1)) {
-            xmin = max(0, xmin);
-            xmax = min(topwidth-1, xmax);
-            ymin = max(0, ymin);
-            ymax = min(topheight-1, ymax);
-            //  Get bottom0 data:
-            int idxbot0 = ((item * pbottomheight + (m - s2p)) \
-            * pbottomwidth + (l - s2o)) * bottomchannels + n;
-            Dtype bot0tmp = bottom0[idxbot0];  //  bottom1[l+s2o,m+s2p,n]
-            //  Index offset for topdiff in following loops:
-            int op = (p+neighborhood_grid_radius) * \
-            neighborhood_grid_width + (o+neighborhood_grid_radius);  //  index [o,p]
-            int idxOpOffset = (item * topchannels + op);
-            for (int y = ymin; y <= ymax; y++) {
-              for (int x = xmin; x <= xmax; x++) {
-                int idxtopdiff = (idxOpOffset * topheight + y)\
-                 * topwidth + x;  //  topdiff[x,y,o,p]
-                sum += topdiff[idxtopdiff] * bot0tmp;
-              }
-            }
-        }
-      }
-    }
-    const int sumelems = (kernel_radius*2+1)*(kernel_radius*2+1)*bottomchannels;
-    const int bot1index = ((n * bottomheight) + (m - pad_size)) * bottomwidth + (l - pad_size);
-    bottom1diff[bot1index + item * bottomcount] = sum / static_cast<float>(sumelems);
-  }
-}
+////  == Correlation Backward Pass Kernel (For data1)
+//template <typename Dtype>
+//__global__ void CorrelateDataBackward0(const int nthreads, int num, int item,
+//  int topwidth, int topheight, int topchannels,
+//  int max_displacement, int neighborhood_grid_radius,
+//  int neighborhood_grid_width, int kernel_radius, int stride1, int stride2,
+//  int bottomwidth, int bottomheight, int pbottomwidth, int pbottomheight,
+//  int bottomchannels, int bottomcount, int pad_size,
+//  Dtype *bottom0diff, const Dtype *bottom1, const Dtype *topdiff) {
+//  CUDA_KERNEL_LOOP(index, nthreads) {
+//    int n = index % bottomchannels;  //  channels
+//    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
+//    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
+//    //  Get X,Y ranges and clamp
+//    //  round_off is a trick to enable integer division with ceil, even for negative numbers
+//    //  We use a large offset, for the inner part not to become negative.
+//    const int round_off = ROUND_OFF;
+//    const int round_off_s1 = stride1 * round_off;
+//    //  We add round_off before_s1 the int division and subtract round_off after it,
+//    //  to ensure the formula matches ceil behavior:
+//    int xmin = (l - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
+//     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
+//    int ymin = (m - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
+//     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
+//    //  Same here:
+//    int xmax = (l - max_displacement + round_off_s1) / stride1 - round_off;
+//    //  floor (l - max_displacement) / stride1
+//    int ymax = (m - max_displacement + round_off_s1) / stride1 - round_off;
+//    //  floor (m - max_displacement) / stride1
+//    Dtype sum = 0;
+//    if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth-1) && (ymin <= topheight-1)) {
+//        xmin = max(0, xmin);
+//        xmax = min(topwidth-1, xmax);
+//        ymin = max(0, ymin);
+//        ymax = min(topheight-1, ymax);
+//        for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
+//          for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
+//            //  Get bottom1 data:
+//            int s2o = stride2 * o;
+//            int s2p = stride2 * p;
+//            int idxbot1 = ((item * pbottomheight + (m + s2p)) * pbottomwidth + (l + s2o))\
+//             * bottomchannels + n;
+//            Dtype bot1tmp = bottom1[idxbot1];  // bottom1[l+s2o,m+s2p,n]
+//            //  Index offset for topdiff in following loops:
+//            int op = (p+neighborhood_grid_radius) * neighborhood_grid_width\
+//             + (o + neighborhood_grid_radius);  //  index [o,p]
+//            int idxopoffset = (item * topchannels + op);
+//            for (int y = ymin; y <= ymax; y++) {
+//              for (int x = xmin; x <= xmax; x++) {
+//                int idxtopdiff = (idxopoffset * topheight + y) * topwidth + x;  //  topdiff[x,y,o,p]
+//                sum += topdiff[idxtopdiff] * bot1tmp;
+//              }
+//            }
+//          }
+//        }
+//    }
+//    const int sumelems = (kernel_radius * 2 + 1) * (kernel_radius * 2+1) * bottomchannels;
+//    const int bot0index = ((n * bottomheight) + (m-pad_size)) * bottomwidth + (l-pad_size);
+//    bottom0diff[bot0index + item * bottomcount] = sum / static_cast<float>(sumelems);
+//  }
+//}
+//// == Correlation Backward Pass Kernel (For Blob 1)
+//template <typename Dtype>
+//__global__ void CorrelateDataBackward1(const int nthreads,
+//  int num, int item, int topwidth, int topheight, int topchannels,
+//  int max_displacement, int neighborhood_grid_radius,
+//  int neighborhood_grid_width, int kernel_radius, int stride1, int stride2,
+//  int bottomwidth, int bottomheight, int pbottomwidth, int pbottomheight,
+//  int bottomchannels, int bottomcount, int pad_size,
+//  const Dtype *bottom0, Dtype *bottom1diff, const Dtype *topdiff) {
+//  CUDA_KERNEL_LOOP(index, nthreads) {
+//    //  int l = index % bottomwidth + pad_size; //w-pos
+//    //  int m = (index / bottomwidth) % bottomheight + pad_size; //  h-pos
+//    //  int n = (index / bottomwidth / bottomheight) % bottomchannels; //  channels
+//    int n = index % bottomchannels;  //  channels
+//    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
+//    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
+//    //  round_off is a trick to enable integer division with ceil, even for negative numbers
+//    //  We use a large offset, for the inner part not to become negative.
+//    const int round_off = ROUND_OFF;
+//    const int round_off_s1 = stride1 * round_off;
+//    Dtype sum = 0;
+//    for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
+//      for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
+//        int s2o = stride2 * o;
+//        int s2p = stride2 * p;
+//        //  Get X,Y ranges and clamp
+//        //  We add round_off before_s1 the int division and subtract round_off after it,
+//        //  to ensure the formula matches ceil behavior:
+//        int xmin = (l - 2*kernel_radius - max_displacement - s2o + round_off_s1 - 1)\
+//         / stride1 + 1 - round_off;
+//         // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
+//        int ymin = (m - 2*kernel_radius - max_displacement - s2p + round_off_s1 - 1)\
+//         / stride1 + 1 - round_off;
+//        // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
+//        //  Same here:
+//        int xmax = (l - max_displacement - s2o + round_off_s1) / stride1 - round_off;
+//        //  floor (l - max_displacement - s2o) / stride1
+//        int ymax = (m - max_displacement - s2p + round_off_s1) / stride1 - round_off;
+//        //  floor (m - max_displacement - s2p) / stride1
+//        if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth - 1) && (ymin <= topheight - 1)) {
+//            xmin = max(0, xmin);
+//            xmax = min(topwidth-1, xmax);
+//            ymin = max(0, ymin);
+//            ymax = min(topheight-1, ymax);
+//            //  Get bottom0 data:
+//            int idxbot0 = ((item * pbottomheight + (m - s2p)) \
+//            * pbottomwidth + (l - s2o)) * bottomchannels + n;
+//            Dtype bot0tmp = bottom0[idxbot0];  //  bottom1[l+s2o,m+s2p,n]
+//            //  Index offset for topdiff in following loops:
+//            int op = (p+neighborhood_grid_radius) * \
+//            neighborhood_grid_width + (o+neighborhood_grid_radius);  //  index [o,p]
+//            int idxOpOffset = (item * topchannels + op);
+//            for (int y = ymin; y <= ymax; y++) {
+//              for (int x = xmin; x <= xmax; x++) {
+//                int idxtopdiff = (idxOpOffset * topheight + y)\
+//                 * topwidth + x;  //  topdiff[x,y,o,p]
+//                sum += topdiff[idxtopdiff] * bot0tmp;
+//              }
+//            }
+//        }
+//      }
+//    }
+//    const int sumelems = (kernel_radius*2+1)*(kernel_radius*2+1)*bottomchannels;
+//    const int bot1index = ((n * bottomheight) + (m - pad_size)) * bottomwidth + (l - pad_size);
+//    bottom1diff[bot1index + item * bottomcount] = sum / static_cast<float>(sumelems);
+//  }
+//}
 // == Correlation Kernel Subtraction
 template <typename Dtype>
 __global__ void CorrelateDataSubtract(const int nthreads, int num, int item,
@@ -272,145 +272,145 @@ __global__ void CorrelateDataSubtract(const int nthreads, int num, int item,
     top[index + item * topcount] = sum / static_cast<float>(sumelems);
   }
 }
-//  == Correlation Backward Pass Kernel (For Blob 0)
-template <typename Dtype>
-__global__ void CorrelateDataBackward0Subtract(const int nthreads, int num,
-  int item, int topwidth, int topheight, int topchannels,
-  int max_displacement, int neighborhood_grid_radius,
-  int neighborhood_grid_width, int kernel_radius,
-  int stride1, int stride2, int bottomwidth, int bottomheight,
-  int pbottomwidth, int pbottomheight,
-  int bottomchannels, int bottomcount, int pad_size,
-  Dtype *bottom0diff, const Dtype *bottom0, const Dtype *bottom1, const Dtype *topdiff) {
-  CUDA_KERNEL_LOOP(index, nthreads) {
-    int n = index % bottomchannels;  //  channels
-    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
-    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
-    //  Get X,Y ranges and clamp
-    //  round_off is a trick to enable integer division with ceil, even for negative numbers
-    //  We use a large offset, for the inner part not to become negative.
-    const int round_off = ROUND_OFF;
-    const int round_off_s1 = stride1 * round_off;
-    int idxbot0 = ((item * pbottomheight + m) * pbottomwidth + l)\
-             * bottomchannels + n;
-    //  We add round_off before_s1 the int division and subtract round_off after it,
-    //  to ensure the formula matches ceil behavior:
-    int xmin = (l - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
-     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
-    int ymin = (m - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
-     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
-    //  Same here:
-    int xmax = (l - max_displacement + round_off_s1) / stride1 - round_off;
-    //  floor (l - max_displacement) / stride1
-    int ymax = (m - max_displacement + round_off_s1) / stride1 - round_off;
-    //  floor (m - max_displacement) / stride1
-    Dtype sum = 0;
-    if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth-1) && (ymin <= topheight-1)) {
-        xmin = max(0, xmin);
-        xmax = min(topwidth-1, xmax);
-        ymin = max(0, ymin);
-        ymax = min(topheight-1, ymax);
-        for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
-          for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
-            //  Get bottom1 data:
-            int s2o = stride2 * o;
-            int s2p = stride2 * p;
-            int idxbot1 = ((item * pbottomheight + (m+s2p)) * pbottomwidth\
-             + (l+s2o)) * bottomchannels + n;
-            Dtype bot0tmp = bottom0[idxbot0];
-            Dtype bot1tmp = bottom1[idxbot1];
-            Dtype sign = (bot0tmp >= bot1tmp) ? Dtype(1.0) : Dtype(-1.0);
-            //  Index offset for topdiff in following loops:
-            int op = (p+neighborhood_grid_radius) * neighborhood_grid_width\
-             + (o + neighborhood_grid_radius);  //  index [o,p]
-            int idxopoffset = (item * topchannels + op);
-            for (int y = ymin; y <= ymax; y++) {
-              for (int x = xmin; x <= xmax; x++) {
-                int idxtopdiff = (idxopoffset * topheight + y) * topwidth + x;  //  topdiff[x,y,o,p]
-                sum += topdiff[idxtopdiff] * sign;
-              }
-            }
-          }
-        }
-    }
-    const int sumelems = (kernel_radius * 2 + 1) * (kernel_radius * 2+1) * bottomchannels;
-    const int bot0index = ((n * bottomheight) + (m-pad_size)) * bottomwidth + (l-pad_size);
-    bottom0diff[bot0index + item * bottomcount] = sum / static_cast<float>(sumelems);
-  }
-}
-//  == Correlation Backward Pass Kernel (For Blob 1)
-template <typename Dtype>
-__global__ void CorrelateDataBackward1Subtract(const int nthreads, int num,
-  int item, int topwidth, int topheight, int topchannels,
-  int max_displacement, int neighborhood_grid_radius,
-  int neighborhood_grid_width, int kernel_radius,
-  int stride1, int stride2, int bottomwidth, int bottomheight,
-  int pbottomwidth, int pbottomheight, int bottomchannels,
-  int bottomcount, int pad_size, const Dtype *bottom0,
-  const Dtype *bottom1, Dtype *bottom1diff, const Dtype *topdiff) {
-    CUDA_KERNEL_LOOP(index, nthreads) {
-    //  int l = index % bottomwidth + pad_size; //w-pos
-    //  int m = (index / bottomwidth) % bottomheight + pad_size; //  h-pos
-    //  int n = (index / bottomwidth / bottomheight) % bottomchannels; //  channels
-    int n = index % bottomchannels;  //  channels
-    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
-    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
-    //  round_off is a trick to enable integer division with ceil, even for negative numbers
-    //  We use a large offset, for the inner part not to become negative.
-    const int round_off = ROUND_OFF;
-    const int round_off_s1 = stride1 * round_off;
-    Dtype sum = 0;
-    int idxbot1 = ((item * pbottomheight + m) * pbottomwidth + l)\
-             * bottomchannels + n;
-    for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
-      for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
-        int s2o = stride2 * o;
-        int s2p = stride2 * p;
-        //  Get X,Y ranges and clamp
-        //  We add round_off before_s1 the int division and subtract round_off after it,
-        //  to ensure the formula matches ceil behavior:
-        int xmin = (l - 2*kernel_radius - max_displacement - s2o + round_off_s1 - 1)\
-         / stride1 + 1 - round_off;
-         // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
-        int ymin = (m - 2*kernel_radius - max_displacement - s2p + round_off_s1 - 1)\
-         / stride1 + 1 - round_off;
-        // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
-        //  Same here:
-        int xmax = (l - max_displacement - s2o + round_off_s1) / stride1 - round_off;
-        //  floor (l - max_displacement - s2o) / stride1
-        int ymax = (m - max_displacement - s2p + round_off_s1) / stride1 - round_off;
-        //  floor (m - max_displacement - s2p) / stride1
-        if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth - 1) && (ymin <= topheight - 1)) {
-            xmin = max(0, xmin);
-            xmax = min(topwidth-1, xmax);
-            ymin = max(0, ymin);
-            ymax = min(topheight-1, ymax);
-            //  Get bottom0 data:
-            int idxbot0 = ((item * pbottomheight + (m - s2p)) * pbottomwidth + (l - s2o))\
-             * bottomchannels + n;
-            //  bottom0[l+s2o,m+s2p,n]
-            Dtype bot0tmp = bottom0[idxbot0];
-            Dtype bot1tmp = bottom1[idxbot1];
-            Dtype sign = (bot0tmp >= bot1tmp) ? Dtype(-1.0) : Dtype(1.0);
-            //  Index offset for topdiff in following loops:
-            int op = (p+neighborhood_grid_radius) * \
-            neighborhood_grid_width + (o+neighborhood_grid_radius);  //  index [o,p]
-            int idxOpOffset = (item * topchannels + op);
-            for (int y = ymin; y <= ymax; y++) {
-              for (int x = xmin; x <= xmax; x++) {
-                int idxtopdiff = (idxOpOffset * topheight + y)\
-                 * topwidth + x;  //  topdiff[x,y,o,p]
-                sum += topdiff[idxtopdiff] * sign;
-              }
-            }
-        }
-      }
-    }
-    const int sumelems = (kernel_radius*2+1)*(kernel_radius*2+1)*bottomchannels;
-    const int bot1index = ((n * bottomheight) + (m - pad_size)) * bottomwidth + (l - pad_size);
-    bottom1diff[bot1index + item * bottomcount] = sum / static_cast<float>(sumelems);
-  }
-}
+////  == Correlation Backward Pass Kernel (For Blob 0)
+//template <typename Dtype>
+//__global__ void CorrelateDataBackward0Subtract(const int nthreads, int num,
+//  int item, int topwidth, int topheight, int topchannels,
+//  int max_displacement, int neighborhood_grid_radius,
+//  int neighborhood_grid_width, int kernel_radius,
+//  int stride1, int stride2, int bottomwidth, int bottomheight,
+//  int pbottomwidth, int pbottomheight,
+//  int bottomchannels, int bottomcount, int pad_size,
+//  Dtype *bottom0diff, const Dtype *bottom0, const Dtype *bottom1, const Dtype *topdiff) {
+//  CUDA_KERNEL_LOOP(index, nthreads) {
+//    int n = index % bottomchannels;  //  channels
+//    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
+//    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
+//    //  Get X,Y ranges and clamp
+//    //  round_off is a trick to enable integer division with ceil, even for negative numbers
+//    //  We use a large offset, for the inner part not to become negative.
+//    const int round_off = ROUND_OFF;
+//    const int round_off_s1 = stride1 * round_off;
+//    int idxbot0 = ((item * pbottomheight + m) * pbottomwidth + l)\
+//             * bottomchannels + n;
+//    //  We add round_off before_s1 the int division and subtract round_off after it,
+//    //  to ensure the formula matches ceil behavior:
+//    int xmin = (l - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
+//     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
+//    int ymin = (m - 2*kernel_radius - max_displacement + round_off_s1 - 1)\
+//     / stride1 + 1 - round_off;  //  ceil (l - 2*kernel_radius - max_displacement) / stride1
+//    //  Same here:
+//    int xmax = (l - max_displacement + round_off_s1) / stride1 - round_off;
+//    //  floor (l - max_displacement) / stride1
+//    int ymax = (m - max_displacement + round_off_s1) / stride1 - round_off;
+//    //  floor (m - max_displacement) / stride1
+//    Dtype sum = 0;
+//    if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth-1) && (ymin <= topheight-1)) {
+//        xmin = max(0, xmin);
+//        xmax = min(topwidth-1, xmax);
+//        ymin = max(0, ymin);
+//        ymax = min(topheight-1, ymax);
+//        for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
+//          for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
+//            //  Get bottom1 data:
+//            int s2o = stride2 * o;
+//            int s2p = stride2 * p;
+//            int idxbot1 = ((item * pbottomheight + (m+s2p)) * pbottomwidth\
+//             + (l+s2o)) * bottomchannels + n;
+//            Dtype bot0tmp = bottom0[idxbot0];
+//            Dtype bot1tmp = bottom1[idxbot1];
+//            Dtype sign = (bot0tmp >= bot1tmp) ? Dtype(1.0) : Dtype(-1.0);
+//            //  Index offset for topdiff in following loops:
+//            int op = (p+neighborhood_grid_radius) * neighborhood_grid_width\
+//             + (o + neighborhood_grid_radius);  //  index [o,p]
+//            int idxopoffset = (item * topchannels + op);
+//            for (int y = ymin; y <= ymax; y++) {
+//              for (int x = xmin; x <= xmax; x++) {
+//                int idxtopdiff = (idxopoffset * topheight + y) * topwidth + x;  //  topdiff[x,y,o,p]
+//                sum += topdiff[idxtopdiff] * sign;
+//              }
+//            }
+//          }
+//        }
+//    }
+//    const int sumelems = (kernel_radius * 2 + 1) * (kernel_radius * 2+1) * bottomchannels;
+//    const int bot0index = ((n * bottomheight) + (m-pad_size)) * bottomwidth + (l-pad_size);
+//    bottom0diff[bot0index + item * bottomcount] = sum / static_cast<float>(sumelems);
+//  }
+//}
+////  == Correlation Backward Pass Kernel (For Blob 1)
+//template <typename Dtype>
+//__global__ void CorrelateDataBackward1Subtract(const int nthreads, int num,
+//  int item, int topwidth, int topheight, int topchannels,
+//  int max_displacement, int neighborhood_grid_radius,
+//  int neighborhood_grid_width, int kernel_radius,
+//  int stride1, int stride2, int bottomwidth, int bottomheight,
+//  int pbottomwidth, int pbottomheight, int bottomchannels,
+//  int bottomcount, int pad_size, const Dtype *bottom0,
+//  const Dtype *bottom1, Dtype *bottom1diff, const Dtype *topdiff) {
+//    CUDA_KERNEL_LOOP(index, nthreads) {
+//    //  int l = index % bottomwidth + pad_size; //w-pos
+//    //  int m = (index / bottomwidth) % bottomheight + pad_size; //  h-pos
+//    //  int n = (index / bottomwidth / bottomheight) % bottomchannels; //  channels
+//    int n = index % bottomchannels;  //  channels
+//    int l = (index / bottomchannels) % bottomwidth + pad_size;  //  w-pos
+//    int m = (index / bottomchannels / bottomwidth) % bottomheight + pad_size;  //  h-pos
+//    //  round_off is a trick to enable integer division with ceil, even for negative numbers
+//    //  We use a large offset, for the inner part not to become negative.
+//    const int round_off = ROUND_OFF;
+//    const int round_off_s1 = stride1 * round_off;
+//    Dtype sum = 0;
+//    int idxbot1 = ((item * pbottomheight + m) * pbottomwidth + l)\
+//             * bottomchannels + n;
+//    for (int p = -neighborhood_grid_radius; p <= neighborhood_grid_radius; p++) {
+//      for (int o = -neighborhood_grid_radius; o <= neighborhood_grid_radius; o++) {
+//        int s2o = stride2 * o;
+//        int s2p = stride2 * p;
+//        //  Get X,Y ranges and clamp
+//        //  We add round_off before_s1 the int division and subtract round_off after it,
+//        //  to ensure the formula matches ceil behavior:
+//        int xmin = (l - 2*kernel_radius - max_displacement - s2o + round_off_s1 - 1)\
+//         / stride1 + 1 - round_off;
+//         // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
+//        int ymin = (m - 2*kernel_radius - max_displacement - s2p + round_off_s1 - 1)\
+//         / stride1 + 1 - round_off;
+//        // ceil (l - 2*kernel_radius - max_displacement - s2o) / stride1
+//        //  Same here:
+//        int xmax = (l - max_displacement - s2o + round_off_s1) / stride1 - round_off;
+//        //  floor (l - max_displacement - s2o) / stride1
+//        int ymax = (m - max_displacement - s2p + round_off_s1) / stride1 - round_off;
+//        //  floor (m - max_displacement - s2p) / stride1
+//        if (xmax >= 0 && ymax >= 0 && (xmin <= topwidth - 1) && (ymin <= topheight - 1)) {
+//            xmin = max(0, xmin);
+//            xmax = min(topwidth-1, xmax);
+//            ymin = max(0, ymin);
+//            ymax = min(topheight-1, ymax);
+//            //  Get bottom0 data:
+//            int idxbot0 = ((item * pbottomheight + (m - s2p)) * pbottomwidth + (l - s2o))\
+//             * bottomchannels + n;
+//            //  bottom0[l+s2o,m+s2p,n]
+//            Dtype bot0tmp = bottom0[idxbot0];
+//            Dtype bot1tmp = bottom1[idxbot1];
+//            Dtype sign = (bot0tmp >= bot1tmp) ? Dtype(-1.0) : Dtype(1.0);
+//            //  Index offset for topdiff in following loops:
+//            int op = (p+neighborhood_grid_radius) * \
+//            neighborhood_grid_width + (o+neighborhood_grid_radius);  //  index [o,p]
+//            int idxOpOffset = (item * topchannels + op);
+//            for (int y = ymin; y <= ymax; y++) {
+//              for (int x = xmin; x <= xmax; x++) {
+//                int idxtopdiff = (idxOpOffset * topheight + y)\
+//                 * topwidth + x;  //  topdiff[x,y,o,p]
+//                sum += topdiff[idxtopdiff] * sign;
+//              }
+//            }
+//        }
+//      }
+//    }
+//    const int sumelems = (kernel_radius*2+1)*(kernel_radius*2+1)*bottomchannels;
+//    const int bot1index = ((n * bottomheight) + (m - pad_size)) * bottomwidth + (l - pad_size);
+//    bottom1diff[bot1index + item * bottomcount] = sum / static_cast<float>(sumelems);
+//  }
+//}
 //  == Forward
 //  == Dimension rearrangement Kernel
 template <typename Dtype>
@@ -495,85 +495,85 @@ void Forward_gpu(
         }
     }
 }
-template <typename Dtype>
-void Backward_gpu(
-       const Tensor<gpu, 4, Dtype> &out_grad,
-      const Tensor<gpu, 4, Dtype> &in_grad1,
-      const Tensor<gpu, 4, Dtype> &in_grad2,
-      const Tensor<gpu, 4, Dtype> &tmp1,
-      const Tensor<gpu, 4, Dtype> &tmp2,
-      int top_channels_, int top_height_,
-      int top_width_, int pad_size_, bool is_multiply,
-      int max_displacement_, int kernel_size_,
-      int neighborhood_grid_radius_, int neighborhood_grid_width_,
-      int  kernel_radius_, int stride1_, int stride2_,
-      cudaStream_t stream0, cudaStream_t stream1,
-      int num, int channels, int height, int width) {
-    //  Get top diff, compute bottom diff
-    const Dtype* top_diff = out_grad.dptr_;
-    Dtype* bottom0_diff = in_grad1.dptr_;
-    Dtype* bottom1_diff = in_grad2.dptr_;
-    const Dtype* rbot1 = tmp1.dptr_;
-    const Dtype* rbot2 = tmp2.dptr_;
-    const int paddedheight = height + 2 * pad_size_;
-    const int paddedwidth = width + 2 * pad_size_;
-    const int bottomcount = channels * height * width;
-    int botThreadCount = bottomcount;
-    const int gridSize = (botThreadCount + kMaxThreadsPerBlock - 1) / kMaxThreadsPerBlock;
-    //  CorrelationLayerBackward
-    if (is_multiply == true) {
-        //  == Run kernel Backward 0
-        dim3 totalBlocksBackward0(width, height, channels * num);  //  First dim is fastest
-        const int buffer_size_backw0 = \
-        (static_cast<int>(ceil(static_cast<float>(2 * kernel_radius_)\
-         / static_cast<float>(stride1_))) + 1) * top_channels_;
-        //  == Run kernel Backward 0
-        for (int n = 0; n < num; n++) {
-        CorrelateDataBackward0<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream0>>>(
-            botThreadCount,
-            num, n, top_width_, top_height_, top_channels_,
-            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
-            stride1_, stride2_,
-            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
-            bottom0_diff, rbot2, top_diff);
-        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
-        }
-        //  == Run kernel Backward 1
-        for (int n = 0; n < num; n++) {
-        CorrelateDataBackward1<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream1>>>(
-            botThreadCount,
-            num, n, top_width_, top_height_, top_channels_,
-            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
-            stride1_, stride2_,
-            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
-            rbot1, bottom1_diff, top_diff);
-       CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
-        }
-    } else  {
-        for (int n = 0; n < num; n++) {
-        //  Bottom0:
-        CorrelateDataBackward0Subtract<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream0>>>(
-            botThreadCount,
-            num, n, top_width_, top_height_, top_channels_,
-            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
-            stride1_, stride2_,
-            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
-            bottom0_diff, rbot1, rbot2, top_diff);
-        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
-        }
-        for (int n = 0; n < num; n++) {
-        //  Bottom1:
-        CorrelateDataBackward1Subtract<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream1>>>(
-            botThreadCount,
-            num, n, top_width_, top_height_, top_channels_,
-            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
-            stride1_, stride2_,
-            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
-            rbot1, rbot2, bottom1_diff, top_diff);
-        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
-        }
-    }
-}
+//template <typename Dtype>
+//void Backward_gpu(
+//       const Tensor<gpu, 4, Dtype> &out_grad,
+//      const Tensor<gpu, 4, Dtype> &in_grad1,
+//      const Tensor<gpu, 4, Dtype> &in_grad2,
+//      const Tensor<gpu, 4, Dtype> &tmp1,
+//      const Tensor<gpu, 4, Dtype> &tmp2,
+//      int top_channels_, int top_height_,
+//      int top_width_, int pad_size_, bool is_multiply,
+//      int max_displacement_, int kernel_size_,
+//      int neighborhood_grid_radius_, int neighborhood_grid_width_,
+//      int  kernel_radius_, int stride1_, int stride2_,
+//      cudaStream_t stream0, cudaStream_t stream1,
+//      int num, int channels, int height, int width) {
+//    //  Get top diff, compute bottom diff
+//    const Dtype* top_diff = out_grad.dptr_;
+//    Dtype* bottom0_diff = in_grad1.dptr_;
+//    Dtype* bottom1_diff = in_grad2.dptr_;
+//    const Dtype* rbot1 = tmp1.dptr_;
+//    const Dtype* rbot2 = tmp2.dptr_;
+//    const int paddedheight = height + 2 * pad_size_;
+//    const int paddedwidth = width + 2 * pad_size_;
+//    const int bottomcount = channels * height * width;
+//    int botThreadCount = bottomcount;
+//    const int gridSize = (botThreadCount + kMaxThreadsPerBlock - 1) / kMaxThreadsPerBlock;
+//    //  CorrelationLayerBackward
+//    if (is_multiply == true) {
+//        //  == Run kernel Backward 0
+//        dim3 totalBlocksBackward0(width, height, channels * num);  //  First dim is fastest
+//        const int buffer_size_backw0 = \
+//        (static_cast<int>(ceil(static_cast<float>(2 * kernel_radius_)\
+//         / static_cast<float>(stride1_))) + 1) * top_channels_;
+//        //  == Run kernel Backward 0
+//        for (int n = 0; n < num; n++) {
+//        CorrelateDataBackward0<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream0>>>(
+//            botThreadCount,
+//            num, n, top_width_, top_height_, top_channels_,
+//            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
+//            stride1_, stride2_,
+//            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
+//            bottom0_diff, rbot2, top_diff);
+//        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
+//        }
+//        //  == Run kernel Backward 1
+//        for (int n = 0; n < num; n++) {
+//        CorrelateDataBackward1<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream1>>>(
+//            botThreadCount,
+//            num, n, top_width_, top_height_, top_channels_,
+//            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
+//            stride1_, stride2_,
+//            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
+//            rbot1, bottom1_diff, top_diff);
+//       CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
+//        }
+//    } else  {
+//        for (int n = 0; n < num; n++) {
+//        //  Bottom0:
+//        CorrelateDataBackward0Subtract<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream0>>>(
+//            botThreadCount,
+//            num, n, top_width_, top_height_, top_channels_,
+//            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
+//            stride1_, stride2_,
+//            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
+//            bottom0_diff, rbot1, rbot2, top_diff);
+//        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
+//        }
+//        for (int n = 0; n < num; n++) {
+//        //  Bottom1:
+//        CorrelateDataBackward1Subtract<Dtype><<<gridSize, kMaxThreadsPerBlock, 0, stream1>>>(
+//            botThreadCount,
+//            num, n, top_width_, top_height_, top_channels_,
+//            max_displacement_, neighborhood_grid_radius_, neighborhood_grid_width_, kernel_radius_,
+//            stride1_, stride2_,
+//            width, height, paddedwidth, paddedheight, channels, bottomcount, pad_size_,
+//            rbot1, rbot2, bottom1_diff, top_diff);
+//        CORRELATION_CUDA_CHECK(cudaPeekAtLastError());
+//        }
+//    }
+//}
 }  // namespace cuda
 template<typename Dtype>
 inline void CorrelationForward(const Tensor<gpu, 4, Dtype> &out,
@@ -596,27 +596,27 @@ inline void CorrelationForward(const Tensor<gpu, 4, Dtype> &out,
                     stride1_, stride2_, stream, stream_tmp1, stream_tmp2);
 }
 
-template<typename Dtype>
-inline void CorrelationBackward(const Tensor<gpu, 4, Dtype> &out_grad,
-                            const Tensor<gpu, 4, Dtype> &in_grad1,
-                            const Tensor<gpu, 4, Dtype> &in_grad2,
-                            const Tensor<gpu, 4, Dtype> &tmp1,
-                            const Tensor<gpu, 4, Dtype> &tmp2,
-                            int top_channels_, int top_height_,
-                            int top_width_, int pad_size_, bool is_multiply,
-                            int max_displacement_, int kernel_size_,
-                            int neighborhood_grid_radius_, int neighborhood_grid_width_,
-                            int  kernel_radius_, int stride1_,
-                            int stride2_, int num, int channels, int height, int width
-                            ) {
-  cudaStream_t stream0 = Stream<gpu>::GetStream(in_grad1.stream_);
-  cudaStream_t stream1 = Stream<gpu>::GetStream(in_grad2.stream_);
-  cuda::Backward_gpu(out_grad, in_grad1, in_grad2, tmp1, tmp2, top_channels_,
-                      top_height_, top_width_, pad_size_, is_multiply,
-                      max_displacement_, kernel_size_, neighborhood_grid_radius_,
-                      neighborhood_grid_width_, kernel_radius_, stride1_, stride2_,
-                      stream0, stream1, num, channels, height, width);
-}
+//template<typename Dtype>
+//inline void CorrelationBackward(const Tensor<gpu, 4, Dtype> &out_grad,
+//                            const Tensor<gpu, 4, Dtype> &in_grad1,
+//                            const Tensor<gpu, 4, Dtype> &in_grad2,
+//                            const Tensor<gpu, 4, Dtype> &tmp1,
+//                            const Tensor<gpu, 4, Dtype> &tmp2,
+//                            int top_channels_, int top_height_,
+//                            int top_width_, int pad_size_, bool is_multiply,
+//                            int max_displacement_, int kernel_size_,
+//                            int neighborhood_grid_radius_, int neighborhood_grid_width_,
+//                            int  kernel_radius_, int stride1_,
+//                            int stride2_, int num, int channels, int height, int width
+//                            ) {
+//  cudaStream_t stream0 = Stream<gpu>::GetStream(in_grad1.stream_);
+//  cudaStream_t stream1 = Stream<gpu>::GetStream(in_grad2.stream_);
+//  cuda::Backward_gpu(out_grad, in_grad1, in_grad2, tmp1, tmp2, top_channels_,
+//                      top_height_, top_width_, pad_size_, is_multiply,
+//                      max_displacement_, kernel_size_, neighborhood_grid_radius_,
+//                      neighborhood_grid_width_, kernel_radius_, stride1_, stride2_,
+//                      stream0, stream1, num, channels, height, width);
+//}
 }  // namespace mshadow
 namespace mxnet {
 namespace op {

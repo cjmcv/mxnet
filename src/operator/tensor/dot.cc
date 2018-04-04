@@ -76,24 +76,24 @@ The storage type of ``dot`` output depends on storage types of inputs and transp
   })
 .set_attr<FCompute>("FCompute<cpu>", DotForward_<cpu>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", DotForwardEx<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_dot"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_dot"})
 .add_argument("lhs", "NDArray-or-Symbol", "The first input")
 .add_argument("rhs", "NDArray-or-Symbol", "The second input")
 .add_arguments(DotParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_dot)
-.set_num_inputs(3)
-.set_num_outputs(2)
-.set_attr_parser(ParamParser<DotParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FInferStorageType>("FInferStorageType", DotBackwardInferStorageType)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<FCompute>("FCompute<cpu>", DotBackward_<cpu>)
-.set_attr<FComputeEx>("FComputeEx<cpu>", DotBackwardEx<cpu>)
-.add_arguments(DotParam::__FIELDS__());
+//NNVM_REGISTER_OP(_backward_dot)
+//.set_num_inputs(3)
+//.set_num_outputs(2)
+//.set_attr_parser(ParamParser<DotParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FInferStorageType>("FInferStorageType", DotBackwardInferStorageType)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  })
+//.set_attr<FCompute>("FCompute<cpu>", DotBackward_<cpu>)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", DotBackwardEx<cpu>)
+//.add_arguments(DotParam::__FIELDS__());
 
 NNVM_REGISTER_OP(batch_dot)
 .describe(R"doc(Batchwise dot product.
@@ -122,21 +122,21 @@ which is computed by::
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
   })
 .set_attr<FCompute>("FCompute<cpu>", BatchDotForward_<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_batch_dot"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_batch_dot"})
 .add_argument("lhs", "NDArray-or-Symbol", "The first input")
 .add_argument("rhs", "NDArray-or-Symbol", "The second input")
 .add_arguments(DotParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_batch_dot)
-.set_num_inputs(3)
-.set_num_outputs(2)
-.set_attr_parser(ParamParser<DotParam>)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", BatchDotBackward_<cpu>);
+//NNVM_REGISTER_OP(_backward_batch_dot)
+//.set_num_inputs(3)
+//.set_num_outputs(2)
+//.set_attr_parser(ParamParser<DotParam>)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", BatchDotBackward_<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

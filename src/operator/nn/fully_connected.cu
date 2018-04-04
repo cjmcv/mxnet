@@ -43,32 +43,32 @@ void FullyConnectedCompute<gpu>(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<>
-void FullyConnectedGradCompute<gpu>(const nnvm::NodeAttrs& attrs,
-                                    const OpContext& ctx,
-                                    const std::vector<TBlob>& inputs,
-                                    const std::vector<OpReqType>& req,
-                                    const std::vector<TBlob>& outputs) {
-  const FullyConnectedParam& param = nnvm::get<FullyConnectedParam>(attrs.parsed);
-  uint32_t out_expected = param.no_bias ? 2 : 3;
-  CHECK_EQ(inputs.size(), 3U);
-  CHECK_EQ(outputs.size(), out_expected);
-  CHECK_EQ(req.size(), out_expected);
-
-  std::vector<TBlob> out_grad{inputs[0]};
-  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
-  int dtype = inputs[0].type_flag_;
-
-  MSHADOW_REAL_TYPE_SWITCH(dtype, DType, {
-    FCBackward<gpu, DType>(ctx, param, out_grad, in_data, req, outputs);
-  });
-}
+//template<>
+//void FullyConnectedGradCompute<gpu>(const nnvm::NodeAttrs& attrs,
+//                                    const OpContext& ctx,
+//                                    const std::vector<TBlob>& inputs,
+//                                    const std::vector<OpReqType>& req,
+//                                    const std::vector<TBlob>& outputs) {
+//  const FullyConnectedParam& param = nnvm::get<FullyConnectedParam>(attrs.parsed);
+//  uint32_t out_expected = param.no_bias ? 2 : 3;
+//  CHECK_EQ(inputs.size(), 3U);
+//  CHECK_EQ(outputs.size(), out_expected);
+//  CHECK_EQ(req.size(), out_expected);
+//
+//  std::vector<TBlob> out_grad{inputs[0]};
+//  std::vector<TBlob> in_data(inputs.begin() + 1, inputs.end());
+//  int dtype = inputs[0].type_flag_;
+//
+//  MSHADOW_REAL_TYPE_SWITCH(dtype, DType, {
+//    FCBackward<gpu, DType>(ctx, param, out_grad, in_data, req, outputs);
+//  });
+//}
 
 NNVM_REGISTER_OP(FullyConnected)
 .set_attr<FCompute>("FCompute<gpu>", FullyConnectedCompute<gpu>);
 
-NNVM_REGISTER_OP(_backward_FullyConnected)
-.set_attr<FCompute>("FCompute<gpu>", FullyConnectedGradCompute<gpu>);
+//NNVM_REGISTER_OP(_backward_FullyConnected)
+//.set_attr<FCompute>("FCompute<gpu>", FullyConnectedGradCompute<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

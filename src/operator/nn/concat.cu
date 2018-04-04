@@ -32,8 +32,8 @@ namespace op {
 NNVM_REGISTER_OP(Concat)
 .set_attr<FCompute>("FCompute<gpu>", ConcatCompute<gpu>);
 
-NNVM_REGISTER_OP(_backward_Concat)
-.set_attr<FCompute>("FCompute<gpu>", ConcatGradCompute<gpu>);
+//NNVM_REGISTER_OP(_backward_Concat)
+//.set_attr<FCompute>("FCompute<gpu>", ConcatGradCompute<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

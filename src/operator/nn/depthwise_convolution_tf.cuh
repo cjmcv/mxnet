@@ -325,64 +325,64 @@ __global__ __launch_bounds__(1024, 2) void DepthwiseConv2dKernelSmall(
   }
 }
 
-template<typename DType>
-__global__ void __launch_bounds__(640, 2)
-DepthwiseConv2dBackwardDataKernel(const DepthwiseArgs args,
-                                  const DType* out_grad,
-                                  const DType* filter, DType* in_grad,
-                                  int num_in_grad) {
-  const int channel = args.in_channel;
-  const int in_height = args.in_height;
-  const int in_width = args.in_width;
-  const int filter_height = args.filter_height;
-  const int filter_width = args.filter_width;
-  const int stride_height = args.stride_height;
-  const int stride_width = args.stride_width;
-  const int pad_height = args.pad_height;
-  const int pad_width = args.pad_width;
-  const int out_height = args.out_height;
-  const int out_width = args.out_width;
-
-  const int in_pixels = in_height * in_width;
-  const int out_pixels = out_height * out_width;
-
-  CUDA_KERNEL_LOOP(thread_id, num_in_grad) {
-    // Compute the indexes of this thread in the input.
-    const int in_w = thread_id % in_width;
-    const int in_h = (thread_id / in_width) % in_height;
-    const int channel_idx = (thread_id / in_width / in_height) % channel;
-    const int batch_idx = thread_id / channel / in_width / in_height;
-    DType sum = 0.0f;
-
-    const int out_h_start = mxnet::common::cuda::CudaMax<int>(
-        0, (in_h - filter_height + pad_height + stride_height) / stride_height);
-    const int out_h_end = mxnet::common::cuda::CudaMin(
-        out_height - 1, (in_h + pad_height) / stride_height);
-    const int out_w_start = mxnet::common::cuda::CudaMax<int>(
-            0, (in_w - filter_width + pad_width + stride_width) / stride_width);
-    const int out_w_end = mxnet::common::cuda::CudaMin(
-        out_width - 1, (in_w + pad_width) / stride_width);
-
-    const int filter_offset_temp = channel_idx * filter_height * filter_width;
-    const int out_grad_offset_temp = (batch_idx * channel * out_pixels) +
-        (channel_idx * out_pixels);
-
-    for (int out_h = out_h_start; out_h <= out_h_end; ++out_h) {
-      const int f_h = in_h + pad_height - out_h * stride_height;
-      const int filter_offset_h = filter_offset_temp + f_h * filter_width;
-      const int out_grad_offset_h = out_grad_offset_temp + out_h * out_width;
-      for (int out_w = out_w_start; out_w <= out_w_end; ++out_w) {
-        const int f_w = in_w + pad_width - out_w * stride_width;
-        const int filter_offset = filter_offset_h + f_w;
-        const int out_grad_offset = out_grad_offset_h + out_w;
-        sum += ldg(out_grad + out_grad_offset) * ldg(filter + filter_offset);
-      }
-    }
-    const int in_grad_offset = (batch_idx * channel * in_pixels) +
-        (channel_idx * in_pixels) + (in_h * in_width) + (in_w);
-    in_grad[in_grad_offset] += sum;
-  }
-}
+//template<typename DType>
+//__global__ void __launch_bounds__(640, 2)
+//DepthwiseConv2dBackwardDataKernel(const DepthwiseArgs args,
+//                                  const DType* out_grad,
+//                                  const DType* filter, DType* in_grad,
+//                                  int num_in_grad) {
+//  const int channel = args.in_channel;
+//  const int in_height = args.in_height;
+//  const int in_width = args.in_width;
+//  const int filter_height = args.filter_height;
+//  const int filter_width = args.filter_width;
+//  const int stride_height = args.stride_height;
+//  const int stride_width = args.stride_width;
+//  const int pad_height = args.pad_height;
+//  const int pad_width = args.pad_width;
+//  const int out_height = args.out_height;
+//  const int out_width = args.out_width;
+//
+//  const int in_pixels = in_height * in_width;
+//  const int out_pixels = out_height * out_width;
+//
+//  CUDA_KERNEL_LOOP(thread_id, num_in_grad) {
+//    // Compute the indexes of this thread in the input.
+//    const int in_w = thread_id % in_width;
+//    const int in_h = (thread_id / in_width) % in_height;
+//    const int channel_idx = (thread_id / in_width / in_height) % channel;
+//    const int batch_idx = thread_id / channel / in_width / in_height;
+//    DType sum = 0.0f;
+//
+//    const int out_h_start = mxnet::common::cuda::CudaMax<int>(
+//        0, (in_h - filter_height + pad_height + stride_height) / stride_height);
+//    const int out_h_end = mxnet::common::cuda::CudaMin(
+//        out_height - 1, (in_h + pad_height) / stride_height);
+//    const int out_w_start = mxnet::common::cuda::CudaMax<int>(
+//            0, (in_w - filter_width + pad_width + stride_width) / stride_width);
+//    const int out_w_end = mxnet::common::cuda::CudaMin(
+//        out_width - 1, (in_w + pad_width) / stride_width);
+//
+//    const int filter_offset_temp = channel_idx * filter_height * filter_width;
+//    const int out_grad_offset_temp = (batch_idx * channel * out_pixels) +
+//        (channel_idx * out_pixels);
+//
+//    for (int out_h = out_h_start; out_h <= out_h_end; ++out_h) {
+//      const int f_h = in_h + pad_height - out_h * stride_height;
+//      const int filter_offset_h = filter_offset_temp + f_h * filter_width;
+//      const int out_grad_offset_h = out_grad_offset_temp + out_h * out_width;
+//      for (int out_w = out_w_start; out_w <= out_w_end; ++out_w) {
+//        const int f_w = in_w + pad_width - out_w * stride_width;
+//        const int filter_offset = filter_offset_h + f_w;
+//        const int out_grad_offset = out_grad_offset_h + out_w;
+//        sum += ldg(out_grad + out_grad_offset) * ldg(filter + filter_offset);
+//      }
+//    }
+//    const int in_grad_offset = (batch_idx * channel * in_pixels) +
+//        (channel_idx * in_pixels) + (in_h * in_width) + (in_w);
+//    in_grad[in_grad_offset] += sum;
+//  }
+//}
 
 // CUDA kernel to compute the depthwise convolution backward w.r.t. filter in
 // NCHW format, tailored for small images up to 32x32. Only use this kernel if

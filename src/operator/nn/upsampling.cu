@@ -33,8 +33,8 @@ namespace op {
 NNVM_REGISTER_OP(UpSampling)
 .set_attr<FCompute>("FCompute<gpu>", UpSamplingCompute<gpu>);
 
-NNVM_REGISTER_OP(_backward_UpSampling)
-.set_attr<FCompute>("FCompute<gpu>", UpSamplingGradCompute<gpu>);
+//NNVM_REGISTER_OP(_backward_UpSampling)
+//.set_attr<FCompute>("FCompute<gpu>", UpSamplingGradCompute<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

@@ -69,12 +69,12 @@ The storage type of ``retain`` output depends on storage types of inputs
 .add_argument("data", "NDArray-or-Symbol", "The input array for sparse_retain operator.")
 .add_argument("indices", "NDArray-or-Symbol", "The index array of rows ids that will be retained.");
 
-NNVM_REGISTER_OP(_backward_sparse_retain)
-.set_num_inputs(2)
-.set_num_outputs(2)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FInferStorageType>("FInferStorageType", SparseRetainBackwardInferStorageType)
-.set_attr<FComputeEx>("FComputeEx<cpu>", SparseRetainOpBackwardEx<cpu>);
+//NNVM_REGISTER_OP(_backward_sparse_retain)
+//.set_num_inputs(2)
+//.set_num_outputs(2)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FInferStorageType>("FInferStorageType", SparseRetainBackwardInferStorageType)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", SparseRetainOpBackwardEx<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

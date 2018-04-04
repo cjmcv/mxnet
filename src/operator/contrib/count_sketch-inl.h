@@ -91,28 +91,28 @@ class CountSketchOp : public Operator {
                            this->param_.processing_batch_size, in_dim, this->param_.out_dim);
     }
 
-    virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    Stream<xpu> *s = ctx.get_stream<xpu>();
-    Tensor<xpu, 2, DType> ograd = out_grad[CountSketch::kOut].FlatTo2D<xpu, DType>(s);
-    Tensor<xpu, 2, DType> dgrad = in_grad[CountSketch::kData].FlatTo2D<xpu, DType>(s);
+    //virtual void Backward(const OpContext &ctx,
+    //                    const std::vector<TBlob> &out_grad,
+    //                    const std::vector<TBlob> &in_data,
+    //                    const std::vector<TBlob> &out_data,
+    //                    const std::vector<OpReqType> &req,
+    //                    const std::vector<TBlob> &in_grad,
+    //                    const std::vector<TBlob> &aux_args) {
+    //using namespace mshadow;
+    //Stream<xpu> *s = ctx.get_stream<xpu>();
+    //Tensor<xpu, 2, DType> ograd = out_grad[CountSketch::kOut].FlatTo2D<xpu, DType>(s);
+    //Tensor<xpu, 2, DType> dgrad = in_grad[CountSketch::kData].FlatTo2D<xpu, DType>(s);
 
-    const TShape& hshape = in_data[CountSketch::kH].shape_;
-    const TShape& sshape = in_data[CountSketch::kS].shape_;
-        Tensor<xpu, 1, DType> h = in_data[CountSketch::kH].get_with_shape<xpu, 1, DType>(
-                                            Shape1(hshape.ProdShape(0, hshape.ndim())), s);
-    Tensor<xpu, 1, DType> ss = in_data[CountSketch::kS].get_with_shape<xpu, 1, DType>(
-                                            Shape1(sshape.ProdShape(0, sshape.ndim())), s);
+    //const TShape& hshape = in_data[CountSketch::kH].shape_;
+    //const TShape& sshape = in_data[CountSketch::kS].shape_;
+    //    Tensor<xpu, 1, DType> h = in_data[CountSketch::kH].get_with_shape<xpu, 1, DType>(
+    //                                        Shape1(hshape.ProdShape(0, hshape.ndim())), s);
+    //Tensor<xpu, 1, DType> ss = in_data[CountSketch::kS].get_with_shape<xpu, 1, DType>(
+    //                                        Shape1(sshape.ProdShape(0, sshape.ndim())), s);
 
-    CountSketchBackward(dgrad, ograd, h, ss, n_samples,
-            this->param_.processing_batch_size, in_dim, this->param_.out_dim);
-    }
+    //CountSketchBackward(dgrad, ograd, h, ss, n_samples,
+    //        this->param_.processing_batch_size, in_dim, this->param_.out_dim);
+    //}
 
  private:
     CountSketchParam param_;

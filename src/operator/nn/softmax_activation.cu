@@ -56,25 +56,25 @@ void SoftmaxActivationCompute<gpu>(const nnvm::NodeAttrs& attrs,
   GetCuDNNSoftmaxActOp(param).Forward(ctx, inputs[0], req[0], outputs[0]);
 }
 
-template<>
-void SoftmaxActivationGradCompute<gpu>(const nnvm::NodeAttrs& attrs,
-                                       const OpContext& ctx,
-                                       const std::vector<TBlob>& inputs,
-                                       const std::vector<OpReqType>& req,
-                                       const std::vector<TBlob>& outputs) {
-  const SoftmaxActivationParam& param = nnvm::get<SoftmaxActivationParam>(attrs.parsed);
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 1);
-  CHECK_EQ(req.size(), 1);
-  GetCuDNNSoftmaxActOp(param).Backward(ctx, inputs[0], inputs[1], req[0], outputs[0]);
-}
+//template<>
+//void SoftmaxActivationGradCompute<gpu>(const nnvm::NodeAttrs& attrs,
+//                                       const OpContext& ctx,
+//                                       const std::vector<TBlob>& inputs,
+//                                       const std::vector<OpReqType>& req,
+//                                       const std::vector<TBlob>& outputs) {
+//  const SoftmaxActivationParam& param = nnvm::get<SoftmaxActivationParam>(attrs.parsed);
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 1);
+//  CHECK_EQ(req.size(), 1);
+//  GetCuDNNSoftmaxActOp(param).Backward(ctx, inputs[0], inputs[1], req[0], outputs[0]);
+//}
 #endif
 
 NNVM_REGISTER_OP(SoftmaxActivation)
 .set_attr<FCompute>("FCompute<gpu>", SoftmaxActivationCompute<gpu>);
 
-NNVM_REGISTER_OP(_backward_SoftmaxActivation)
-.set_attr<FCompute>("FCompute<gpu>", SoftmaxActivationGradCompute<gpu>);
+//NNVM_REGISTER_OP(_backward_SoftmaxActivation)
+//.set_attr<FCompute>("FCompute<gpu>", SoftmaxActivationGradCompute<gpu>);
 
 }  // namespace op
 }  // namespace mxnet

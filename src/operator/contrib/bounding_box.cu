@@ -32,19 +32,19 @@ namespace op {
 NNVM_REGISTER_OP(_contrib_box_nms)
 .set_attr<FCompute>("FCompute<gpu>", BoxNMSForward<gpu>);
 
-NNVM_REGISTER_OP(_backward_contrib_box_nms)
-.set_attr<FCompute>("FCompute<gpu>", BoxNMSBackward<gpu>);
+//NNVM_REGISTER_OP(_backward_contrib_box_nms)
+//.set_attr<FCompute>("FCompute<gpu>", BoxNMSBackward<gpu>);
 
 NNVM_REGISTER_OP(_contrib_box_iou)
 .set_attr<FCompute>("FCompute<gpu>", BoxOverlapForward<gpu>);
 
-NNVM_REGISTER_OP(_backward_contrib_box_iou)
-.set_attr<FCompute>("FCompute<gpu>", BoxOverlapBackward<gpu>);
+//NNVM_REGISTER_OP(_backward_contrib_box_iou)
+//.set_attr<FCompute>("FCompute<gpu>", BoxOverlapBackward<gpu>);
 
 NNVM_REGISTER_OP(_contrib_bipartite_matching)
 .set_attr<FCompute>("FCompute<gpu>", BipartiteMatchingForward<gpu>);
 
-NNVM_REGISTER_OP(_backward_contrib_bipartite_matching)
-.set_attr<FCompute>("FCompute<gpu>", BipartiteMatchingBackward<gpu>);
+//NNVM_REGISTER_OP(_backward_contrib_bipartite_matching)
+//.set_attr<FCompute>("FCompute<gpu>", BipartiteMatchingBackward<gpu>);
 }  // namespace op
 }  // namespace mxnet

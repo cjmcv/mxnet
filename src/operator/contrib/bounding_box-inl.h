@@ -426,36 +426,36 @@ void BoxNMSForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void BoxNMSBackward(const nnvm::NodeAttrs& attrs,
-                 const OpContext& ctx,
-                 const std::vector<TBlob>& inputs,
-                 const std::vector<OpReqType>& req,
-                 const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  using namespace mxnet_op;
-  CHECK_EQ(inputs.size(), 4U);
-  CHECK_EQ(outputs.size(), 1U);
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  TShape in_shape = outputs[box_nms_enum::kData].shape_;
-  int indim = in_shape.ndim();
-  int num_batch = indim <= 2? 1 : in_shape.ProdShape(0, indim - 2);
-  int num_elem = in_shape[indim - 2];
-  int width_elem = in_shape[indim - 1];
-  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
-    Tensor<xpu, 3, DType> out_grad = inputs[box_nms_enum::kOut]
-     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, width_elem), s);
-    Tensor<xpu, 3, DType> in_grad = outputs[box_nms_enum::kData]
-     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, width_elem), s);
-    Tensor<xpu, 3, DType> record = inputs[box_nms_enum::kTemp + 2]
-     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, 1), s);
-
-    in_grad = 0;
-    Kernel<nms_backward, xpu>::Launch(s, num_batch * num_elem, in_grad.dptr_,
-      out_grad.dptr_, record.dptr_, num_elem, width_elem);
-  });
-}
+//template<typename xpu>
+//void BoxNMSBackward(const nnvm::NodeAttrs& attrs,
+//                 const OpContext& ctx,
+//                 const std::vector<TBlob>& inputs,
+//                 const std::vector<OpReqType>& req,
+//                 const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  using namespace mxnet_op;
+//  CHECK_EQ(inputs.size(), 4U);
+//  CHECK_EQ(outputs.size(), 1U);
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  TShape in_shape = outputs[box_nms_enum::kData].shape_;
+//  int indim = in_shape.ndim();
+//  int num_batch = indim <= 2? 1 : in_shape.ProdShape(0, indim - 2);
+//  int num_elem = in_shape[indim - 2];
+//  int width_elem = in_shape[indim - 1];
+//  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
+//    Tensor<xpu, 3, DType> out_grad = inputs[box_nms_enum::kOut]
+//     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, width_elem), s);
+//    Tensor<xpu, 3, DType> in_grad = outputs[box_nms_enum::kData]
+//     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, width_elem), s);
+//    Tensor<xpu, 3, DType> record = inputs[box_nms_enum::kTemp + 2]
+//     .get_with_shape<xpu, 3, DType>(Shape3(num_batch, num_elem, 1), s);
+//
+//    in_grad = 0;
+//    Kernel<nms_backward, xpu>::Launch(s, num_batch * num_elem, in_grad.dptr_,
+//      out_grad.dptr_, record.dptr_, num_elem, width_elem);
+//  });
+//}
 
 struct BoxOverlapParam : public dmlc::Parameter<BoxOverlapParam> {
   int format;
@@ -556,26 +556,26 @@ void BoxOverlapForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void BoxOverlapBackward(const nnvm::NodeAttrs& attrs,
-                        const OpContext& ctx,
-                        const std::vector<TBlob>& inputs,
-                        const std::vector<OpReqType>& req,
-                        const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  using namespace mxnet_op;
-  CHECK_EQ(inputs.size(), 1U);
-  CHECK_EQ(outputs.size(), 2U);
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
-    Tensor<xpu, 2, DType> in_grad_lhs = outputs[0].FlatTo2D<xpu, DType>(s);
-    Tensor<xpu, 2, DType> in_grad_rhs = outputs[1].FlatTo2D<xpu, DType>(s);
-    // TODO(Joshua Zhang): allow backprop?
-    in_grad_lhs = 0;
-    in_grad_rhs = 0;
-  });
-}
+//template<typename xpu>
+//void BoxOverlapBackward(const nnvm::NodeAttrs& attrs,
+//                        const OpContext& ctx,
+//                        const std::vector<TBlob>& inputs,
+//                        const std::vector<OpReqType>& req,
+//                        const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  using namespace mxnet_op;
+//  CHECK_EQ(inputs.size(), 1U);
+//  CHECK_EQ(outputs.size(), 2U);
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
+//    Tensor<xpu, 2, DType> in_grad_lhs = outputs[0].FlatTo2D<xpu, DType>(s);
+//    Tensor<xpu, 2, DType> in_grad_rhs = outputs[1].FlatTo2D<xpu, DType>(s);
+//    // TODO(Joshua Zhang): allow backprop?
+//    in_grad_lhs = 0;
+//    in_grad_rhs = 0;
+//  });
+//}
 
 struct BipartiteMatchingParam : public dmlc::Parameter<BipartiteMatchingParam> {
   bool is_ascend;
@@ -703,24 +703,24 @@ void BipartiteMatchingForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void BipartiteMatchingBackward(const nnvm::NodeAttrs& attrs,
-                              const OpContext& ctx,
-                              const std::vector<TBlob>& inputs,
-                              const std::vector<OpReqType>& req,
-                              const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  using namespace mxnet_op;
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 1U);
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
-    Tensor<xpu, 2, DType> in_grad = outputs[0].FlatTo2D<xpu, DType>(s);
-    // TODO(Joshua Zhang): allow backprop?
-    in_grad = 0;
-  });
-}
+//template<typename xpu>
+//void BipartiteMatchingBackward(const nnvm::NodeAttrs& attrs,
+//                              const OpContext& ctx,
+//                              const std::vector<TBlob>& inputs,
+//                              const std::vector<OpReqType>& req,
+//                              const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  using namespace mxnet_op;
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 1U);
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  MSHADOW_REAL_TYPE_SWITCH(outputs[0].type_flag_, DType, {
+//    Tensor<xpu, 2, DType> in_grad = outputs[0].FlatTo2D<xpu, DType>(s);
+//    // TODO(Joshua Zhang): allow backprop?
+//    in_grad = 0;
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

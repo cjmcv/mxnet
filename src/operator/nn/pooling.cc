@@ -237,37 +237,37 @@ void PoolingComputeExCPU(const nnvm::NodeAttrs &attrs, const OpContext &ctx,
   FallBackCompute(PoolingCompute<cpu>, attrs, ctx, inputs, req, outputs);
 }
 
-void PoolingGradComputeExCPU(const nnvm::NodeAttrs &attrs, const OpContext &ctx,
-                             const std::vector<NDArray> &inputs,
-                             const std::vector<OpReqType> &req,
-                             const std::vector<NDArray> &outputs) {
-  const PoolingParam &param = nnvm::get<PoolingParam>(attrs.parsed);
-  const NDArray &out_grad = inputs[0];
-  const NDArray *workspace = nullptr;
-  const NDArray *in_data = nullptr;
-  if (MKLDNNRequireWorkspace(param)) {
-    // The first two elements are the gradient of the outputs in forward.
-    // The third is the input of forward.
-    // The fourth and the fifth are the outputs of forward.
-    CHECK_EQ(inputs.size(), 5U);
-    in_data = &inputs[2];
-    workspace = &inputs[4];
-  } else {
-    CHECK_EQ(inputs.size(), 3U);
-    in_data = &inputs[1];
-  }
-  const NDArray &in_grad = outputs[0];
-  if (SupportMKLDNN(inputs[0])
-      && SupportMKLDNNPooling(param, inputs[0].shape())) {
-    MKLDNN_OPCHECK_INIT(true, outputs.size(), inputs, outputs);
-    MKLDNNPoolingGradCompute(ctx, param, out_grad, *in_data, workspace,
-                             req[0], in_grad);
-    MKLDNN_OPCHECK_RUN(PoolingGradCompute<cpu>, attrs, ctx, inputs, req,
-                       outputs);
-    return;
-  }
-  FallBackCompute(PoolingGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
-}
+//void PoolingGradComputeExCPU(const nnvm::NodeAttrs &attrs, const OpContext &ctx,
+//                             const std::vector<NDArray> &inputs,
+//                             const std::vector<OpReqType> &req,
+//                             const std::vector<NDArray> &outputs) {
+//  const PoolingParam &param = nnvm::get<PoolingParam>(attrs.parsed);
+//  const NDArray &out_grad = inputs[0];
+//  const NDArray *workspace = nullptr;
+//  const NDArray *in_data = nullptr;
+//  if (MKLDNNRequireWorkspace(param)) {
+//    // The first two elements are the gradient of the outputs in forward.
+//    // The third is the input of forward.
+//    // The fourth and the fifth are the outputs of forward.
+//    CHECK_EQ(inputs.size(), 5U);
+//    in_data = &inputs[2];
+//    workspace = &inputs[4];
+//  } else {
+//    CHECK_EQ(inputs.size(), 3U);
+//    in_data = &inputs[1];
+//  }
+//  const NDArray &in_grad = outputs[0];
+//  if (SupportMKLDNN(inputs[0])
+//      && SupportMKLDNNPooling(param, inputs[0].shape())) {
+//    MKLDNN_OPCHECK_INIT(true, outputs.size(), inputs, outputs);
+//    MKLDNNPoolingGradCompute(ctx, param, out_grad, *in_data, workspace,
+//                             req[0], in_grad);
+//    MKLDNN_OPCHECK_RUN(PoolingGradCompute<cpu>, attrs, ctx, inputs, req,
+//                       outputs);
+//    return;
+//  }
+//  FallBackCompute(PoolingGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//}
 #endif
 
 inline static bool PoolingStorageType(const nnvm::NodeAttrs &attrs,
@@ -290,26 +290,26 @@ inline static bool PoolingStorageType(const nnvm::NodeAttrs &attrs,
                              dispatch_mode, DispatchMode::kFCompute);
 }
 
-inline static bool BackwardPoolingStorageType(const nnvm::NodeAttrs &attrs,
-                                              const int dev_mask,
-                                              DispatchMode *dispatch_mode,
-                                              std::vector<int> *in_attrs,
-                                              std::vector<int> *out_attrs) {
-  const PoolingParam &param = nnvm::get<PoolingParam>(attrs.parsed);
-  CHECK_EQ(in_attrs->size(), GetNumBackInputs(param));
-  CHECK_EQ(out_attrs->size(), 1);
-
-#if MXNET_USE_MKLDNN == 1
-  if (dev_mask == mshadow::cpu::kDevMask && SupportMKLDNNPooling(param)) {
-    return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
-                               dispatch_mode, DispatchMode::kFComputeEx);
-  }
-#else
-  CHECK_EQ(in_attrs->size(), 3);
-#endif
-  return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
-                             dispatch_mode, DispatchMode::kFCompute);
-}
+//inline static bool BackwardPoolingStorageType(const nnvm::NodeAttrs &attrs,
+//                                              const int dev_mask,
+//                                              DispatchMode *dispatch_mode,
+//                                              std::vector<int> *in_attrs,
+//                                              std::vector<int> *out_attrs) {
+//  const PoolingParam &param = nnvm::get<PoolingParam>(attrs.parsed);
+//  CHECK_EQ(in_attrs->size(), GetNumBackInputs(param));
+//  CHECK_EQ(out_attrs->size(), 1);
+//
+//#if MXNET_USE_MKLDNN == 1
+//  if (dev_mask == mshadow::cpu::kDevMask && SupportMKLDNNPooling(param)) {
+//    return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
+//                               dispatch_mode, DispatchMode::kFComputeEx);
+//  }
+//#else
+//  CHECK_EQ(in_attrs->size(), 3);
+//#endif
+//  return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
+//                             dispatch_mode, DispatchMode::kFCompute);
+//}
 
 DMLC_REGISTER_PARAMETER(PoolingParam);
 
@@ -384,30 +384,30 @@ height, width)*.
               "Input data to the pooling operator.")
 .add_arguments(PoolingParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_Pooling)
-.set_num_outputs(1)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<nnvm::FInplaceOption>(
-    "FInplaceOption",
-    [](const NodeAttrs &attrs) {
-#if MXNET_USE_CUDNN == 1
-  return std::vector<std::pair<int, int> >();
-#else
-  return std::vector<std::pair<int, int> >{{1, 0}};
-#endif
-})
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-})
-#endif
-.set_attr<FInferStorageType>("FInferStorageType",
-                             BackwardPoolingStorageType)
-.set_attr_parser(PoolingParamParser)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FComputeEx>("FComputeEx<cpu>", PoolingGradComputeExCPU)
-#endif
-.set_attr<FCompute>("FCompute<cpu>", PoolingGradCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_Pooling)
+//.set_num_outputs(1)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<nnvm::FInplaceOption>(
+//    "FInplaceOption",
+//    [](const NodeAttrs &attrs) {
+//#if MXNET_USE_CUDNN == 1
+//  return std::vector<std::pair<int, int> >();
+//#else
+//  return std::vector<std::pair<int, int> >{{1, 0}};
+//#endif
+//})
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//#endif
+//.set_attr<FInferStorageType>("FInferStorageType",
+//                             BackwardPoolingStorageType)
+//.set_attr_parser(PoolingParamParser)
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FComputeEx>("FComputeEx<cpu>", PoolingGradComputeExCPU)
+//#endif
+//.set_attr<FCompute>("FCompute<cpu>", PoolingGradCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

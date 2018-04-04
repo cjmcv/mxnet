@@ -87,8 +87,8 @@ with default storage
 .set_attr<FResourceRequest>("FResourceRequest",
                             [](const NodeAttrs& attrs) {
                               return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-                            })
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_div"});
+                            });
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_div"});
 
 /*! \brief _scatter_plus_scalar */
 MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_scatter_plus_scalar)

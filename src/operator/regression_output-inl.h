@@ -95,31 +95,31 @@ void RegressionForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu, typename BackwardOp>
-void RegressionBackward(const nnvm::NodeAttrs& attrs,
-                        const OpContext& ctx,
-                        const std::vector<TBlob>& inputs,
-                        const std::vector<OpReqType>& req,
-                        const std::vector<TBlob>& outputs) {
-  const RegressionOutputParam& param = nnvm::get<RegressionOutputParam>(attrs.parsed);
-  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
-  // inputs are in_label, out_data
-  // outputs are data_grad, label_grad
-  MSHADOW_REAL_TYPE_SWITCH(inputs[1].type_flag_, DType, {
-    MXNET_ASSIGN_REQ_SWITCH(req[0], Req, {
-      const DType* in_label = inputs[0].dptr<DType>();
-      const DType* out_data = inputs[1].dptr<DType>();
-      DType* data_grad = outputs[0].dptr<DType>();
-      const real_t num_output = inputs[0].Size()/inputs[0].shape_[0];
-      using namespace mxnet_op;
-      Kernel<op_with_req<BackwardOp, Req>, xpu>::Launch(
-        s, outputs[0].Size(), data_grad, out_data, in_label);
-      Kernel<op_with_req<mshadow_op::mul, Req>, xpu>::Launch(
-        s, outputs[0].Size(), data_grad, data_grad,
-        static_cast<DType>(param.grad_scale/num_output));
-    });
-  });
-}
+//template<typename xpu, typename BackwardOp>
+//void RegressionBackward(const nnvm::NodeAttrs& attrs,
+//                        const OpContext& ctx,
+//                        const std::vector<TBlob>& inputs,
+//                        const std::vector<OpReqType>& req,
+//                        const std::vector<TBlob>& outputs) {
+//  const RegressionOutputParam& param = nnvm::get<RegressionOutputParam>(attrs.parsed);
+//  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
+//  // inputs are in_label, out_data
+//  // outputs are data_grad, label_grad
+//  MSHADOW_REAL_TYPE_SWITCH(inputs[1].type_flag_, DType, {
+//    MXNET_ASSIGN_REQ_SWITCH(req[0], Req, {
+//      const DType* in_label = inputs[0].dptr<DType>();
+//      const DType* out_data = inputs[1].dptr<DType>();
+//      DType* data_grad = outputs[0].dptr<DType>();
+//      const real_t num_output = inputs[0].Size()/inputs[0].shape_[0];
+//      using namespace mxnet_op;
+//      Kernel<op_with_req<BackwardOp, Req>, xpu>::Launch(
+//        s, outputs[0].Size(), data_grad, out_data, in_label);
+//      Kernel<op_with_req<mshadow_op::mul, Req>, xpu>::Launch(
+//        s, outputs[0].Size(), data_grad, data_grad,
+//        static_cast<DType>(param.grad_scale/num_output));
+//    });
+//  });
+//}
 
 struct RegressionOpGrad {
   const char *op_name;

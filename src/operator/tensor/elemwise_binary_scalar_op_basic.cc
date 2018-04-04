@@ -150,14 +150,14 @@ it will result output.data = [nan, nan] instead of 10000 nans.
 .set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
 .set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::mul>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::mul>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_mul_scalar"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_mul_scalar"})
 .add_alias("_MulScalar");
 
-MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_backward_mul_scalar)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
-.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::mul>)
-.set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::mul>);
+//MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_backward_mul_scalar)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
+//.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::mul>)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::mul>);
 
 MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_div_scalar)
 .describe(R"doc(Divide an array with a scalar.
@@ -172,48 +172,48 @@ it will result output.data = [nan, nan] instead of 10000 nans.
 .set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
 .set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::div>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::div>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_div_scalar"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_div_scalar"})
 .add_alias("_DivScalar");
 
-MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_backward_div_scalar)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
-.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::div>)
-.set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::div>);
+//MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_backward_div_scalar)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FInferStorageType>("FInferStorageType", BinaryScalarStorageType)
+//.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, op::mshadow_op::div>)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", BinaryScalarOp::ComputeEx<cpu, op::mshadow_op::div>);
 
 
 MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_rdiv_scalar)
 .set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, mshadow_op::rdiv>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_rdiv_scalar"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_rdiv_scalar"})
 .add_alias("_RDivScalar");
 
-MXNET_OPERATOR_REGISTER_BINARY(_backward_rdiv_scalar)
-.add_argument("scalar", "float", "scalar value")
-.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
-.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
-  cpu, mshadow_op::rdiv_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY(_backward_rdiv_scalar)
+//.add_argument("scalar", "float", "scalar value")
+//.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
+//.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
+//  cpu, mshadow_op::rdiv_grad>);
 
 MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_mod_scalar)
 .set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, mshadow_op::mod>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_mod_scalar"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_mod_scalar"})
 .add_alias("_ModScalar");
 
-MXNET_OPERATOR_REGISTER_BINARY(_backward_mod_scalar)
-.add_argument("scalar", "float", "scalar value")
-.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
-.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
-  cpu, mshadow_op::mod_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY(_backward_mod_scalar)
+//.add_argument("scalar", "float", "scalar value")
+//.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
+//.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
+//  cpu, mshadow_op::mod_grad>);
 
 MXNET_OPERATOR_REGISTER_BINARY_SCALAR(_rmod_scalar)
 .set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Compute<cpu, mshadow_op::rmod>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_rmod_scalar"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_rmod_scalar"})
 .add_alias("_RModScalar");
 
-MXNET_OPERATOR_REGISTER_BINARY(_backward_rmod_scalar)
-.add_argument("scalar", "float", "scalar value")
-.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
-.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
-  cpu, mshadow_op::rmod_grad>);
+//MXNET_OPERATOR_REGISTER_BINARY(_backward_rmod_scalar)
+//.add_argument("scalar", "float", "scalar value")
+//.set_attr_parser([](NodeAttrs *attrs) { attrs->parsed = std::stod(attrs->dict["scalar"]); })
+//.set_attr<FCompute>("FCompute<cpu>", BinaryScalarOp::Backward<
+//  cpu, mshadow_op::rmod_grad>);
 
 }  // namespace op
 }  // namespace mxnet

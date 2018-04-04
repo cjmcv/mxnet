@@ -460,58 +460,58 @@ void AddTakeGradLargeBatchCaller(const OpContext& ctx, mshadow::Tensor<xpu, 2, D
   mxnet::op::AddTakeGradLargeBatch(dst, sorted_data, original_index, src, &temp_storage);
 }
 
-template<typename xpu>
-void EmbeddingOpBackward(const nnvm::NodeAttrs& attrs,
-                         const OpContext& ctx,
-                         const std::vector<TBlob>& inputs,
-                         const std::vector<OpReqType>& req,
-                         const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 2U);
-  CHECK_EQ(req[embedding::kData], kNullOp)
-          << "Embedding layer doesn't support calculate data gradient";
-  CHECK_EQ(outputs[1].type_flag_, inputs[0].type_flag_);
-
-  const TShape& ishape = inputs[1].shape_;
-  const TShape& oshape = inputs[0].shape_;
-
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  MSHADOW_TYPE_SWITCH(outputs[1].type_flag_, DType, {
-    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {
-      Tensor < xpu, 1, IType > data = inputs[1].get_with_shape<xpu, 1, IType>(
-        Shape1(ishape.ProdShape(0, ishape.ndim())), s);
-      Tensor<xpu, 2, DType> grad_out = inputs[0].get_with_shape<xpu, 2, DType>(
-      Shape2(oshape.ProdShape(0, oshape.ndim()-1), oshape[oshape.ndim()-1]), s);
-      Tensor<xpu, 2, DType> grad_in = outputs[1].get<xpu, 2, DType>(s);
-
-
-      if (req[embedding::kWeight] == kWriteTo || req[embedding::kWeight] == kAddTo) {
-        if (req[embedding::kWeight] == kWriteTo) {
-          grad_in = scalar<DType>(0.0f);
-        }
-        // shape_out_prod ~= the number of elements loaded in AddTakeGrad
-        // shape_in_prod  ~= the number of elements stored in AddTakeGrad
-        // When the number of elements processed is low, use AddTakeGrad.
-        // The approximate cut-off value 16384 was found experimentally on Titan X Pascal
-        uint64_t shape_in_prod =
-          static_cast<uint64_t>(grad_in.shape_[0])*
-          static_cast<uint64_t>(grad_in.shape_[1]);
-        uint64_t shape_out_prod =
-          static_cast<uint64_t>(grad_out.shape_[0])*
-          static_cast<uint64_t>(grad_out.shape_[1]);
-        if (shape_out_prod < (uint64_t)16384 && shape_in_prod < (uint64_t)16384) {
-          AddTakeGrad(grad_in, data, grad_out);
-        } else {
-          AddTakeGradLargeBatchCaller(ctx, grad_in, data, grad_out);
-        }
-      } else {
-        LOG(FATAL) << "wrong req";
-      }
-    });
-  });
-}
+//template<typename xpu>
+//void EmbeddingOpBackward(const nnvm::NodeAttrs& attrs,
+//                         const OpContext& ctx,
+//                         const std::vector<TBlob>& inputs,
+//                         const std::vector<OpReqType>& req,
+//                         const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 2U);
+//  CHECK_EQ(req[embedding::kData], kNullOp)
+//          << "Embedding layer doesn't support calculate data gradient";
+//  CHECK_EQ(outputs[1].type_flag_, inputs[0].type_flag_);
+//
+//  const TShape& ishape = inputs[1].shape_;
+//  const TShape& oshape = inputs[0].shape_;
+//
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  MSHADOW_TYPE_SWITCH(outputs[1].type_flag_, DType, {
+//    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {
+//      Tensor < xpu, 1, IType > data = inputs[1].get_with_shape<xpu, 1, IType>(
+//        Shape1(ishape.ProdShape(0, ishape.ndim())), s);
+//      Tensor<xpu, 2, DType> grad_out = inputs[0].get_with_shape<xpu, 2, DType>(
+//      Shape2(oshape.ProdShape(0, oshape.ndim()-1), oshape[oshape.ndim()-1]), s);
+//      Tensor<xpu, 2, DType> grad_in = outputs[1].get<xpu, 2, DType>(s);
+//
+//
+//      if (req[embedding::kWeight] == kWriteTo || req[embedding::kWeight] == kAddTo) {
+//        if (req[embedding::kWeight] == kWriteTo) {
+//          grad_in = scalar<DType>(0.0f);
+//        }
+//        // shape_out_prod ~= the number of elements loaded in AddTakeGrad
+//        // shape_in_prod  ~= the number of elements stored in AddTakeGrad
+//        // When the number of elements processed is low, use AddTakeGrad.
+//        // The approximate cut-off value 16384 was found experimentally on Titan X Pascal
+//        uint64_t shape_in_prod =
+//          static_cast<uint64_t>(grad_in.shape_[0])*
+//          static_cast<uint64_t>(grad_in.shape_[1]);
+//        uint64_t shape_out_prod =
+//          static_cast<uint64_t>(grad_out.shape_[0])*
+//          static_cast<uint64_t>(grad_out.shape_[1]);
+//        if (shape_out_prod < (uint64_t)16384 && shape_in_prod < (uint64_t)16384) {
+//          AddTakeGrad(grad_in, data, grad_out);
+//        } else {
+//          AddTakeGradLargeBatchCaller(ctx, grad_in, data, grad_out);
+//        }
+//      } else {
+//        LOG(FATAL) << "wrong req";
+//      }
+//    });
+//  });
+//}
 
 struct AddTakeGradRspKernel {
   /*!
@@ -555,37 +555,37 @@ struct AddTakeGradRspKernel {
   }
 };
 
-template<typename xpu>
-inline void SparseEmbeddingOpBackwardRspImpl(const OpContext& ctx,
-                                             const TBlob& ograd,
-                                             const TBlob& data,
-                                             const OpReqType req,
-                                             const NDArray& output);
+//template<typename xpu>
+//inline void SparseEmbeddingOpBackwardRspImpl(const OpContext& ctx,
+//                                             const TBlob& ograd,
+//                                             const TBlob& data,
+//                                             const OpReqType req,
+//                                             const NDArray& output);
 
-template<typename xpu>
-void SparseEmbeddingOpBackwardEx(const nnvm::NodeAttrs& attrs,
-                                 const OpContext& ctx,
-                                 const std::vector<NDArray>& inputs,
-                                 const std::vector<OpReqType>& req,
-                                 const std::vector<NDArray>& outputs) {
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 2U);
-  const NDArray& weight_grad = outputs[1];
-  const NDArray& ograd = inputs[0];
-  const NDArray& data = inputs[1];
-  // check dtype
-  CHECK_EQ(weight_grad.dtype(), ograd.dtype());
-  // check req
-  CHECK_EQ(req[embedding::kData], kNullOp)
-          << "SparseEmbedding layer doesn't support calculate data gradient";
-  if (data.storage_type() == kDefaultStorage && ograd.storage_type() == kDefaultStorage &&
-      weight_grad.storage_type() == kRowSparseStorage) {
-    SparseEmbeddingOpBackwardRspImpl<xpu>(ctx, ograd.data(), data.data(),
-                                          req[embedding::kWeight], weight_grad);
-  } else {
-    LogUnimplementedOp(attrs, ctx, inputs, req, outputs);
-  }
-}
+//template<typename xpu>
+//void SparseEmbeddingOpBackwardEx(const nnvm::NodeAttrs& attrs,
+//                                 const OpContext& ctx,
+//                                 const std::vector<NDArray>& inputs,
+//                                 const std::vector<OpReqType>& req,
+//                                 const std::vector<NDArray>& outputs) {
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 2U);
+//  const NDArray& weight_grad = outputs[1];
+//  const NDArray& ograd = inputs[0];
+//  const NDArray& data = inputs[1];
+//  // check dtype
+//  CHECK_EQ(weight_grad.dtype(), ograd.dtype());
+//  // check req
+//  CHECK_EQ(req[embedding::kData], kNullOp)
+//          << "SparseEmbedding layer doesn't support calculate data gradient";
+//  if (data.storage_type() == kDefaultStorage && ograd.storage_type() == kDefaultStorage &&
+//      weight_grad.storage_type() == kRowSparseStorage) {
+//    SparseEmbeddingOpBackwardRspImpl<xpu>(ctx, ograd.data(), data.data(),
+//                                          req[embedding::kWeight], weight_grad);
+//  } else {
+//    LogUnimplementedOp(attrs, ctx, inputs, req, outputs);
+//  }
+//}
 
 namespace take_ {  // to avoid name conflict
 enum TakeOpInputs {kArr, kIdx};
@@ -688,65 +688,65 @@ void TakeOpForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu>
-void TakeOpBackward(const nnvm::NodeAttrs& attrs,
-                    const OpContext& ctx,
-                    const std::vector<TBlob>& inputs,
-                    const std::vector<OpReqType>& req,
-                    const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 2U);
-  CHECK_EQ(req[take_::kIdx], kNullOp)
-    << "take layer doesn't support gradient into index";
-
-  // inputs are specified in the .cc file, which are the gradients from
-  // the upper layer and the input index
-  // outputs are the gradients of inputs in the feed-forward pass
-  const TShape& idxshape = inputs[1].shape_;
-  const TShape& arrshape = outputs[0].shape_;
-  const TShape& oshape = inputs[0].shape_;
-
-  int idxndim = idxshape.ndim();
-
-  // grad_out is the gradient of the outputs in the feed-forward
-  // grad_in is the gradient of the inputs in the feed-forward
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  MSHADOW_TYPE_SWITCH(outputs[0].type_flag_, DType, {  // output data type
-    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {  // index data type
-      Tensor<xpu, 1, IType> idx = inputs[1].get_with_shape<xpu, 1, IType>(
-          Shape1(idxshape.ProdShape(0, idxndim)), s);
-      Tensor<xpu, 2, DType> grad_out = inputs[0].get_with_shape<xpu, 2, DType>(
-          Shape2(oshape.ProdShape(0, idxndim), oshape.ProdShape(idxndim, oshape.ndim())), s);
-      Tensor<xpu, 2, DType> grad_in = outputs[0].get_with_shape<xpu, 2, DType>(
-          Shape2(arrshape[0], arrshape.ProdShape(1, arrshape.ndim())), s);
-
-      if (req[take_::kArr] == kWriteTo || req[take_::kArr] == kAddTo) {
-        if (req[take_::kArr] == kWriteTo) {
-          grad_in = scalar<DType>(0.0f);
-        }
-        // shape_out_prod ~= the number of elements loaded in AddTakeGrad
-        // shape_in_prod  ~= the number of elements stored in AddTakeGrad
-        // When the number of elements processed is low, use AddTakeGrad.
-        // The approximate cut-off value 16384 was found experimentally on Titan X Pascal
-        uint64_t shape_in_prod =
-          static_cast<uint64_t>(grad_in.shape_[0])*
-          static_cast<uint64_t>(grad_in.shape_[1]);
-        uint64_t shape_out_prod =
-          static_cast<uint64_t>(grad_out.shape_[0])*
-          static_cast<uint64_t>(grad_out.shape_[1]);
-        if (shape_out_prod < (uint64_t)16384 && shape_in_prod < (uint64_t)16384) {
-          AddTakeGrad(grad_in, idx, grad_out);
-        } else {
-          AddTakeGradLargeBatchCaller(ctx, grad_in, idx, grad_out);
-        }
-      } else {
-        LOG(FATAL) << "wrong req";
-      }
-    });
-  });
-}
+//template<typename xpu>
+//void TakeOpBackward(const nnvm::NodeAttrs& attrs,
+//                    const OpContext& ctx,
+//                    const std::vector<TBlob>& inputs,
+//                    const std::vector<OpReqType>& req,
+//                    const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 2U);
+//  CHECK_EQ(req[take_::kIdx], kNullOp)
+//    << "take layer doesn't support gradient into index";
+//
+//  // inputs are specified in the .cc file, which are the gradients from
+//  // the upper layer and the input index
+//  // outputs are the gradients of inputs in the feed-forward pass
+//  const TShape& idxshape = inputs[1].shape_;
+//  const TShape& arrshape = outputs[0].shape_;
+//  const TShape& oshape = inputs[0].shape_;
+//
+//  int idxndim = idxshape.ndim();
+//
+//  // grad_out is the gradient of the outputs in the feed-forward
+//  // grad_in is the gradient of the inputs in the feed-forward
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  MSHADOW_TYPE_SWITCH(outputs[0].type_flag_, DType, {  // output data type
+//    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {  // index data type
+//      Tensor<xpu, 1, IType> idx = inputs[1].get_with_shape<xpu, 1, IType>(
+//          Shape1(idxshape.ProdShape(0, idxndim)), s);
+//      Tensor<xpu, 2, DType> grad_out = inputs[0].get_with_shape<xpu, 2, DType>(
+//          Shape2(oshape.ProdShape(0, idxndim), oshape.ProdShape(idxndim, oshape.ndim())), s);
+//      Tensor<xpu, 2, DType> grad_in = outputs[0].get_with_shape<xpu, 2, DType>(
+//          Shape2(arrshape[0], arrshape.ProdShape(1, arrshape.ndim())), s);
+//
+//      if (req[take_::kArr] == kWriteTo || req[take_::kArr] == kAddTo) {
+//        if (req[take_::kArr] == kWriteTo) {
+//          grad_in = scalar<DType>(0.0f);
+//        }
+//        // shape_out_prod ~= the number of elements loaded in AddTakeGrad
+//        // shape_in_prod  ~= the number of elements stored in AddTakeGrad
+//        // When the number of elements processed is low, use AddTakeGrad.
+//        // The approximate cut-off value 16384 was found experimentally on Titan X Pascal
+//        uint64_t shape_in_prod =
+//          static_cast<uint64_t>(grad_in.shape_[0])*
+//          static_cast<uint64_t>(grad_in.shape_[1]);
+//        uint64_t shape_out_prod =
+//          static_cast<uint64_t>(grad_out.shape_[0])*
+//          static_cast<uint64_t>(grad_out.shape_[1]);
+//        if (shape_out_prod < (uint64_t)16384 && shape_in_prod < (uint64_t)16384) {
+//          AddTakeGrad(grad_in, idx, grad_out);
+//        } else {
+//          AddTakeGradLargeBatchCaller(ctx, grad_in, idx, grad_out);
+//        }
+//      } else {
+//        LOG(FATAL) << "wrong req";
+//      }
+//    });
+//  });
+//}
 
 inline bool BatchTakeOpShape(const nnvm::NodeAttrs& attrs,
                              std::vector<TShape> *in_attrs,
@@ -1124,63 +1124,63 @@ void ScatterNDForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename DType, typename IType>
-inline typename std::enable_if<(!std::is_same<DType, mshadow::half::half_t>::value), void>::type
-GatherNDBackwardImpl(int N, int M, int K,
-                     const mshadow::Shape<10> strides,
-                     DType* out,
-                     const DType* data,
-                     const IType* indices,
-                     mshadow::Stream<cpu> *s);
+//template<typename DType, typename IType>
+//inline typename std::enable_if<(!std::is_same<DType, mshadow::half::half_t>::value), void>::type
+//GatherNDBackwardImpl(int N, int M, int K,
+//                     const mshadow::Shape<10> strides,
+//                     DType* out,
+//                     const DType* data,
+//                     const IType* indices,
+//                     mshadow::Stream<cpu> *s);
+//
+//template<typename DType, typename IType>
+//inline typename std::enable_if<std::is_same<DType, mshadow::half::half_t>::value, void>::type
+//GatherNDBackwardImpl(int N, int M, int K,
+//                     const mshadow::Shape<10> strides,
+//                     DType* out,
+//                     const DType* data,
+//                     const IType* indices,
+//                     mshadow::Stream<cpu> *s);
+//
+//template<typename DType, typename IType>
+//inline void GatherNDBackwardImpl(int N, int M, int K,
+//                                 const mshadow::Shape<10> strides,
+//                                 DType* out,
+//                                 const DType* data,
+//                                 const IType* indices,
+//                                 mshadow::Stream<gpu> *s);
 
-template<typename DType, typename IType>
-inline typename std::enable_if<std::is_same<DType, mshadow::half::half_t>::value, void>::type
-GatherNDBackwardImpl(int N, int M, int K,
-                     const mshadow::Shape<10> strides,
-                     DType* out,
-                     const DType* data,
-                     const IType* indices,
-                     mshadow::Stream<cpu> *s);
-
-template<typename DType, typename IType>
-inline void GatherNDBackwardImpl(int N, int M, int K,
-                                 const mshadow::Shape<10> strides,
-                                 DType* out,
-                                 const DType* data,
-                                 const IType* indices,
-                                 mshadow::Stream<gpu> *s);
-
-template<typename xpu>
-void GatherNDBackward(const nnvm::NodeAttrs& attrs,
-                      const OpContext& ctx,
-                      const std::vector<TBlob>& inputs,
-                      const std::vector<OpReqType>& req,
-                      const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  CHECK_EQ(inputs.size(), 2U);
-  CHECK_EQ(outputs.size(), 1U);
-  if (req[0] == kNullOp) return;
-  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
-  const TShape& oshape = outputs[0].shape_;
-  const TShape& ishape = inputs[1].shape_;
-  int M = ishape[0];
-  int N = ishape.Size() / M;
-  int K = oshape.ProdShape(M, oshape.ndim());
-  mshadow::Shape<10> strides;
-  for (int i = M-1, stride = K; i >= 0; stride *= oshape[i], --i) strides[i] = stride;
-  if (kWriteTo == req[0]) {
-    Fill<true>(s, outputs[0], req[0], 0);
-  }
-  MXNET_NO_INT8_TYPE_SWITCH(inputs[0].type_flag_, DType, {  // output data type switch
-    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {  // indices data type switch
-      GatherNDBackwardImpl(N, M, K, strides,
-                           outputs[0].dptr<DType>(),
-                           inputs[0].dptr<DType>(),
-                           inputs[1].dptr<IType>(),
-                           s);
-    });
-  });
-}
+//template<typename xpu>
+//void GatherNDBackward(const nnvm::NodeAttrs& attrs,
+//                      const OpContext& ctx,
+//                      const std::vector<TBlob>& inputs,
+//                      const std::vector<OpReqType>& req,
+//                      const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  CHECK_EQ(inputs.size(), 2U);
+//  CHECK_EQ(outputs.size(), 1U);
+//  if (req[0] == kNullOp) return;
+//  mshadow::Stream<xpu> *s = ctx.get_stream<xpu>();
+//  const TShape& oshape = outputs[0].shape_;
+//  const TShape& ishape = inputs[1].shape_;
+//  int M = ishape[0];
+//  int N = ishape.Size() / M;
+//  int K = oshape.ProdShape(M, oshape.ndim());
+//  mshadow::Shape<10> strides;
+//  for (int i = M-1, stride = K; i >= 0; stride *= oshape[i], --i) strides[i] = stride;
+//  if (kWriteTo == req[0]) {
+//    Fill<true>(s, outputs[0], req[0], 0);
+//  }
+//  MXNET_NO_INT8_TYPE_SWITCH(inputs[0].type_flag_, DType, {  // output data type switch
+//    MSHADOW_TYPE_SWITCH(inputs[1].type_flag_, IType, {  // indices data type switch
+//      GatherNDBackwardImpl(N, M, K, strides,
+//                           outputs[0].dptr<DType>(),
+//                           inputs[0].dptr<DType>(),
+//                           inputs[1].dptr<IType>(),
+//                           s);
+//    });
+//  });
+//}
 
 /*!
  * This is for internal use only.

@@ -81,47 +81,47 @@ inline void image_pad_edge(Tensor<gpu, 4, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_edge_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_2d_pad_edge_grad_kernel(
-    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
-    const int padT, const int padL) {
-  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  if (outputPointId >= grad_out.size(2) * grad_out.size(3)) {
-    return;
-  }
-  int outputPointX = outputPointId % grad_out.size(3);
-  int outputPointY = outputPointId / grad_out.size(3);
+//template <int n_bits, typename DType>
+//__global__ void image_2d_pad_edge_grad_kernel(
+//    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
+//    const int padT, const int padL) {
+//  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  if (outputPointId >= grad_out.size(2) * grad_out.size(3)) {
+//    return;
+//  }
+//  int outputPointX = outputPointId % grad_out.size(3);
+//  int outputPointY = outputPointId / grad_out.size(3);
+//
+//  int iStartX = max(0, -padL);
+//  int iStartY = max(0, -padT);
+//  int oStartX = max(0, padL);
+//  int oStartY = max(0, padT);
+//  int inputPointX = min(max(padL, outputPointX), grad_in.size(3) + padL - 1) -
+//                    oStartX + iStartX;
+//  int inputPointY = min(max(padT, outputPointY), grad_in.size(2) + padT - 1) -
+//                    oStartY + iStartY;
+//  DType valueToCopy = grad_out[batch][plane][outputPointY][outputPointX];
+//  atomicAdd(&grad_in[batch][plane][inputPointY][inputPointX], valueToCopy);
+//}
 
-  int iStartX = max(0, -padL);
-  int iStartY = max(0, -padT);
-  int oStartX = max(0, padL);
-  int oStartY = max(0, padT);
-  int inputPointX = min(max(padL, outputPointX), grad_in.size(3) + padL - 1) -
-                    oStartX + iStartX;
-  int inputPointY = min(max(padT, outputPointY), grad_in.size(2) + padT - 1) -
-                    oStartY + iStartY;
-  DType valueToCopy = grad_out[batch][plane][outputPointY][outputPointX];
-  atomicAdd(&grad_in[batch][plane][inputPointY][inputPointX], valueToCopy);
-}
-
-template <typename DType>
-inline void image_pad_edge_grad(Tensor<gpu, 4, DType> grad_in,
-                                const Tensor<gpu, 4, DType> &grad_out,
-                                const mxnet::TShape &pad) {
-  const int padT = pad[4];
-  const int padL = pad[6];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize = (grad_out.size(2) * grad_out.size(3) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
-  image_2d_pad_edge_grad_kernel<kBaseThreadBits,
-                                DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_edge_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_edge_grad(Tensor<gpu, 4, DType> grad_in,
+//                                const Tensor<gpu, 4, DType> &grad_out,
+//                                const mxnet::TShape &pad) {
+//  const int padT = pad[4];
+//  const int padL = pad[6];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize = (grad_out.size(2) * grad_out.size(3) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
+//  image_2d_pad_edge_grad_kernel<kBaseThreadBits,
+//                                DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_edge_grad_kernel);
+//}
 
 // Case 2: Constant Padding
 template <int n_bits, typename DType>
@@ -171,42 +171,42 @@ inline void image_pad_constant(Tensor<gpu, 4, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_constant_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_2d_pad_constant_grad_kernel(
-    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
-    const int padT, const int padL) {
-  int inPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  int pixel_num = grad_in.size(2) * grad_in.size(3);
-  if (inPointId >= pixel_num) {
-    return;
-  }
-  int inPointX = inPointId % grad_in.size(3);
-  int inPointY = inPointId / grad_in.size(3);
-  int outPointX = inPointX + padL;
-  int outPointY = inPointY + padT;
+//template <int n_bits, typename DType>
+//__global__ void image_2d_pad_constant_grad_kernel(
+//    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
+//    const int padT, const int padL) {
+//  int inPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  int pixel_num = grad_in.size(2) * grad_in.size(3);
+//  if (inPointId >= pixel_num) {
+//    return;
+//  }
+//  int inPointX = inPointId % grad_in.size(3);
+//  int inPointY = inPointId / grad_in.size(3);
+//  int outPointX = inPointX + padL;
+//  int outPointY = inPointY + padT;
+//
+//  grad_in[batch][plane][inPointY][inPointX] =
+//      grad_out[batch][plane][outPointY][outPointX];
+//}
 
-  grad_in[batch][plane][inPointY][inPointX] =
-      grad_out[batch][plane][outPointY][outPointX];
-}
-
-template <typename DType>
-inline void image_pad_constant_grad(Tensor<gpu, 4, DType> grad_in,
-                                    const Tensor<gpu, 4, DType> &grad_out,
-                                    const mxnet::TShape &pad) {
-  const int padT = pad[4];
-  const int padL = pad[6];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize = (grad_in.size(2) * grad_in.size(3) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_in.size(1), grad_in.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_in.stream_);
-  image_2d_pad_constant_grad_kernel<kBaseThreadBits,
-                                    DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_constant_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_constant_grad(Tensor<gpu, 4, DType> grad_in,
+//                                    const Tensor<gpu, 4, DType> &grad_out,
+//                                    const mxnet::TShape &pad) {
+//  const int padT = pad[4];
+//  const int padL = pad[6];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize = (grad_in.size(2) * grad_in.size(3) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_in.size(1), grad_in.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_in.stream_);
+//  image_2d_pad_constant_grad_kernel<kBaseThreadBits,
+//                                    DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_constant_grad_kernel);
+//}
 
 
 // Case 3: Reflection Padding
@@ -264,56 +264,56 @@ inline void image_pad_reflect(Tensor<gpu, 4, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_reflect_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_2d_pad_reflect_grad_kernel(
-    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
-    const int padT, const int padL) {
-  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  if (outputPointId >= grad_out.size(2) * grad_out.size(3)) {
-    return;
-  }
-  int outputPointX = outputPointId % grad_out.size(3);
-  int outputPointY = outputPointId / grad_out.size(3);
+//template <int n_bits, typename DType>
+//__global__ void image_2d_pad_reflect_grad_kernel(
+//    Tensor<gpu, 4, DType> grad_in, const Tensor<gpu, 4, DType> grad_out,
+//    const int padT, const int padL) {
+//  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  if (outputPointId >= grad_out.size(2) * grad_out.size(3)) {
+//    return;
+//  }
+//  int outputPointX = outputPointId % grad_out.size(3);
+//  int outputPointY = outputPointId / grad_out.size(3);
+//
+//  int iStartX = max(0, -padL);
+//  int iStartY = max(0, -padT);
+//  int oStartX = max(0, padL);
+//  int oStartY = max(0, padT);
+//
+//  int inputPointX = __sad(outputPointX, padL, 0)
+//                  - __sad(outputPointX, grad_in.size(3) + padL - 1, 0)
+//                  - outputPointX
+//                  + 2 * padL + grad_in.size(3) - 1
+//                  - oStartX + iStartX;
+//
+//  int inputPointY = __sad(outputPointY, padT, 0)
+//                  - __sad(outputPointY, grad_in.size(2) + padT - 1, 0)
+//                  - outputPointY
+//                  + 2 * padT + grad_in.size(2) - 1
+//                  - oStartY + iStartY;
+//
+//  DType valueToCopy = grad_out[batch][plane][outputPointY][outputPointX];
+//  atomicAdd(&grad_in[batch][plane][inputPointY][inputPointX], valueToCopy);
+//}
 
-  int iStartX = max(0, -padL);
-  int iStartY = max(0, -padT);
-  int oStartX = max(0, padL);
-  int oStartY = max(0, padT);
-
-  int inputPointX = __sad(outputPointX, padL, 0)
-                  - __sad(outputPointX, grad_in.size(3) + padL - 1, 0)
-                  - outputPointX
-                  + 2 * padL + grad_in.size(3) - 1
-                  - oStartX + iStartX;
-
-  int inputPointY = __sad(outputPointY, padT, 0)
-                  - __sad(outputPointY, grad_in.size(2) + padT - 1, 0)
-                  - outputPointY
-                  + 2 * padT + grad_in.size(2) - 1
-                  - oStartY + iStartY;
-
-  DType valueToCopy = grad_out[batch][plane][outputPointY][outputPointX];
-  atomicAdd(&grad_in[batch][plane][inputPointY][inputPointX], valueToCopy);
-}
-
-template <typename DType>
-inline void image_pad_reflect_grad(Tensor<gpu, 4, DType> grad_in,
-                                const Tensor<gpu, 4, DType> &grad_out,
-                                const mxnet::TShape &pad) {
-  const int padT = pad[4];
-  const int padL = pad[6];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize = (grad_out.size(2) * grad_out.size(3) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
-  image_2d_pad_reflect_grad_kernel<kBaseThreadBits,
-                                DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_reflect_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_reflect_grad(Tensor<gpu, 4, DType> grad_in,
+//                                const Tensor<gpu, 4, DType> &grad_out,
+//                                const mxnet::TShape &pad) {
+//  const int padT = pad[4];
+//  const int padL = pad[6];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize = (grad_out.size(2) * grad_out.size(3) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
+//  image_2d_pad_reflect_grad_kernel<kBaseThreadBits,
+//                                DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_2d_pad_reflect_grad_kernel);
+//}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -374,57 +374,57 @@ inline void image_pad_edge(Tensor<gpu, 5, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_edge_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_3d_pad_edge_grad_kernel(
-    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
-    const int padF, const int padT, const int padL) {
-  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  if (outputPointId >= grad_out.size(2) * grad_out.size(3) * grad_out.size(4)) {
-    return;
-  }
-  int outputPointX = outputPointId % grad_out.size(4);
-  int outputPointY = (outputPointId / grad_out.size(4)) % grad_out.size(3);
-  int outputPointZ = outputPointId / (grad_out.size(3) * grad_out.size(4));
+//template <int n_bits, typename DType>
+//__global__ void image_3d_pad_edge_grad_kernel(
+//    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
+//    const int padF, const int padT, const int padL) {
+//  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  if (outputPointId >= grad_out.size(2) * grad_out.size(3) * grad_out.size(4)) {
+//    return;
+//  }
+//  int outputPointX = outputPointId % grad_out.size(4);
+//  int outputPointY = (outputPointId / grad_out.size(4)) % grad_out.size(3);
+//  int outputPointZ = outputPointId / (grad_out.size(3) * grad_out.size(4));
+//
+//  int iStartX = max(0, -padL);
+//  int iStartY = max(0, -padT);
+//  int iStartZ = max(0, -padF);
+//  int oStartX = max(0, padL);
+//  int oStartY = max(0, padT);
+//  int oStartZ = max(0, padF);
+//
+//  int inputPointX = min(max(padL, outputPointX), grad_in.size(4) + padL - 1) -
+//                    oStartX + iStartX;
+//  int inputPointY = min(max(padT, outputPointY), grad_in.size(3) + padT - 1) -
+//                    oStartY + iStartY;
+//  int inputPointZ = min(max(padF, outputPointZ), grad_in.size(2) + padF - 1) -
+//                    oStartZ + iStartZ;
+//  DType valueToCopy =
+//      grad_out[batch][plane][outputPointZ][outputPointY][outputPointX];
+//  atomicAdd(&grad_in[batch][plane][inputPointZ][inputPointY][inputPointX],
+//            valueToCopy);
+//}
 
-  int iStartX = max(0, -padL);
-  int iStartY = max(0, -padT);
-  int iStartZ = max(0, -padF);
-  int oStartX = max(0, padL);
-  int oStartY = max(0, padT);
-  int oStartZ = max(0, padF);
-
-  int inputPointX = min(max(padL, outputPointX), grad_in.size(4) + padL - 1) -
-                    oStartX + iStartX;
-  int inputPointY = min(max(padT, outputPointY), grad_in.size(3) + padT - 1) -
-                    oStartY + iStartY;
-  int inputPointZ = min(max(padF, outputPointZ), grad_in.size(2) + padF - 1) -
-                    oStartZ + iStartZ;
-  DType valueToCopy =
-      grad_out[batch][plane][outputPointZ][outputPointY][outputPointX];
-  atomicAdd(&grad_in[batch][plane][inputPointZ][inputPointY][inputPointX],
-            valueToCopy);
-}
-
-template <typename DType>
-inline void image_pad_edge_grad(Tensor<gpu, 5, DType> grad_in,
-                                const Tensor<gpu, 5, DType> &grad_out,
-                                const mxnet::TShape &pad) {
-  const int padF = pad[4];
-  const int padT = pad[6];
-  const int padL = pad[8];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize =
-      (grad_out.size(2) * grad_out.size(3) * grad_out.size(4) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
-  image_3d_pad_edge_grad_kernel<kBaseThreadBits,
-                                DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padF, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_edge_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_edge_grad(Tensor<gpu, 5, DType> grad_in,
+//                                const Tensor<gpu, 5, DType> &grad_out,
+//                                const mxnet::TShape &pad) {
+//  const int padF = pad[4];
+//  const int padT = pad[6];
+//  const int padL = pad[8];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize =
+//      (grad_out.size(2) * grad_out.size(3) * grad_out.size(4) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
+//  image_3d_pad_edge_grad_kernel<kBaseThreadBits,
+//                                DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padF, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_edge_grad_kernel);
+//}
 
 // Case 2: Constant Padding
 template <int n_bits, typename DType>
@@ -484,48 +484,48 @@ inline void image_pad_constant(Tensor<gpu, 5, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_constant_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_3d_pad_constant_grad_kernel(
-    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
-    const int padF, const int padT, const int padL) {
-  int inPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  int pixel_num = grad_in.size(2) * grad_in.size(3) * grad_in.size(4);
-  if (inPointId >= pixel_num) {
-    return;
-  }
+//template <int n_bits, typename DType>
+//__global__ void image_3d_pad_constant_grad_kernel(
+//    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
+//    const int padF, const int padT, const int padL) {
+//  int inPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  int pixel_num = grad_in.size(2) * grad_in.size(3) * grad_in.size(4);
+//  if (inPointId >= pixel_num) {
+//    return;
+//  }
+//
+//  int inPointX = inPointId % grad_in.size(4);
+//  int inPointY = (inPointId / grad_in.size(4)) % grad_in.size(3);
+//  int inPointZ = inPointId / (grad_in.size(3) * grad_in.size(4));
+//
+//  int outPointZ = inPointZ + padF;
+//  int outPointX = inPointX + padL;
+//  int outPointY = inPointY + padT;
+//
+//  grad_in[batch][plane][inPointZ][inPointY][inPointX] =
+//      grad_out[batch][plane][outPointZ][outPointY][outPointX];
+//}
 
-  int inPointX = inPointId % grad_in.size(4);
-  int inPointY = (inPointId / grad_in.size(4)) % grad_in.size(3);
-  int inPointZ = inPointId / (grad_in.size(3) * grad_in.size(4));
-
-  int outPointZ = inPointZ + padF;
-  int outPointX = inPointX + padL;
-  int outPointY = inPointY + padT;
-
-  grad_in[batch][plane][inPointZ][inPointY][inPointX] =
-      grad_out[batch][plane][outPointZ][outPointY][outPointX];
-}
-
-template <typename DType>
-inline void image_pad_constant_grad(Tensor<gpu, 5, DType> grad_in,
-                                    const Tensor<gpu, 5, DType> &grad_out,
-                                    const mxnet::TShape &pad) {
-  const int padF = pad[4];
-  const int padT = pad[6];
-  const int padL = pad[8];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize =
-      (grad_in.size(2) * grad_in.size(3) * grad_in.size(4) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_in.size(1), grad_in.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_in.stream_);
-  image_3d_pad_constant_grad_kernel<kBaseThreadBits,
-                                    DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padF, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_constant_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_constant_grad(Tensor<gpu, 5, DType> grad_in,
+//                                    const Tensor<gpu, 5, DType> &grad_out,
+//                                    const mxnet::TShape &pad) {
+//  const int padF = pad[4];
+//  const int padT = pad[6];
+//  const int padL = pad[8];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize =
+//      (grad_in.size(2) * grad_in.size(3) * grad_in.size(4) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_in.size(1), grad_in.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_in.stream_);
+//  image_3d_pad_constant_grad_kernel<kBaseThreadBits,
+//                                    DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padF, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_constant_grad_kernel);
+//}
 
 // Case 3: Reflection Padding
 
@@ -591,50 +591,50 @@ inline void image_pad_reflect(Tensor<gpu, 5, DType> dst,
   MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_reflect_kernel);
 }
 
-template <int n_bits, typename DType>
-__global__ void image_3d_pad_reflect_grad_kernel(
-    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
-    const int padF, const int padT, const int padL) {
-  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
-  int plane = blockIdx.y;
-  int batch = blockIdx.z;
-  if (outputPointId >= grad_out.size(2) * grad_out.size(3) * grad_out.size(4)) {
-    return;
-  }
-  int outputPointX = outputPointId % grad_out.size(4);
-  int outputPointY = (outputPointId / grad_out.size(4)) % grad_out.size(3);
-  int outputPointZ = outputPointId / (grad_out.size(3) * grad_out.size(4));
-
-  int iStartX = max(0, -padL);
-  int iStartY = max(0, -padT);
-  int iStartZ = max(0, -padF);
-  int oStartX = max(0, padL);
-  int oStartY = max(0, padT);
-  int oStartZ = max(0, padF);
-
-  int inputPointX = __sad(outputPointX, padL, 0)
-                  - __sad(outputPointX, grad_in.size(4) + padL - 1, 0)
-                  - outputPointX
-                  + 2 * padL + grad_in.size(4) - 1
-                  - oStartX + iStartX;
-
-  int inputPointY = __sad(outputPointY, padT, 0)
-                  - __sad(outputPointY, grad_in.size(3) + padT - 1, 0)
-                  - outputPointY
-                  + 2 * padT + grad_in.size(3) - 1
-                  - oStartY + iStartY;
-
-  int inputPointZ = __sad(outputPointZ, padF, 0)
-                  - __sad(outputPointZ, grad_in.size(2) + padF - 1, 0)
-                  - outputPointZ
-                  + 2 * padF + grad_in.size(2) - 1
-                  - oStartZ + iStartZ;
-
-  DType valueToCopy =
-      grad_out[batch][plane][outputPointZ][outputPointY][outputPointX];
-  atomicAdd(&grad_in[batch][plane][inputPointZ][inputPointY][inputPointX],
-            valueToCopy);
-}
+//template <int n_bits, typename DType>
+//__global__ void image_3d_pad_reflect_grad_kernel(
+//    Tensor<gpu, 5, DType> grad_in, const Tensor<gpu, 5, DType> grad_out,
+//    const int padF, const int padT, const int padL) {
+//  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
+//  int plane = blockIdx.y;
+//  int batch = blockIdx.z;
+//  if (outputPointId >= grad_out.size(2) * grad_out.size(3) * grad_out.size(4)) {
+//    return;
+//  }
+//  int outputPointX = outputPointId % grad_out.size(4);
+//  int outputPointY = (outputPointId / grad_out.size(4)) % grad_out.size(3);
+//  int outputPointZ = outputPointId / (grad_out.size(3) * grad_out.size(4));
+//
+//  int iStartX = max(0, -padL);
+//  int iStartY = max(0, -padT);
+//  int iStartZ = max(0, -padF);
+//  int oStartX = max(0, padL);
+//  int oStartY = max(0, padT);
+//  int oStartZ = max(0, padF);
+//
+//  int inputPointX = __sad(outputPointX, padL, 0)
+//                  - __sad(outputPointX, grad_in.size(4) + padL - 1, 0)
+//                  - outputPointX
+//                  + 2 * padL + grad_in.size(4) - 1
+//                  - oStartX + iStartX;
+//
+//  int inputPointY = __sad(outputPointY, padT, 0)
+//                  - __sad(outputPointY, grad_in.size(3) + padT - 1, 0)
+//                  - outputPointY
+//                  + 2 * padT + grad_in.size(3) - 1
+//                  - oStartY + iStartY;
+//
+//  int inputPointZ = __sad(outputPointZ, padF, 0)
+//                  - __sad(outputPointZ, grad_in.size(2) + padF - 1, 0)
+//                  - outputPointZ
+//                  + 2 * padF + grad_in.size(2) - 1
+//                  - oStartZ + iStartZ;
+//
+//  DType valueToCopy =
+//      grad_out[batch][plane][outputPointZ][outputPointY][outputPointX];
+//  atomicAdd(&grad_in[batch][plane][inputPointZ][inputPointY][inputPointX],
+//            valueToCopy);
+//}
 
 /*  int outputPointId = threadIdx.x + blockIdx.x * blockDim.x;
   int plane = blockIdx.y;
@@ -665,24 +665,24 @@ __global__ void image_3d_pad_reflect_grad_kernel(
   DType valueToCopy = grad_out[batch][plane][outputPointY][outputPointX];
   atomicAdd(&grad_in[batch][plane][inputPointY][inputPointX], valueToCopy);*/
 
-template <typename DType>
-inline void image_pad_reflect_grad(Tensor<gpu, 5, DType> grad_in,
-                                const Tensor<gpu, 5, DType> &grad_out,
-                                const mxnet::TShape &pad) {
-  const int padF = pad[4];
-  const int padT = pad[6];
-  const int padL = pad[8];
-  dim3 dimBlock(kBaseThreadNum);
-  int xGridSize =
-      (grad_out.size(2) * grad_out.size(3) * grad_out.size(4) + 256 - 1) / 256;
-  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
-  CheckLaunchParam(dimGrid, dimBlock, "Pad");
-  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
-  image_3d_pad_reflect_grad_kernel<kBaseThreadBits,
-                                DType><<<dimGrid, dimBlock, 0, stream>>>(
-      grad_in, grad_out, padF, padT, padL);
-  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_reflect_grad_kernel);
-}
+//template <typename DType>
+//inline void image_pad_reflect_grad(Tensor<gpu, 5, DType> grad_in,
+//                                const Tensor<gpu, 5, DType> &grad_out,
+//                                const mxnet::TShape &pad) {
+//  const int padF = pad[4];
+//  const int padT = pad[6];
+//  const int padL = pad[8];
+//  dim3 dimBlock(kBaseThreadNum);
+//  int xGridSize =
+//      (grad_out.size(2) * grad_out.size(3) * grad_out.size(4) + 256 - 1) / 256;
+//  dim3 dimGrid(xGridSize, grad_out.size(1), grad_out.size(0));
+//  CheckLaunchParam(dimGrid, dimBlock, "Pad");
+//  cudaStream_t stream = Stream<gpu>::GetStream(grad_out.stream_);
+//  image_3d_pad_reflect_grad_kernel<kBaseThreadBits,
+//                                DType><<<dimGrid, dimBlock, 0, stream>>>(
+//      grad_in, grad_out, padF, padT, padL);
+//  MSHADOW_CUDA_POST_KERNEL_CHECK(image_3d_pad_reflect_grad_kernel);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 }  // namespace cuda
@@ -703,22 +703,22 @@ void pad_image(Tensor<gpu, dim, DType> dst, const Tensor<gpu, dim, DType> src,
   }
 }
 
-template <int dim, typename DType>
-void pad_image_grad(Tensor<gpu, dim, DType> grad_in,
-                    const Tensor<gpu, dim, DType> grad_out,
-                    const mxnet::TShape pad, int mode) {
-  switch (mode) {
-    case mxnet::op::pad_enum::kEdge:
-      cuda::image_pad_edge_grad(grad_in, grad_out, pad);
-      break;
-    case mxnet::op::pad_enum::kConstant:
-      cuda::image_pad_constant_grad(grad_in, grad_out, pad);
-      break;
-    case mxnet::op::pad_enum::kReflect:
-      cuda::image_pad_reflect_grad(grad_in, grad_out, pad);
-      break;
-  }
-}
+//template <int dim, typename DType>
+//void pad_image_grad(Tensor<gpu, dim, DType> grad_in,
+//                    const Tensor<gpu, dim, DType> grad_out,
+//                    const mxnet::TShape pad, int mode) {
+//  switch (mode) {
+//    case mxnet::op::pad_enum::kEdge:
+//      cuda::image_pad_edge_grad(grad_in, grad_out, pad);
+//      break;
+//    case mxnet::op::pad_enum::kConstant:
+//      cuda::image_pad_constant_grad(grad_in, grad_out, pad);
+//      break;
+//    case mxnet::op::pad_enum::kReflect:
+//      cuda::image_pad_reflect_grad(grad_in, grad_out, pad);
+//      break;
+//  }
+//}
 
 }  // namespace mshadow
 

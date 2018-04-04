@@ -91,17 +91,17 @@ Examples::
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
   })
 .set_attr<FCompute>("FCompute<cpu>", BoxNMSForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_contrib_box_nms"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_contrib_box_nms"})
 .add_argument("data", "NDArray-or-Symbol", "The input")
 .add_arguments(BoxNMSParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_contrib_box_nms)
-.set_num_inputs(3)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<BoxNMSParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", BoxNMSBackward<cpu>)
-.add_arguments(BoxNMSParam::__FIELDS__());
+//NNVM_REGISTER_OP(_backward_contrib_box_nms)
+//.set_num_inputs(3)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<BoxNMSParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", BoxNMSBackward<cpu>)
+//.add_arguments(BoxNMSParam::__FIELDS__());
 
 NNVM_REGISTER_OP(_contrib_box_iou)
 .describe(R"doc(Bounding box overlap of two arrays.
@@ -131,18 +131,18 @@ NNVM_REGISTER_OP(_contrib_box_iou)
 .set_attr<nnvm::FInferShape>("FInferShape", BoxOverlapShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<2, 1>)
 .set_attr<FCompute>("FCompute<cpu>", BoxOverlapForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_contrib_box_iou"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{"_backward_contrib_box_iou"})
 .add_argument("lhs", "NDArray-or-Symbol", "The first input")
 .add_argument("rhs", "NDArray-or-Symbol", "The second input")
 .add_arguments(BoxOverlapParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_contrib_box_iou)
-.set_num_inputs(2)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<BoxOverlapParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", BoxOverlapBackward<cpu>)
-.add_arguments(BoxOverlapParam::__FIELDS__());
+//NNVM_REGISTER_OP(_backward_contrib_box_iou)
+//.set_num_inputs(2)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<BoxOverlapParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", BoxOverlapBackward<cpu>)
+//.add_arguments(BoxOverlapParam::__FIELDS__());
 
 NNVM_REGISTER_OP(_contrib_bipartite_matching)
 .describe(R"doc(Compute bipartite matching.
@@ -177,18 +177,18 @@ NNVM_REGISTER_OP(_contrib_bipartite_matching)
 .set_attr<nnvm::FInferShape>("FInferShape", MatchingShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 2>)
 .set_attr<FCompute>("FCompute<cpu>", BipartiteMatchingForward<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  ElemwiseGradUseNone{"_backward_contrib_bipartite_matching"})
+//.set_attr<nnvm::FGradient>("FGradient",
+//  ElemwiseGradUseNone{"_backward_contrib_bipartite_matching"})
 .add_argument("data", "NDArray-or-Symbol", "The input")
 .add_arguments(BipartiteMatchingParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_contrib_bipartite_matching)
-.set_num_inputs(2)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<BipartiteMatchingParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", BipartiteMatchingBackward<cpu>)
-.add_arguments(BipartiteMatchingParam::__FIELDS__());
+//NNVM_REGISTER_OP(_backward_contrib_bipartite_matching)
+//.set_num_inputs(2)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<BipartiteMatchingParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", BipartiteMatchingBackward<cpu>)
+//.add_arguments(BipartiteMatchingParam::__FIELDS__());
 
 }  // namespace op
 }  // namespace mxnet

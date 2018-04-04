@@ -115,33 +115,33 @@ class CorrelationOp : public Operator {
                        neighborhood_grid_radius_, neighborhood_grid_width_,
                        kernel_radius_, param_.stride1, param_.stride2);
   }
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    Stream<xpu> *s = ctx.get_stream<xpu>();
-    Tensor<xpu, 4> grad_data1 = in_grad[Correlation::kData1].get<xpu, 4, real_t>(s);
-    Tensor<xpu, 4> grad_data2 = in_grad[Correlation::kData2].get<xpu, 4, real_t>(s);
-    Tensor<xpu, 4> out_g = out_grad[Correlation::kOut].get<xpu, 4, real_t>(s);
-    Tensor<xpu, 4> tmp1 = out_data[Correlation::kTemp1].get<xpu, 4, real_t>(s);
-    Tensor<xpu, 4> tmp2 = out_data[Correlation::kTemp2].get<xpu, 4, real_t>(s);
-    if (req[0] != kAddTo) grad_data1 = 0.0f;
-    if (req[1] != kAddTo) grad_data2 = 0.0f;
-    CHECK_EQ(grad_data1.CheckContiguous(), true);
-    CHECK_EQ(grad_data2.CheckContiguous(), true);
-    CHECK_EQ(out_g.CheckContiguous(), true);
-    CHECK_EQ(tmp1.CheckContiguous(), true);
-    CHECK_EQ(tmp2.CheckContiguous(), true);
-    CorrelationBackward(out_g, grad_data1, grad_data2, tmp1, tmp2, top_channels_,
-                        top_height_, top_width_, param_.pad_size, param_.is_multiply,
-                        param_.max_displacement, param_.kernel_size, neighborhood_grid_radius_,
-                        neighborhood_grid_width_, kernel_radius_, param_.stride1, param_.stride2,
-                        num, channels, height, width);
-  }
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
+  //  Tensor<xpu, 4> grad_data1 = in_grad[Correlation::kData1].get<xpu, 4, real_t>(s);
+  //  Tensor<xpu, 4> grad_data2 = in_grad[Correlation::kData2].get<xpu, 4, real_t>(s);
+  //  Tensor<xpu, 4> out_g = out_grad[Correlation::kOut].get<xpu, 4, real_t>(s);
+  //  Tensor<xpu, 4> tmp1 = out_data[Correlation::kTemp1].get<xpu, 4, real_t>(s);
+  //  Tensor<xpu, 4> tmp2 = out_data[Correlation::kTemp2].get<xpu, 4, real_t>(s);
+  //  if (req[0] != kAddTo) grad_data1 = 0.0f;
+  //  if (req[1] != kAddTo) grad_data2 = 0.0f;
+  //  CHECK_EQ(grad_data1.CheckContiguous(), true);
+  //  CHECK_EQ(grad_data2.CheckContiguous(), true);
+  //  CHECK_EQ(out_g.CheckContiguous(), true);
+  //  CHECK_EQ(tmp1.CheckContiguous(), true);
+  //  CHECK_EQ(tmp2.CheckContiguous(), true);
+  //  CorrelationBackward(out_g, grad_data1, grad_data2, tmp1, tmp2, top_channels_,
+  //                      top_height_, top_width_, param_.pad_size, param_.is_multiply,
+  //                      param_.max_displacement, param_.kernel_size, neighborhood_grid_radius_,
+  //                      neighborhood_grid_width_, kernel_radius_, param_.stride1, param_.stride2,
+  //                      num, channels, height, width);
+  //}
 
  private:
     CorrelationParam param_;

@@ -83,18 +83,18 @@ __global__ void sketch_forward_kernel(const int nthreads, DType *out, const DTyp
   atomic_add(out + target, s[i_indim] * in[index]);
 }
 
-template <typename DType>
-__global__ void sketch_backward_kernel(const int nthreads, DType *in_grad, const DType *h,
-                    const DType *s, const DType *out_grad, const int n_smaples,
-                    const int in_dim, const int out_dim) {
-  // only calculate gradient regarding x
-  // can also calculate gradient regarding s if needed
-  const int index = blockIdx.x * blockDim.x + threadIdx.x;
-  const int i_indim = index % in_dim;
-  const int i_sample = index / in_dim;
-  const int i_outdim = i_sample*out_dim + h[i_indim];
-  in_grad[index] = out_grad[i_outdim] * s[i_indim];
-}
+//template <typename DType>
+//__global__ void sketch_backward_kernel(const int nthreads, DType *in_grad, const DType *h,
+//                    const DType *s, const DType *out_grad, const int n_smaples,
+//                    const int in_dim, const int out_dim) {
+//  // only calculate gradient regarding x
+//  // can also calculate gradient regarding s if needed
+//  const int index = blockIdx.x * blockDim.x + threadIdx.x;
+//  const int i_indim = index % in_dim;
+//  const int i_sample = index / in_dim;
+//  const int i_outdim = i_sample*out_dim + h[i_indim];
+//  in_grad[index] = out_grad[i_outdim] * s[i_indim];
+//}
 
 }  // namespace cuda
 
@@ -135,40 +135,40 @@ inline void CountSketchForward(const Tensor<gpu, 2, DType> &out,
   }
 }
 
-template<typename DType>
-inline void CountSketchBackward(const Tensor<gpu, 2, DType> &in_grad,
-                                const Tensor<gpu, 2, DType> &out_grad,
-                                const Tensor<gpu, 1, DType> &h,
-                                const Tensor<gpu, 1, DType> &s,
-                                const int n_samples,
-                                const int processing_batch_size,
-                                const int in_dim,
-                                const int out_dim) {
-  DType *in_grad_ptr = in_grad.dptr_;
-  const DType *out_grad_ptr = out_grad.dptr_;
-  const DType *h_ptr = h.dptr_;
-  const DType *s_ptr = s.dptr_;
-  int upper_bound = n_samples/processing_batch_size;
-  if (n_samples%processing_batch_size == 0) {
-    upper_bound = upper_bound-1;
-  }
-  // guarantee there are at least one iteration
-  upper_bound = upper_bound > 0? upper_bound:0;
-  int bstart = 0;
-  for ( int i = 0; i <= upper_bound; i++ ) {
-    const int batchlen = min(processing_batch_size, n_samples - bstart);
-    const int nthreads = batchlen * in_dim;
-    // to make number of threads the same as input
-    const int threads_per_block = min(THREADS_PER_BLOCK, nthreads);
-    int nblocks = (nthreads + threads_per_block - 1) / threads_per_block;
-    cuda::sketch_backward_kernel<DType><<<nblocks, threads_per_block>>>(
-                            nthreads, in_grad_ptr+bstart*in_dim, h_ptr,
-                            s_ptr, out_grad_ptr+bstart*out_dim, batchlen,
-                            in_dim, out_dim);
-    MSHADOW_CUDA_POST_KERNEL_CHECK(sketch_backward_kernel);
-    bstart = (i+1)*batchlen;
-  }
-}
+//template<typename DType>
+//inline void CountSketchBackward(const Tensor<gpu, 2, DType> &in_grad,
+//                                const Tensor<gpu, 2, DType> &out_grad,
+//                                const Tensor<gpu, 1, DType> &h,
+//                                const Tensor<gpu, 1, DType> &s,
+//                                const int n_samples,
+//                                const int processing_batch_size,
+//                                const int in_dim,
+//                                const int out_dim) {
+//  DType *in_grad_ptr = in_grad.dptr_;
+//  const DType *out_grad_ptr = out_grad.dptr_;
+//  const DType *h_ptr = h.dptr_;
+//  const DType *s_ptr = s.dptr_;
+//  int upper_bound = n_samples/processing_batch_size;
+//  if (n_samples%processing_batch_size == 0) {
+//    upper_bound = upper_bound-1;
+//  }
+//  // guarantee there are at least one iteration
+//  upper_bound = upper_bound > 0? upper_bound:0;
+//  int bstart = 0;
+//  for ( int i = 0; i <= upper_bound; i++ ) {
+//    const int batchlen = min(processing_batch_size, n_samples - bstart);
+//    const int nthreads = batchlen * in_dim;
+//    // to make number of threads the same as input
+//    const int threads_per_block = min(THREADS_PER_BLOCK, nthreads);
+//    int nblocks = (nthreads + threads_per_block - 1) / threads_per_block;
+//    cuda::sketch_backward_kernel<DType><<<nblocks, threads_per_block>>>(
+//                            nthreads, in_grad_ptr+bstart*in_dim, h_ptr,
+//                            s_ptr, out_grad_ptr+bstart*out_dim, batchlen,
+//                            in_dim, out_dim);
+//    MSHADOW_CUDA_POST_KERNEL_CHECK(sketch_backward_kernel);
+//    bstart = (i+1)*batchlen;
+//  }
+//}
 }  // namespace mshadow
 namespace mxnet {
 namespace op {

@@ -475,34 +475,34 @@ void LaOpForward(const nnvm::NodeAttrs& attrs,
   });
 }
 
-template<typename xpu, int idim, int odim, int inum, int onum, typename laop>
-void LaOpBackward(const nnvm::NodeAttrs& attrs,
-                  const OpContext& ctx,
-                  const std::vector<TBlob>& inputs,
-                  const std::vector<OpReqType>& req,
-                  const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  CHECK_EQ(inputs.size(), inum);
-  CHECK_EQ(outputs.size(), onum);
-  MSHADOW_SGL_DBL_TYPE_SWITCH(outputs[0].type_flag_, OType, {
-    std::vector<TBlob> tspace(outputs);
-    for ( int i = 0; i < onum; ++i ) {
-      if ( req[i] == kAddTo ) {
-        tspace[i].dptr_ = ctx.requested[0]
-                             .get_space_typed<xpu, 1, OType>(Shape1(outputs[i].Size()), s).dptr_;
-      }
-    }
-    LaOpCaller<xpu, OType, idim, odim, inum, onum, laop>::op(inputs, tspace,
-                                                             attrs, ctx);
-    for ( int i = 0; i < onum; ++i ) {
-      if ( req[i] == kAddTo ) {
-        Tensor<xpu, 1, OType> out = outputs[i].FlatTo1D<xpu, OType>(s);
-        out += tspace[i].FlatTo1D<xpu, OType>(s);
-      }
-    }
-  });
-}
+//template<typename xpu, int idim, int odim, int inum, int onum, typename laop>
+//void LaOpBackward(const nnvm::NodeAttrs& attrs,
+//                  const OpContext& ctx,
+//                  const std::vector<TBlob>& inputs,
+//                  const std::vector<OpReqType>& req,
+//                  const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  CHECK_EQ(inputs.size(), inum);
+//  CHECK_EQ(outputs.size(), onum);
+//  MSHADOW_SGL_DBL_TYPE_SWITCH(outputs[0].type_flag_, OType, {
+//    std::vector<TBlob> tspace(outputs);
+//    for ( int i = 0; i < onum; ++i ) {
+//      if ( req[i] == kAddTo ) {
+//        tspace[i].dptr_ = ctx.requested[0]
+//                             .get_space_typed<xpu, 1, OType>(Shape1(outputs[i].Size()), s).dptr_;
+//      }
+//    }
+//    LaOpCaller<xpu, OType, idim, odim, inum, onum, laop>::op(inputs, tspace,
+//                                                             attrs, ctx);
+//    for ( int i = 0; i < onum; ++i ) {
+//      if ( req[i] == kAddTo ) {
+//        Tensor<xpu, 1, OType> out = outputs[i].FlatTo1D<xpu, OType>(s);
+//        out += tspace[i].FlatTo1D<xpu, OType>(s);
+//      }
+//    }
+//  });
+//}
 
 // Specific wrapper for syevd (cannot use the default ones, because A, U have
 // different dimensionality than L
@@ -525,34 +525,34 @@ void LaOpForwSyevd(const nnvm::NodeAttrs& attrs,
   });
 }
 
-// (dU, dL, U, L) => (dA)
-template<typename xpu, typename laop>
-void LaOpBackwSyevd(const nnvm::NodeAttrs& attrs,
-                    const OpContext& ctx,
-                    const std::vector<TBlob>& inputs,
-                    const std::vector<OpReqType>& req,
-                    const std::vector<TBlob>& outputs) {
-  using namespace mshadow;
-  Stream<xpu> *s = ctx.get_stream<xpu>();
-  CHECK_EQ(inputs.size(), 4);
-  CHECK_EQ(outputs.size(), 1);
-  MSHADOW_SGL_DBL_TYPE_SWITCH(outputs[0].type_flag_, OType, {
-    std::vector<TBlob> tspace(outputs);
-    if ( req[0] == kAddTo ) {
-      tspace[0].dptr_ = ctx.requested[0]
-        .get_space_typed<xpu, 1, OType>(Shape1(outputs[0].Size()), s).dptr_;
-    }
-    laop::op(inputs[0].FlatToKD<xpu, 3, OType>(s),
-             inputs[1].FlatToKD<xpu, 2, OType>(s),
-             inputs[2].FlatToKD<xpu, 3, OType>(s),
-             inputs[3].FlatToKD<xpu, 2, OType>(s),
-             tspace[0].FlatToKD<xpu, 3, OType>(s), ctx, attrs);
-    if ( req[0] == kAddTo ) {
-      Tensor<xpu, 1, OType> out = outputs[0].FlatTo1D<xpu, OType>(s);
-      out += tspace[0].FlatTo1D<xpu, OType>(s);
-    }
-  });
-}
+//// (dU, dL, U, L) => (dA)
+//template<typename xpu, typename laop>
+//void LaOpBackwSyevd(const nnvm::NodeAttrs& attrs,
+//                    const OpContext& ctx,
+//                    const std::vector<TBlob>& inputs,
+//                    const std::vector<OpReqType>& req,
+//                    const std::vector<TBlob>& outputs) {
+//  using namespace mshadow;
+//  Stream<xpu> *s = ctx.get_stream<xpu>();
+//  CHECK_EQ(inputs.size(), 4);
+//  CHECK_EQ(outputs.size(), 1);
+//  MSHADOW_SGL_DBL_TYPE_SWITCH(outputs[0].type_flag_, OType, {
+//    std::vector<TBlob> tspace(outputs);
+//    if ( req[0] == kAddTo ) {
+//      tspace[0].dptr_ = ctx.requested[0]
+//        .get_space_typed<xpu, 1, OType>(Shape1(outputs[0].Size()), s).dptr_;
+//    }
+//    laop::op(inputs[0].FlatToKD<xpu, 3, OType>(s),
+//             inputs[1].FlatToKD<xpu, 2, OType>(s),
+//             inputs[2].FlatToKD<xpu, 3, OType>(s),
+//             inputs[3].FlatToKD<xpu, 2, OType>(s),
+//             tspace[0].FlatToKD<xpu, 3, OType>(s), ctx, attrs);
+//    if ( req[0] == kAddTo ) {
+//      Tensor<xpu, 1, OType> out = outputs[0].FlatTo1D<xpu, OType>(s);
+//      out += tspace[0].FlatTo1D<xpu, OType>(s);
+//    }
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

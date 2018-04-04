@@ -155,22 +155,22 @@ NNVM_REGISTER_OP(UpSampling)
       }
     });
 
-NNVM_REGISTER_OP(_backward_UpSampling)
-.set_num_outputs([](const NodeAttrs& attrs) {
-  const UpSamplingParam& params = nnvm::get<UpSamplingParam>(attrs.parsed);
-  return params.sample_type == up_enum::kNearest ? params.num_args : 2;
-})
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  const UpSamplingParam& param = nnvm::get<UpSamplingParam>(n.parsed);
-  if (param.sample_type == up_enum::kNearest) {
-    return std::vector<ResourceRequest>();
-  } else {
-    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-  }
-})
-.set_attr_parser(ParamParser<UpSamplingParam>)
-.set_attr<FCompute>("FCompute<cpu>", UpSamplingGradCompute<cpu>);
+//NNVM_REGISTER_OP(_backward_UpSampling)
+//.set_num_outputs([](const NodeAttrs& attrs) {
+//  const UpSamplingParam& params = nnvm::get<UpSamplingParam>(attrs.parsed);
+//  return params.sample_type == up_enum::kNearest ? params.num_args : 2;
+//})
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  const UpSamplingParam& param = nnvm::get<UpSamplingParam>(n.parsed);
+//  if (param.sample_type == up_enum::kNearest) {
+//    return std::vector<ResourceRequest>();
+//  } else {
+//    return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//  }
+//})
+//.set_attr_parser(ParamParser<UpSamplingParam>)
+//.set_attr<FCompute>("FCompute<cpu>", UpSamplingGradCompute<cpu>);
 
 }  // namespace op
 }  // namespace mxnet

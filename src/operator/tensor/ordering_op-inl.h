@@ -353,77 +353,77 @@ void ArgSort(const nnvm::NodeAttrs& attrs,
   TopKImpl<xpu>(ctx.run_ctx, ctx.requested[0], inputs[0], outputs, topk_param);
 }
 
-template<typename xpu>
-void TopKBackward_(const nnvm::NodeAttrs& attrs,
-                  const OpContext& ctx,
-                  const std::vector<TBlob>& inputs,
-                  const std::vector<OpReqType>& req,
-                  const std::vector<TBlob>& outputs) {
-  CHECK_NE(req[0], kWriteInplace);
-  using namespace mshadow;
-  using namespace mshadow::expr;
-  Stream<xpu> *s = ctx.run_ctx.get_stream<xpu>();
-  const TopKParam& param = nnvm::get<TopKParam>(attrs.parsed);
-  CHECK(param.ret_typ == topk_enum::kReturnValue || param.ret_typ == topk_enum::kReturnBoth);
-  int batch_size, element_num;  // number of batches + the size of each batch
-  int axis = 0;
-  bool do_transpose = false;
-  bool is_ascend = false;
-  int k = 0;
-  TShape target_shape;
-  ParseTopKParam(outputs[0].shape_, param,
-                 &target_shape, &batch_size, &element_num, &axis, &k, &do_transpose, &is_ascend);
-  Tensor<xpu, 1, real_t> workspace =
-    ctx.requested[0].get_space_typed<xpu, 1, real_t>(Shape1(batch_size * k * 2 + batch_size), s);
-  Tensor<xpu, 1, real_t> sel_indices =
-    Tensor<xpu, 1, real_t>(workspace.dptr_, Shape1(batch_size * k), s);
-  Tensor<xpu, 1, real_t> batch_shift =
-    Tensor<xpu, 1, real_t>(workspace.dptr_ + batch_size * k, Shape1(batch_size), s);
-  Tensor<xpu, 1, real_t> dummy_index =
-    Tensor<xpu, 1, real_t>(workspace.dptr_ + batch_size * k + batch_size,
-                           Shape1(batch_size * k), s);
-  Tensor<xpu, 2, real_t> out_grad =
-    inputs[0].get_with_shape<xpu, 2, real_t>(Shape2(inputs[0].shape_.Size(), 1), s);
-  Tensor<xpu, 2, real_t> in_grad =
-    outputs[0].get_with_shape<xpu, 2, real_t>(Shape2(outputs[0].shape_.Size(), 1), s);
-  mxnet_op::Kernel<range_fwd, xpu>::Launch(s, batch_size, 1, 0.0f,
-    static_cast<real_t>(element_num), kWriteTo, batch_shift.dptr_);
-  if (do_transpose) {
-    Tensor<xpu, 1, real_t> indices = inputs[2].FlatTo1D<xpu, real_t>(s);
-    TShape src_shape = outputs[0].shape_.FlatTo3D(axis);
-    sel_indices = reshape(transpose(
-                            broadcast_to(inplace_reshape(batch_shift,
-                                                         Shape3(src_shape[0], src_shape[2], 1)),
-                                         TShape(Shape3(src_shape[0], src_shape[2], k))),
-                            Shape3(0, 2, 1)),
-                          Shape1(batch_size * k));
-    sel_indices += indices;
-    sel_indices = transpose_indices(sel_indices, Shape3(src_shape[0], src_shape[2], src_shape[1]),
-                                    Shape3(0, 2, 1));
-  } else {
-    Tensor<xpu, 2, real_t> indices =
-      inputs[2].get_with_shape<xpu, 2, real_t>(Shape2(batch_size, k), s);
-    sel_indices = reshape(indices +
-                          broadcast_to(inplace_reshape(batch_shift, Shape2(batch_size, 1)),
-                                       TShape(Shape2(batch_size, k))),
-                          Shape1(batch_size * k));
-  }
-  CHECK_EQ(sel_indices.CheckContiguous(), true);
-  if (kWriteTo == req[0]) {
-    in_grad = scalar<real_t>(0);
-    IndexFill(in_grad, sel_indices, out_grad);
-  } else if (kAddTo == req[0]) {
-    // TODO(sxjscience) We can use AddTakeGrad in the future.
-    // However, the current implementation of AddTakeGrad is not so efficient.
-    mxnet_op::Kernel<range_fwd, xpu>::Launch(s, sel_indices.shape_.Size(), 1, 0.0f,
-      1.0f, kWriteTo, dummy_index.dptr_);
-    mxnet::op::AddTakeGradLargeBatch(in_grad, sel_indices, dummy_index, out_grad);
-  } else if (kNullOp == req[0]) {
-    return;
-  } else {
-    LOG(FATAL) << "Not Implemented!";
-  }
-}
+//template<typename xpu>
+//void TopKBackward_(const nnvm::NodeAttrs& attrs,
+//                  const OpContext& ctx,
+//                  const std::vector<TBlob>& inputs,
+//                  const std::vector<OpReqType>& req,
+//                  const std::vector<TBlob>& outputs) {
+//  CHECK_NE(req[0], kWriteInplace);
+//  using namespace mshadow;
+//  using namespace mshadow::expr;
+//  Stream<xpu> *s = ctx.run_ctx.get_stream<xpu>();
+//  const TopKParam& param = nnvm::get<TopKParam>(attrs.parsed);
+//  CHECK(param.ret_typ == topk_enum::kReturnValue || param.ret_typ == topk_enum::kReturnBoth);
+//  int batch_size, element_num;  // number of batches + the size of each batch
+//  int axis = 0;
+//  bool do_transpose = false;
+//  bool is_ascend = false;
+//  int k = 0;
+//  TShape target_shape;
+//  ParseTopKParam(outputs[0].shape_, param,
+//                 &target_shape, &batch_size, &element_num, &axis, &k, &do_transpose, &is_ascend);
+//  Tensor<xpu, 1, real_t> workspace =
+//    ctx.requested[0].get_space_typed<xpu, 1, real_t>(Shape1(batch_size * k * 2 + batch_size), s);
+//  Tensor<xpu, 1, real_t> sel_indices =
+//    Tensor<xpu, 1, real_t>(workspace.dptr_, Shape1(batch_size * k), s);
+//  Tensor<xpu, 1, real_t> batch_shift =
+//    Tensor<xpu, 1, real_t>(workspace.dptr_ + batch_size * k, Shape1(batch_size), s);
+//  Tensor<xpu, 1, real_t> dummy_index =
+//    Tensor<xpu, 1, real_t>(workspace.dptr_ + batch_size * k + batch_size,
+//                           Shape1(batch_size * k), s);
+//  Tensor<xpu, 2, real_t> out_grad =
+//    inputs[0].get_with_shape<xpu, 2, real_t>(Shape2(inputs[0].shape_.Size(), 1), s);
+//  Tensor<xpu, 2, real_t> in_grad =
+//    outputs[0].get_with_shape<xpu, 2, real_t>(Shape2(outputs[0].shape_.Size(), 1), s);
+//  mxnet_op::Kernel<range_fwd, xpu>::Launch(s, batch_size, 1, 0.0f,
+//    static_cast<real_t>(element_num), kWriteTo, batch_shift.dptr_);
+//  if (do_transpose) {
+//    Tensor<xpu, 1, real_t> indices = inputs[2].FlatTo1D<xpu, real_t>(s);
+//    TShape src_shape = outputs[0].shape_.FlatTo3D(axis);
+//    sel_indices = reshape(transpose(
+//                            broadcast_to(inplace_reshape(batch_shift,
+//                                                         Shape3(src_shape[0], src_shape[2], 1)),
+//                                         TShape(Shape3(src_shape[0], src_shape[2], k))),
+//                            Shape3(0, 2, 1)),
+//                          Shape1(batch_size * k));
+//    sel_indices += indices;
+//    sel_indices = transpose_indices(sel_indices, Shape3(src_shape[0], src_shape[2], src_shape[1]),
+//                                    Shape3(0, 2, 1));
+//  } else {
+//    Tensor<xpu, 2, real_t> indices =
+//      inputs[2].get_with_shape<xpu, 2, real_t>(Shape2(batch_size, k), s);
+//    sel_indices = reshape(indices +
+//                          broadcast_to(inplace_reshape(batch_shift, Shape2(batch_size, 1)),
+//                                       TShape(Shape2(batch_size, k))),
+//                          Shape1(batch_size * k));
+//  }
+//  CHECK_EQ(sel_indices.CheckContiguous(), true);
+//  if (kWriteTo == req[0]) {
+//    in_grad = scalar<real_t>(0);
+//    IndexFill(in_grad, sel_indices, out_grad);
+//  } else if (kAddTo == req[0]) {
+//    // TODO(sxjscience) We can use AddTakeGrad in the future.
+//    // However, the current implementation of AddTakeGrad is not so efficient.
+//    mxnet_op::Kernel<range_fwd, xpu>::Launch(s, sel_indices.shape_.Size(), 1, 0.0f,
+//      1.0f, kWriteTo, dummy_index.dptr_);
+//    mxnet::op::AddTakeGradLargeBatch(in_grad, sel_indices, dummy_index, out_grad);
+//  } else if (kNullOp == req[0]) {
+//    return;
+//  } else {
+//    LOG(FATAL) << "Not Implemented!";
+//  }
+//}
 
 inline uint32_t TopKNumOutputs(const NodeAttrs& attrs) {
   const TopKParam& param = nnvm::get<TopKParam>(attrs.parsed);

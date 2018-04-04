@@ -141,18 +141,18 @@ void ConcatCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
   });
 }
 
-template<typename xpu>
-void ConcatGradCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
-                       const std::vector<TBlob>& inputs,
-                       const std::vector<OpReqType>& req,
-                       const std::vector<TBlob>& outputs) {
-  const ConcatParam& param = nnvm::get<ConcatParam>(attrs.parsed);
-  MSHADOW_TYPE_SWITCH(inputs[concat_enum::kOut].type_flag_, DType, {
-    ConcatOp<xpu, DType> op;
-    op.Init(param);
-    op.Backward(ctx, inputs[concat_enum::kOut], req, outputs);
-  });
-}
+//template<typename xpu>
+//void ConcatGradCompute(const nnvm::NodeAttrs& attrs, const OpContext& ctx,
+//                       const std::vector<TBlob>& inputs,
+//                       const std::vector<OpReqType>& req,
+//                       const std::vector<TBlob>& outputs) {
+//  const ConcatParam& param = nnvm::get<ConcatParam>(attrs.parsed);
+//  MSHADOW_TYPE_SWITCH(inputs[concat_enum::kOut].type_flag_, DType, {
+//    ConcatOp<xpu, DType> op;
+//    op.Init(param);
+//    op.Backward(ctx, inputs[concat_enum::kOut], req, outputs);
+//  });
+//}
 
 }  // namespace op
 }  // namespace mxnet

@@ -93,44 +93,44 @@ class ROIPoolingOp : public Operator {
     ROIPoolForward(out, data, bbox, max_idx, param_.spatial_scale);
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    size_t expected = 2;
-    CHECK_EQ(in_data.size(), expected);
-    CHECK_EQ(out_data.size(), expected);
-    CHECK_EQ(out_grad[roipool::kOut].shape_[0], in_data[roipool::kBox].shape_[0]);
-    CHECK_EQ(out_data[roipool::kMaxIdx].shape_[0], in_data[roipool::kBox].shape_[0]);
-    CHECK_NE(req[roipool::kData], kWriteInplace) <<
-      "ROIPooling: Backward doesn't support kWriteInplace.";
-    CHECK_NE(req[roipool::kBox], kWriteInplace) <<
-      "ROIPooling: Backward doesn't support kWriteInplace.";
-    Stream<xpu> *s = ctx.get_stream<xpu>();
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  size_t expected = 2;
+  //  CHECK_EQ(in_data.size(), expected);
+  //  CHECK_EQ(out_data.size(), expected);
+  //  CHECK_EQ(out_grad[roipool::kOut].shape_[0], in_data[roipool::kBox].shape_[0]);
+  //  CHECK_EQ(out_data[roipool::kMaxIdx].shape_[0], in_data[roipool::kBox].shape_[0]);
+  //  CHECK_NE(req[roipool::kData], kWriteInplace) <<
+  //    "ROIPooling: Backward doesn't support kWriteInplace.";
+  //  CHECK_NE(req[roipool::kBox], kWriteInplace) <<
+  //    "ROIPooling: Backward doesn't support kWriteInplace.";
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
 
-    Tensor<xpu, 4, DType> grad_out = out_grad[roipool::kOut].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> bbox = in_data[roipool::kBox].get<xpu, 2, DType>(s);
-    Tensor<xpu, 4, DType> max_idx = out_data[roipool::kMaxIdx].get<xpu, 4, DType>(s);
-    Tensor<xpu, 4, DType> grad_in = in_grad[roipool::kData].get<xpu, 4, DType>(s);
-    Tensor<xpu, 2, DType> grad_roi = in_grad[roipool::kBox].get<xpu, 2, DType>(s);
-    CHECK_EQ(grad_out.CheckContiguous(), true);
-    CHECK_EQ(bbox.CheckContiguous(), true);
-    CHECK_EQ(max_idx.CheckContiguous(), true);
-    CHECK_EQ(grad_in.CheckContiguous(), true);
-    if (kAddTo == req[roipool::kData] || kWriteTo == req[roipool::kData]) {
-      if (kWriteTo == req[roipool::kData]) {
-        grad_in = 0.0f;
-      }
-      ROIPoolBackwardAcc(grad_in, grad_out, bbox, max_idx, param_.spatial_scale);
-    }
-    if (kWriteTo == req[roipool::kBox]) {
-      grad_roi = 0.0f;
-    }
-  }
+  //  Tensor<xpu, 4, DType> grad_out = out_grad[roipool::kOut].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> bbox = in_data[roipool::kBox].get<xpu, 2, DType>(s);
+  //  Tensor<xpu, 4, DType> max_idx = out_data[roipool::kMaxIdx].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 4, DType> grad_in = in_grad[roipool::kData].get<xpu, 4, DType>(s);
+  //  Tensor<xpu, 2, DType> grad_roi = in_grad[roipool::kBox].get<xpu, 2, DType>(s);
+  //  CHECK_EQ(grad_out.CheckContiguous(), true);
+  //  CHECK_EQ(bbox.CheckContiguous(), true);
+  //  CHECK_EQ(max_idx.CheckContiguous(), true);
+  //  CHECK_EQ(grad_in.CheckContiguous(), true);
+  //  if (kAddTo == req[roipool::kData] || kWriteTo == req[roipool::kData]) {
+  //    if (kWriteTo == req[roipool::kData]) {
+  //      grad_in = 0.0f;
+  //    }
+  //    ROIPoolBackwardAcc(grad_in, grad_out, bbox, max_idx, param_.spatial_scale);
+  //  }
+  //  if (kWriteTo == req[roipool::kBox]) {
+  //    grad_roi = 0.0f;
+  //  }
+  //}
 
  private:
   ROIPoolingParam param_;

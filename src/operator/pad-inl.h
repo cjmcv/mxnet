@@ -120,47 +120,47 @@ class PadOp : public Operator {
     // Assign(out, req[pad_enum::kOut], F<mshadow_op::identity>(data));
   }
 
-  virtual void Backward(const OpContext &ctx,
-                        const std::vector<TBlob> &out_grad,
-                        const std::vector<TBlob> &in_data,
-                        const std::vector<TBlob> &out_data,
-                        const std::vector<OpReqType> &req,
-                        const std::vector<TBlob> &in_grad,
-                        const std::vector<TBlob> &aux_args) {
-    using namespace mshadow;
-    using namespace mshadow::expr;
-    CHECK_EQ(out_grad.size(), 1U);
-    CHECK_EQ(out_data.size(), 1U);
-    Stream<xpu> *s = ctx.get_stream<xpu>();
-    // Get any size input + output into required form
-    auto pad = param_.pad_width;
-    int rank = in_grad[pad_enum::kData].ndim();
-    switch (rank) {
-      case 4:
-        {
-          Tensor<xpu, 4, DType> in =
-            in_grad[pad_enum::kData].get<xpu, 4, DType>(s);
-          Tensor<xpu, 4, DType> out =
-            out_grad[pad_enum::kOut].get<xpu, 4, DType>(s);
-          if (req[pad_enum::kData] == kWriteTo) in = 0.0f;
-          pad_image_grad(in, out, param_.pad_width, param_.mode);
-          break;
-        }
-      case 5:
-        {
-          Tensor<xpu, 5, DType> in =
-            in_grad[pad_enum::kData].get<xpu, 5, DType>(s);
-          Tensor<xpu, 5, DType> out =
-            out_grad[pad_enum::kOut].get<xpu, 5, DType>(s);
-          if (req[pad_enum::kData] == kWriteTo) in = 0.0f;
-          pad_image_grad(in, out, param_.pad_width, param_.mode);
-          break;
-        }
-      default:
-        LOG(FATAL) << "Attempted to run backward pass "
-                        "with input dimensions other than 4 or 5.";
-    }
-  }
+  //virtual void Backward(const OpContext &ctx,
+  //                      const std::vector<TBlob> &out_grad,
+  //                      const std::vector<TBlob> &in_data,
+  //                      const std::vector<TBlob> &out_data,
+  //                      const std::vector<OpReqType> &req,
+  //                      const std::vector<TBlob> &in_grad,
+  //                      const std::vector<TBlob> &aux_args) {
+  //  using namespace mshadow;
+  //  using namespace mshadow::expr;
+  //  CHECK_EQ(out_grad.size(), 1U);
+  //  CHECK_EQ(out_data.size(), 1U);
+  //  Stream<xpu> *s = ctx.get_stream<xpu>();
+  //  // Get any size input + output into required form
+  //  auto pad = param_.pad_width;
+  //  int rank = in_grad[pad_enum::kData].ndim();
+  //  switch (rank) {
+  //    case 4:
+  //      {
+  //        Tensor<xpu, 4, DType> in =
+  //          in_grad[pad_enum::kData].get<xpu, 4, DType>(s);
+  //        Tensor<xpu, 4, DType> out =
+  //          out_grad[pad_enum::kOut].get<xpu, 4, DType>(s);
+  //        if (req[pad_enum::kData] == kWriteTo) in = 0.0f;
+  //        pad_image_grad(in, out, param_.pad_width, param_.mode);
+  //        break;
+  //      }
+  //    case 5:
+  //      {
+  //        Tensor<xpu, 5, DType> in =
+  //          in_grad[pad_enum::kData].get<xpu, 5, DType>(s);
+  //        Tensor<xpu, 5, DType> out =
+  //          out_grad[pad_enum::kOut].get<xpu, 5, DType>(s);
+  //        if (req[pad_enum::kData] == kWriteTo) in = 0.0f;
+  //        pad_image_grad(in, out, param_.pad_width, param_.mode);
+  //        break;
+  //      }
+  //    default:
+  //      LOG(FATAL) << "Attempted to run backward pass "
+  //                      "with input dimensions other than 4 or 5.";
+  //  }
+  //}
 
  private:
   PadParam param_;

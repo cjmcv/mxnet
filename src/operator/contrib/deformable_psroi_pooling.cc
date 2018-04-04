@@ -55,25 +55,25 @@ namespace mshadow {
     return;
   }
 
-  template<typename DType>
-  inline void DeformablePSROIPoolBackwardAcc(const Tensor<cpu, 4, DType> &in_grad,
-    const Tensor<cpu, 4, DType> &trans_grad,
-    const Tensor<cpu, 4, DType> &out_grad,
-    const Tensor<cpu, 4, DType> &data,
-    const Tensor<cpu, 2, DType> &bbox,
-    const Tensor<cpu, 4, DType> &trans,
-    const Tensor<cpu, 4, DType> &top_count,
-    const bool no_trans,
-    const float spatial_scale,
-    const int output_dim,
-    const int group_size,
-    const int pooled_size,
-    const int part_size,
-    const int sample_per_part,
-    const float trans_std) {
-    // NOT_IMPLEMENTED;
-    return;
-  }
+  //template<typename DType>
+  //inline void DeformablePSROIPoolBackwardAcc(const Tensor<cpu, 4, DType> &in_grad,
+  //  const Tensor<cpu, 4, DType> &trans_grad,
+  //  const Tensor<cpu, 4, DType> &out_grad,
+  //  const Tensor<cpu, 4, DType> &data,
+  //  const Tensor<cpu, 2, DType> &bbox,
+  //  const Tensor<cpu, 4, DType> &trans,
+  //  const Tensor<cpu, 4, DType> &top_count,
+  //  const bool no_trans,
+  //  const float spatial_scale,
+  //  const int output_dim,
+  //  const int group_size,
+  //  const int pooled_size,
+  //  const int part_size,
+  //  const int sample_per_part,
+  //  const float trans_std) {
+  //  // NOT_IMPLEMENTED;
+  //  return;
+  //}
 }  // namespace mshadow
 
 namespace mxnet {

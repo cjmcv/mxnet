@@ -77,22 +77,22 @@ Examples::
 .set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
   { return std::vector<std::pair<int, int>>{{2, 0}}; })
 .set_attr<FCompute>("FCompute<cpu>", LaOpForward<cpu, 2, 2, 3, 1, gemm>)
-.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_linalg_gemm"})
+//.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_linalg_gemm"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of input matrices")
 .add_argument("B", "NDArray-or-Symbol", "Tensor of input matrices")
 .add_argument("C", "NDArray-or-Symbol", "Tensor of input matrices")
 .add_arguments(LaMatrixMacParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_linalg_gemm)
-.set_num_inputs(4)
-.set_num_outputs(3)
-.set_attr_parser(ParamParser<LaMatrixMacParam>)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{2, 1}, {3, 2}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 3, gemm_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_gemm)
+//.set_num_inputs(4)
+//.set_num_outputs(3)
+//.set_attr_parser(ParamParser<LaMatrixMacParam>)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{2, 1}, {3, 2}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 3, gemm_backward>);
 
 NNVM_REGISTER_OP(_linalg_gemm2)
 .add_alias("linalg_gemm2")
@@ -139,16 +139,16 @@ Examples::
 .add_argument("B", "NDArray-or-Symbol", "Tensor of input matrices")
 .add_arguments(LaMatrixMultParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_linalg_gemm2)
-.set_num_inputs(3)
-.set_num_outputs(2)
-.set_attr_parser(ParamParser<LaMatrixMultParam>)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{2, 1}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 2, gemm2_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_gemm2)
+//.set_num_inputs(3)
+//.set_num_outputs(2)
+//.set_attr_parser(ParamParser<LaMatrixMultParam>)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{2, 1}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 2, gemm2_backward>);
 
 NNVM_REGISTER_OP(_linalg_potrf)
 .add_alias("linalg_potrf")
@@ -188,15 +188,15 @@ Examples::
 .set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_linalg_potrf"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of input matrices to be decomposed");
 
-NNVM_REGISTER_OP(_backward_linalg_potrf)
-.set_num_inputs(2)
-.set_num_outputs(1)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{0, 0}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, potrf_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_potrf)
+//.set_num_inputs(2)
+//.set_num_outputs(1)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{0, 0}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, potrf_backward>);
 
 
 NNVM_REGISTER_OP(_linalg_potri)
@@ -246,13 +246,13 @@ Examples::
 .set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseInOut{"_backward_linalg_potri"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of lower triangular matrices");
 
-NNVM_REGISTER_OP(_backward_linalg_potri)
-.set_num_inputs(3)
-.set_num_outputs(1)
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 1, potri_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_potri)
+//.set_num_inputs(3)
+//.set_num_outputs(1)
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 1, potri_backward>);
 
 NNVM_REGISTER_OP(_linalg_trmm)
 .add_alias("linalg_trmm")
@@ -306,16 +306,16 @@ Examples::
 .add_argument("B", "NDArray-or-Symbol", "Tensor of matrices")
 .add_arguments(LaTriangMatrixMultParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_linalg_trmm)
-.set_num_inputs(3)
-.set_num_outputs(2)
-.set_attr_parser(ParamParser<LaTriangMatrixMultParam>)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{0, 1}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 2, trmm_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_trmm)
+//.set_num_inputs(3)
+//.set_num_outputs(2)
+//.set_attr_parser(ParamParser<LaTriangMatrixMultParam>)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{0, 1}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 3, 2, trmm_backward>);
 
 NNVM_REGISTER_OP(_linalg_trsm)
 .add_alias("linalg_trsm")
@@ -369,16 +369,16 @@ Examples::
 .add_argument("B", "NDArray-or-Symbol", "Tensor of matrices")
 .add_arguments(LaTriangMatrixMultParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_linalg_trsm)
-.set_num_inputs(4)
-.set_num_outputs(2)
-.set_attr_parser(ParamParser<LaTriangMatrixMultParam>)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{0, 1}, {1, 0}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 2, trsm_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_trsm)
+//.set_num_inputs(4)
+//.set_num_outputs(2)
+//.set_attr_parser(ParamParser<LaTriangMatrixMultParam>)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{0, 1}, {1, 0}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 2, trsm_backward>);
 
 NNVM_REGISTER_OP(_linalg_sumlogdiag)
 .add_alias("linalg_sumlogdiag")
@@ -413,15 +413,15 @@ Examples::
 .set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseIn{"_backward_linalg_sumlogdiag"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of square matrices");
 
-NNVM_REGISTER_OP(_backward_linalg_sumlogdiag)
-.set_num_inputs(2)
-.set_num_outputs(1)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int>>{{1, 0}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, sumlogdiag_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_sumlogdiag)
+//.set_num_inputs(2)
+//.set_num_outputs(1)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int>>{{1, 0}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, sumlogdiag_backward>);
 
 NNVM_REGISTER_OP(_linalg_syrk)
 .add_alias("linalg_syrk")
@@ -471,14 +471,14 @@ Examples::
 .add_argument("A", "NDArray-or-Symbol", "Tensor of input matrices")
 .add_arguments(LaSyrkParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_linalg_syrk)
-.set_num_inputs(2)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<LaSyrkParam>)
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, syrk_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_syrk)
+//.set_num_inputs(2)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<LaSyrkParam>)
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 2, 1, syrk_backward>);
 
 NNVM_REGISTER_OP(_linalg_gelqf)
 .add_alias("linalg_gelqf")
@@ -541,15 +541,15 @@ Examples::
 .set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_linalg_gelqf"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of input matrices to be factorized");
 
-NNVM_REGISTER_OP(_backward_linalg_gelqf)
-.set_num_inputs(4)
-.set_num_outputs(1)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{0, 0}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 1, gelqf_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_gelqf)
+//.set_num_inputs(4)
+//.set_num_outputs(1)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{0, 0}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackward<cpu, 2, 2, 4, 1, gelqf_backward>);
 
 NNVM_REGISTER_OP(_linalg_syevd)
 .describe(R"code(Eigendecomposition for symmetric matrix.
@@ -610,15 +610,15 @@ Examples::
 .set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseOut{"_backward_linalg_syevd"})
 .add_argument("A", "NDArray-or-Symbol", "Tensor of input matrices to be factorized");
 
-NNVM_REGISTER_OP(_backward_linalg_syevd)
-.set_num_inputs(4)
-.set_num_outputs(1)
-.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
-  { return std::vector<std::pair<int, int> >{{0, 0}}; })
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
-  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", LaOpBackwSyevd<cpu, syevd_backward>);
+//NNVM_REGISTER_OP(_backward_linalg_syevd)
+//.set_num_inputs(4)
+//.set_num_outputs(1)
+//.set_attr<nnvm::FInplaceOption>("FInplaceOption", [](const NodeAttrs& attrs)
+//  { return std::vector<std::pair<int, int> >{{0, 0}}; })
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& attrs)
+//  { return std::vector<ResourceRequest>{ResourceRequest::kTempSpace}; })
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", LaOpBackwSyevd<cpu, syevd_backward>);
 
 }  // namespace op
 }  // namespace mxnet

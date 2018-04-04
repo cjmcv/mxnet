@@ -68,20 +68,20 @@ Examples::
 .set_attr<nnvm::FInferType>("FInferType", TopKType)
 .set_attr<nnvm::FNumVisibleOutputs>("FNumVisibleOutputs", TopKNumVisibleOutputs)
 .set_attr<FCompute>("FCompute<cpu>", TopK<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    const TopKParam& param = nnvm::get<TopKParam>(n->attrs.parsed);
-    if (param.ret_typ == topk_enum::kReturnValue || param.ret_typ == topk_enum::kReturnBoth) {
-      std::vector<nnvm::NodeEntry> inputs;
-      index_t n_out = n->num_outputs();
-      for (index_t i = 0; i < n_out; ++i) {
-        inputs.emplace_back(nnvm::NodeEntry{ n, i, 0 });
-      }
-      return MakeNonlossGradNode("_backward_topk", n, {ograds[0]}, inputs, n->attrs.dict);
-    } else {
-      return MakeZeroGradNodes(n, ograds);
-    }
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    const TopKParam& param = nnvm::get<TopKParam>(n->attrs.parsed);
+//    if (param.ret_typ == topk_enum::kReturnValue || param.ret_typ == topk_enum::kReturnBoth) {
+//      std::vector<nnvm::NodeEntry> inputs;
+//      index_t n_out = n->num_outputs();
+//      for (index_t i = 0; i < n_out; ++i) {
+//        inputs.emplace_back(nnvm::NodeEntry{ n, i, 0 });
+//      }
+//      return MakeNonlossGradNode("_backward_topk", n, {ograds[0]}, inputs, n->attrs.dict);
+//    } else {
+//      return MakeZeroGradNodes(n, ograds);
+//    }
+//  })
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
@@ -89,16 +89,16 @@ Examples::
 .add_argument("data", "NDArray-or-Symbol", "The input array")
 .add_arguments(TopKParam::__FIELDS__());
 
-NNVM_REGISTER_OP(_backward_topk)
-.set_num_inputs(3)
-.set_num_outputs(1)
-.set_attr_parser(ParamParser<TopKParam>)
-.set_attr<nnvm::TIsBackward>("TIsBackward", true)
-.set_attr<FCompute>("FCompute<cpu>", TopKBackward_<cpu>)
-.set_attr<FResourceRequest>("FResourceRequest",
-  [](const NodeAttrs& attrs) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-});
+//NNVM_REGISTER_OP(_backward_topk)
+//.set_num_inputs(3)
+//.set_num_outputs(1)
+//.set_attr_parser(ParamParser<TopKParam>)
+//.set_attr<nnvm::TIsBackward>("TIsBackward", true)
+//.set_attr<FCompute>("FCompute<cpu>", TopKBackward_<cpu>)
+//.set_attr<FResourceRequest>("FResourceRequest",
+//  [](const NodeAttrs& attrs) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//});
 
 NNVM_REGISTER_OP(sort)
 .describe(R"code(Returns a sorted copy of an input array along the given axis.
@@ -131,20 +131,20 @@ Examples::
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 2>)
 .set_attr<nnvm::FNumVisibleOutputs>("FNumVisibleOutputs", [](const NodeAttrs& attrs) { return 1; })
 .set_attr<FCompute>("FCompute<cpu>", Sort<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    const SortParam& param = nnvm::get<SortParam>(n->attrs.parsed);
-    std::vector<nnvm::NodeEntry> inputs;
-    index_t n_out = n->num_outputs();
-    for (index_t i = 0; i < n_out; ++i) {
-      inputs.emplace_back(nnvm::NodeEntry{ n, i, 0 });
-    }
-    return MakeNonlossGradNode("_backward_topk", n, {ograds[0]}, inputs,
-                               {{"axis", n->attrs.dict["axis"]},
-                                {"k", "0"},
-                                {"ret_typ", "value"},
-                                {"is_ascend", std::to_string(param.is_ascend)}});
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    const SortParam& param = nnvm::get<SortParam>(n->attrs.parsed);
+//    std::vector<nnvm::NodeEntry> inputs;
+//    index_t n_out = n->num_outputs();
+//    for (index_t i = 0; i < n_out; ++i) {
+//      inputs.emplace_back(nnvm::NodeEntry{ n, i, 0 });
+//    }
+//    return MakeNonlossGradNode("_backward_topk", n, {ograds[0]}, inputs,
+//                               {{"axis", n->attrs.dict["axis"]},
+//                                {"k", "0"},
+//                                {"ret_typ", "value"},
+//                                {"is_ascend", std::to_string(param.is_ascend)}});
+//  })
 .set_attr<FResourceRequest>("FResourceRequest",
   [](const NodeAttrs& attrs) {
     return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
