@@ -61,11 +61,11 @@ The storage type of ``retain`` output depends on storage types of inputs
 .set_attr<nnvm::FInferType>("FInferType", SparseRetainOpType)
 .set_attr<FInferStorageType>("FInferStorageType", SparseRetainForwardInferStorageType)
 .set_attr<FComputeEx>("FComputeEx<cpu>", SparseRetainOpForwardEx<cpu>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    return MakeNonlossGradNode("_backward_sparse_retain", n, ograds,
-                               {n->inputs[sr::kIdx]}, n->attrs.dict);
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    return MakeNonlossGradNode("_backward_sparse_retain", n, ograds,
+//                               {n->inputs[sr::kIdx]}, n->attrs.dict);
+//  })
 .add_argument("data", "NDArray-or-Symbol", "The input array for sparse_retain operator.")
 .add_argument("indices", "NDArray-or-Symbol", "The index array of rows ids that will be retained.");
 

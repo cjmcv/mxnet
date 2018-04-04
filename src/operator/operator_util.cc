@@ -151,50 +151,50 @@ class SimpleOpRegEntryImpl : public SimpleOpRegEntry {
     return *this;
   }
 
-  TSelf& set_gradient(int dev_mask,
-                      UnaryGradFunctionT0 fgrad,
-                      SimpleOpInplaceOption inplace_out_in_grad) override {
-    std::lock_guard<std::mutex> lock(mutex_);
-    SetFunction(&funary_grad_t0_, dev_mask, fgrad, "UnaryGradFunctionT0");
-    unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
-    return *this;
-  }
+  //TSelf& set_gradient(int dev_mask,
+  //                    UnaryGradFunctionT0 fgrad,
+  //                    SimpleOpInplaceOption inplace_out_in_grad) override {
+  //  std::lock_guard<std::mutex> lock(mutex_);
+  //  SetFunction(&funary_grad_t0_, dev_mask, fgrad, "UnaryGradFunctionT0");
+  //  unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
+  //  return *this;
+  //}
 
-  TSelf& set_gradient(int dev_mask,
-                      UnaryGradFunctionT1 fgrad,
-                      SimpleOpInplaceOption inplace_out_in_grad) override {
-    std::lock_guard<std::mutex> lock(mutex_);
-    SetFunction(&funary_grad_t1_, dev_mask, fgrad, "UnaryGradFunctionT1");
-    unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
-    return *this;
-  }
+  //TSelf& set_gradient(int dev_mask,
+  //                    UnaryGradFunctionT1 fgrad,
+  //                    SimpleOpInplaceOption inplace_out_in_grad) override {
+  //  std::lock_guard<std::mutex> lock(mutex_);
+  //  SetFunction(&funary_grad_t1_, dev_mask, fgrad, "UnaryGradFunctionT1");
+  //  unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
+  //  return *this;
+  //}
 
-  TSelf& set_gradient(int dev_mask,
-                      UnaryGradFunctionT2 fgrad,
-                      SimpleOpInplaceOption inplace_out_in_grad) override {
-    std::lock_guard<std::mutex> lock(mutex_);
-    SetFunction(&funary_grad_t2_, dev_mask, fgrad, "UnaryGradFunctionT2");
-    unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
-    return *this;
-  }
+  //TSelf& set_gradient(int dev_mask,
+  //                    UnaryGradFunctionT2 fgrad,
+  //                    SimpleOpInplaceOption inplace_out_in_grad) override {
+  //  std::lock_guard<std::mutex> lock(mutex_);
+  //  SetFunction(&funary_grad_t2_, dev_mask, fgrad, "UnaryGradFunctionT2");
+  //  unary_backward_inplace_out_in_ = (inplace_out_in_grad == kInplaceOutIn);
+  //  return *this;
+  //}
 
-  TSelf& set_gradient(int dev_mask,
-                      BinaryGradFunctionT0 fgrad,
-                      SimpleOpInplaceOption inplace_out_lhs_grad) override {
-    std::lock_guard<std::mutex> lock(mutex_);
-    SetFunction(&fbinary_grad_t0_, dev_mask, fgrad, "BinaryGradFunctionT0");
-    binary_backward_inplace_out_lhs_ = (inplace_out_lhs_grad == kInplaceLhsOut);
-    return *this;
-  }
+  //TSelf& set_gradient(int dev_mask,
+  //                    BinaryGradFunctionT0 fgrad,
+  //                    SimpleOpInplaceOption inplace_out_lhs_grad) override {
+  //  std::lock_guard<std::mutex> lock(mutex_);
+  //  SetFunction(&fbinary_grad_t0_, dev_mask, fgrad, "BinaryGradFunctionT0");
+  //  binary_backward_inplace_out_lhs_ = (inplace_out_lhs_grad == kInplaceLhsOut);
+  //  return *this;
+  //}
 
-  TSelf& set_gradient(int dev_mask,
-                      BinaryGradFunctionT1 fgrad,
-                      SimpleOpInplaceOption inplace_out_lhs_grad) override {
-    std::lock_guard<std::mutex> lock(mutex_);
-    SetFunction(&fbinary_grad_t1_, dev_mask, fgrad, "BinaryGradFunctionT1");
-    binary_backward_inplace_out_lhs_ = (inplace_out_lhs_grad == kInplaceLhsOut);
-    return *this;
-  }
+  //TSelf& set_gradient(int dev_mask,
+  //                    BinaryGradFunctionT1 fgrad,
+  //                    SimpleOpInplaceOption inplace_out_lhs_grad) override {
+  //  std::lock_guard<std::mutex> lock(mutex_);
+  //  SetFunction(&fbinary_grad_t1_, dev_mask, fgrad, "BinaryGradFunctionT1");
+  //  binary_backward_inplace_out_lhs_ = (inplace_out_lhs_grad == kInplaceLhsOut);
+  //  return *this;
+  //}
 
   TSelf& describe(const std::string &description) override {
     std::lock_guard<std::mutex> lock(mutex_);

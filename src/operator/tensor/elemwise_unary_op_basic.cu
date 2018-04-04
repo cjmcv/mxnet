@@ -48,12 +48,12 @@ NNVM_REGISTER_OP(_copy)
 //NNVM_REGISTER_OP(_backward_copy)
 //.set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>);
 
-NNVM_REGISTER_OP(BlockGrad)
-.set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>);
+//NNVM_REGISTER_OP(BlockGrad)
+//.set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>);
 
-NNVM_REGISTER_OP(make_loss)
-.set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>)
-.set_attr<FComputeEx>("FComputeEx<gpu>", UnaryOp::IdentityComputeEx<gpu>);
+//NNVM_REGISTER_OP(make_loss)
+//.set_attr<FCompute>("FCompute<gpu>", UnaryOp::IdentityCompute<gpu>)
+//.set_attr<FComputeEx>("FComputeEx<gpu>", UnaryOp::IdentityComputeEx<gpu>);
 
 // identity output as first input, but attributes are constrainted to be like rhs
 NNVM_REGISTER_OP(_identity_with_attr_like_rhs)

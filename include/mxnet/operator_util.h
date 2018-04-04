@@ -355,51 +355,51 @@ class SimpleOpRegEntry {
       BinaryFunction fbinary,
       SimpleOpInplaceOption inplace_lhs_out,
       SimpleOpRegOption register_symbolic = kRegisterSymbolic) = 0;
-  /*!
-   * \brief set gradient of the function of this function.
-   * \param dev_mask The device mask of the function can act on.
-   * \param fgrad The gradient function to be set.
-   * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
-   */
-  virtual TSelf& set_gradient(int dev_mask,
-                              UnaryGradFunctionT0 fgrad,
-                              SimpleOpInplaceOption inplace_out_in_grad) = 0;
-  /*!
-   * \brief set gradient of the function of this function.
-   * \param dev_mask The device mask of the function can act on.
-   * \param fgrad The gradient function to be set.
-   * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
-   */
-  virtual TSelf& set_gradient(int dev_mask,
-                              UnaryGradFunctionT1 fgrad,
-                              SimpleOpInplaceOption inplace_out_in_grad) = 0;
-  /*!
-   * \brief set gradient of the function of this function.
-   * \param dev_mask The device mask of the function can act on.
-   * \param fgrad The gradient function to be set.
-   * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
-   */
-  virtual TSelf& set_gradient(int dev_mask,
-                              UnaryGradFunctionT2 fgrad,
-                              SimpleOpInplaceOption inplace_out_in_grad) = 0;
-  /*!
-   * \brief set gradient of the function of this function.
-   * \param dev_mask The device mask of the function can act on.
-   * \param fgrad The gradient function to be set.
-   * \param inplace_out_lhs_grad whether out_grad and lhs_grad can share memory.
-   */
-  virtual TSelf& set_gradient(int dev_mask,
-                              BinaryGradFunctionT0 fgrad,
-                              SimpleOpInplaceOption inplace_out_lhs_grad) = 0;
-  /*!
-   * \brief set gradient of the function of this function.
-   * \param dev_mask The device mask of the function can act on.
-   * \param fgrad The gradient function to be set.
-   * \param inplace_out_lhs_grad whether out_grad and lhs_grad can share memory.
-   */
-  virtual TSelf& set_gradient(int dev_mask,
-                              BinaryGradFunctionT1 fgrad,
-                              SimpleOpInplaceOption inplace_out_lhs_grad) = 0;
+  ///*!
+  // * \brief set gradient of the function of this function.
+  // * \param dev_mask The device mask of the function can act on.
+  // * \param fgrad The gradient function to be set.
+  // * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
+  // */
+  //virtual TSelf& set_gradient(int dev_mask,
+  //                            UnaryGradFunctionT0 fgrad,
+  //                            SimpleOpInplaceOption inplace_out_in_grad) = 0;
+  ///*!
+  // * \brief set gradient of the function of this function.
+  // * \param dev_mask The device mask of the function can act on.
+  // * \param fgrad The gradient function to be set.
+  // * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
+  // */
+  //virtual TSelf& set_gradient(int dev_mask,
+  //                            UnaryGradFunctionT1 fgrad,
+  //                            SimpleOpInplaceOption inplace_out_in_grad) = 0;
+  ///*!
+  // * \brief set gradient of the function of this function.
+  // * \param dev_mask The device mask of the function can act on.
+  // * \param fgrad The gradient function to be set.
+  // * \param inplace_out_in_grad whether out_grad and in_grad can share memory.
+  // */
+  //virtual TSelf& set_gradient(int dev_mask,
+  //                            UnaryGradFunctionT2 fgrad,
+  //                            SimpleOpInplaceOption inplace_out_in_grad) = 0;
+  ///*!
+  // * \brief set gradient of the function of this function.
+  // * \param dev_mask The device mask of the function can act on.
+  // * \param fgrad The gradient function to be set.
+  // * \param inplace_out_lhs_grad whether out_grad and lhs_grad can share memory.
+  // */
+  //virtual TSelf& set_gradient(int dev_mask,
+  //                            BinaryGradFunctionT0 fgrad,
+  //                            SimpleOpInplaceOption inplace_out_lhs_grad) = 0;
+  ///*!
+  // * \brief set gradient of the function of this function.
+  // * \param dev_mask The device mask of the function can act on.
+  // * \param fgrad The gradient function to be set.
+  // * \param inplace_out_lhs_grad whether out_grad and lhs_grad can share memory.
+  // */
+  //virtual TSelf& set_gradient(int dev_mask,
+  //                            BinaryGradFunctionT1 fgrad,
+  //                            SimpleOpInplaceOption inplace_out_lhs_grad) = 0;
   /*!
    * \brief Describe the function.
    * \param description The description of the function.

@@ -193,79 +193,79 @@ MXNET_OPERATOR_REGISTER_UNARY(_copy)
 //    return std::vector<bool>{true};
 //  });
 
-MXNET_OPERATOR_REGISTER_UNARY(BlockGrad)
-MXNET_ADD_SPARSE_OP_ALIAS(stop_gradient)
-.add_alias("stop_gradient")
-.describe(R"code(Stops gradient computation.
+//MXNET_OPERATOR_REGISTER_UNARY(BlockGrad)
+//MXNET_ADD_SPARSE_OP_ALIAS(stop_gradient)
+//.add_alias("stop_gradient")
+//.describe(R"code(Stops gradient computation.
+//
+//Stops the accumulated gradient of the inputs from flowing through this operator
+//in the backward direction. In other words, this operator prevents the contribution
+//of its inputs to be taken into account for computing gradients.
+//
+//Example::
+//
+//  v1 = [1, 2]
+//  v2 = [0, 1]
+//  a = Variable('a')
+//  b = Variable('b')
+//  b_stop_grad = stop_gradient(3 * b)
+//  loss = MakeLoss(b_stop_grad + a)
+//
+//  executor = loss.simple_bind(ctx=cpu(), a=(1,2), b=(1,2))
+//  executor.forward(is_train=True, a=v1, b=v2)
+//  executor.outputs
+//  [ 1.  5.]
+//
+//  executor.backward()
+//  executor.grad_arrays
+//  [ 0.  0.]
+//  [ 1.  1.]
+//
+//)code" ADD_FILELINE)
+//.set_attr<FInferStorageType>("FInferStorageType", ElemwiseStorageType<1, 1, false, true, true>)
+//.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", UnaryOp::IdentityComputeEx<cpu>)
+//.set_attr<nnvm::FInplaceIdentity>("FInplaceIdentity",
+//  [](const NodeAttrs& attrs){
+//    return std::vector<bool>{true};
+//  })
+//.set_attr<nnvm::FGradient>("FGradient", MakeZeroGradNodes);
 
-Stops the accumulated gradient of the inputs from flowing through this operator
-in the backward direction. In other words, this operator prevents the contribution
-of its inputs to be taken into account for computing gradients.
-
-Example::
-
-  v1 = [1, 2]
-  v2 = [0, 1]
-  a = Variable('a')
-  b = Variable('b')
-  b_stop_grad = stop_gradient(3 * b)
-  loss = MakeLoss(b_stop_grad + a)
-
-  executor = loss.simple_bind(ctx=cpu(), a=(1,2), b=(1,2))
-  executor.forward(is_train=True, a=v1, b=v2)
-  executor.outputs
-  [ 1.  5.]
-
-  executor.backward()
-  executor.grad_arrays
-  [ 0.  0.]
-  [ 1.  1.]
-
-)code" ADD_FILELINE)
-.set_attr<FInferStorageType>("FInferStorageType", ElemwiseStorageType<1, 1, false, true, true>)
-.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
-.set_attr<FComputeEx>("FComputeEx<cpu>", UnaryOp::IdentityComputeEx<cpu>)
-.set_attr<nnvm::FInplaceIdentity>("FInplaceIdentity",
-  [](const NodeAttrs& attrs){
-    return std::vector<bool>{true};
-  })
-.set_attr<nnvm::FGradient>("FGradient", MakeZeroGradNodes);
-
-MXNET_OPERATOR_REGISTER_UNARY(make_loss)
-MXNET_ADD_SPARSE_OP_ALIAS(make_loss)
-  .describe(R"code(Make your own loss function in network construction.
-
-This operator accepts a customized loss function symbol as a terminal loss and
-the symbol should be an operator with no backward dependency.
-The output of this function is the gradient of loss with respect to the input data.
-
-For example, if you are a making a cross entropy loss function. Assume ``out`` is the
-predicted output and ``label`` is the true label, then the cross entropy can be defined as::
-
-  cross_entropy = label * log(out) + (1 - label) * log(1 - out)
-  loss = make_loss(cross_entropy)
-
-We will need to use ``make_loss`` when we are creating our own loss function or we want to
-combine multiple loss functions. Also we may want to stop some variables' gradients
-from backpropagation. See more detail in ``BlockGrad`` or ``stop_gradient``.
-
-The storage type of ``make_loss`` output depends upon the input storage type:
-
-   - make_loss(default) = default
-   - make_loss(row_sparse) = row_sparse
-
-)code" ADD_FILELINE)
-.set_attr<nnvm::FListOutputNames>("FListOutputNames",
-  [](const NodeAttrs& attrs) {
-    return std::vector<std::string>{"loss"};
-  })
-.set_attr<FInferStorageType>("FInferStorageType", ElemwiseStorageType<1, 1, false, true, true>)
-.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
-.set_attr<FComputeEx>("FComputeEx<cpu>", UnaryOp::IdentityComputeEx<cpu>)
-.set_attr<nnvm::FInplaceIdentity>("FInplaceIdentity",
-  [](const NodeAttrs& attrs){
-    return std::vector<bool>{true};
-  });
+//MXNET_OPERATOR_REGISTER_UNARY(make_loss)
+//MXNET_ADD_SPARSE_OP_ALIAS(make_loss)
+//  .describe(R"code(Make your own loss function in network construction.
+//
+//This operator accepts a customized loss function symbol as a terminal loss and
+//the symbol should be an operator with no backward dependency.
+//The output of this function is the gradient of loss with respect to the input data.
+//
+//For example, if you are a making a cross entropy loss function. Assume ``out`` is the
+//predicted output and ``label`` is the true label, then the cross entropy can be defined as::
+//
+//  cross_entropy = label * log(out) + (1 - label) * log(1 - out)
+//  loss = make_loss(cross_entropy)
+//
+//We will need to use ``make_loss`` when we are creating our own loss function or we want to
+//combine multiple loss functions. Also we may want to stop some variables' gradients
+//from backpropagation. See more detail in ``BlockGrad`` or ``stop_gradient``.
+//
+//The storage type of ``make_loss`` output depends upon the input storage type:
+//
+//   - make_loss(default) = default
+//   - make_loss(row_sparse) = row_sparse
+//
+//)code" ADD_FILELINE)
+//.set_attr<nnvm::FListOutputNames>("FListOutputNames",
+//  [](const NodeAttrs& attrs) {
+//    return std::vector<std::string>{"loss"};
+//  })
+//.set_attr<FInferStorageType>("FInferStorageType", ElemwiseStorageType<1, 1, false, true, true>)
+//.set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
+//.set_attr<FComputeEx>("FComputeEx<cpu>", UnaryOp::IdentityComputeEx<cpu>)
+//.set_attr<nnvm::FInplaceIdentity>("FInplaceIdentity",
+//  [](const NodeAttrs& attrs){
+//    return std::vector<bool>{true};
+//  });
 //.set_attr<nnvm::FGradient>("FGradient",
 //  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
 //    auto p = MakeNode("ones_like", n->attrs.name + "_backward",

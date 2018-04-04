@@ -312,25 +312,25 @@ Examples::
 .set_attr_parser(ParamParser<TransposeParam>)
 .set_attr<nnvm::FInferShape>("FInferShape", TransposeShape)
 .set_attr<nnvm::FInferType>("FInferType", ElemwiseType<1, 1>)
-.set_attr<nnvm::FGradient>("FGradient",
-  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
-    const TransposeParam& param = nnvm::get<TransposeParam>(n->attrs.parsed);
-    if (param.axes.ndim() == 0) {
-      return MakeNonlossGradNode(
-          "transpose", n, ograds, {},
-          std::unordered_map<std::string, std::string>());
-    } else {
-      TShape axes = TShape(param.axes.ndim());
-      for (index_t i = 0; i < axes.ndim(); ++i) {
-        axes[param.axes[i]] = i;
-      }
-      std::ostringstream os;
-      os << axes;
-      return MakeNonlossGradNode(
-          "transpose", n, ograds,
-          {}, {{"axes", os.str()}});
-    }
-  })
+//.set_attr<nnvm::FGradient>("FGradient",
+//  [](const nnvm::NodePtr& n, const std::vector<nnvm::NodeEntry>& ograds) {
+//    const TransposeParam& param = nnvm::get<TransposeParam>(n->attrs.parsed);
+//    if (param.axes.ndim() == 0) {
+//      return MakeNonlossGradNode(
+//          "transpose", n, ograds, {},
+//          std::unordered_map<std::string, std::string>());
+//    } else {
+//      TShape axes = TShape(param.axes.ndim());
+//      for (index_t i = 0; i < axes.ndim(); ++i) {
+//        axes[param.axes[i]] = i;
+//      }
+//      std::ostringstream os;
+//      os << axes;
+//      return MakeNonlossGradNode(
+//          "transpose", n, ograds,
+//          {}, {{"axes", os.str()}});
+//    }
+//  })
 .set_attr<FCompute>("FCompute<cpu>", Transpose<cpu>)
 .add_argument("data", "NDArray-or-Symbol", "Source input")
 .add_arguments(TransposeParam::__FIELDS__());
