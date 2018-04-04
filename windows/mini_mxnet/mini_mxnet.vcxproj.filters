@@ -696,9 +696,6 @@
     <ClInclude Include="..\..\src\operator\contrib\count_sketch-inl.h">
       <Filter>Include\src\operator\contrib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\operator\contrib\ctc_loss-inl.h">
-      <Filter>Include\src\operator\contrib</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\operator\contrib\deformable_convolution-inl.h">
       <Filter>Include\src\operator\contrib</Filter>
     </ClInclude>
@@ -1002,12 +999,6 @@
     <ClInclude Include="..\..\src\operator\linalg_impl.h">
       <Filter>Include\src\operator</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\operator\loss_binary_op-inl.h">
-      <Filter>Include\src\operator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\make_loss-inl.h">
-      <Filter>Include\src\operator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\operator\math_functions-inl.h">
       <Filter>Include\src\operator</Filter>
     </ClInclude>
@@ -1026,16 +1017,10 @@
     <ClInclude Include="..\..\src\operator\operator_tune-inl.h">
       <Filter>Include\src\operator</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\operator\optimizer_op-inl.h">
-      <Filter>Include\src\operator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\operator\pad-inl.h">
       <Filter>Include\src\operator</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\operator\pooling_v1-inl.h">
-      <Filter>Include\src\operator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\regression_output-inl.h">
       <Filter>Include\src\operator</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\operator\rnn-inl.h">
@@ -1116,9 +1101,6 @@
       <Filter>CUDA\src\operator\contrib</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\src\operator\contrib\count_sketch.cu">
-      <Filter>CUDA\src\operator\contrib</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\src\operator\contrib\ctc_loss.cu">
       <Filter>CUDA\src\operator\contrib</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\src\operator\contrib\deformable_convolution.cu">
@@ -1313,22 +1295,10 @@
     <CudaCompile Include="..\..\src\operator\leaky_relu.cu">
       <Filter>CUDA\src\operator</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\..\src\operator\loss_binary_op.cu">
-      <Filter>CUDA\src\operator</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\src\operator\make_loss.cu">
-      <Filter>CUDA\src\operator</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\src\operator\optimizer_op.cu">
-      <Filter>CUDA\src\operator</Filter>
-    </CudaCompile>
     <CudaCompile Include="..\..\src\operator\pad.cu">
       <Filter>CUDA\src\operator</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\src\operator\pooling_v1.cu">
-      <Filter>CUDA\src\operator</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\..\src\operator\regression_output.cu">
       <Filter>CUDA\src\operator</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\src\operator\rnn.cu">
@@ -1523,9 +1493,6 @@
       <Filter>Source\src\operator\contrib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\contrib\count_sketch.cc">
-      <Filter>Source\src\operator\contrib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\contrib\ctc_loss.cc">
       <Filter>Source\src\operator\contrib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\contrib\deformable_convolution.cc">
@@ -1768,12 +1735,6 @@
     <ClCompile Include="..\..\src\operator\leaky_relu.cc">
       <Filter>Source\src\operator</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\operator\loss_binary_op.cc">
-      <Filter>Source\src\operator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\make_loss.cc">
-      <Filter>Source\src\operator</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\operator\operator.cc">
       <Filter>Source\src\operator</Filter>
     </ClCompile>
@@ -1783,16 +1744,10 @@
     <ClCompile Include="..\..\src\operator\operator_util.cc">
       <Filter>Source\src\operator</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\operator\optimizer_op.cc">
-      <Filter>Source\src\operator</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\operator\pad.cc">
       <Filter>Source\src\operator</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\pooling_v1.cc">
-      <Filter>Source\src\operator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\regression_output.cc">
       <Filter>Source\src\operator</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\rnn.cc">

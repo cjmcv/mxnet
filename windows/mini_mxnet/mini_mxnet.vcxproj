@@ -162,7 +162,6 @@
     <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\gpu_ctc.h" />
     <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\gpu_ctc_kernels.h" />
     <ClInclude Include="..\..\src\operator\contrib\ctc_include\detail\hostdevice.h" />
-    <ClInclude Include="..\..\src\operator\contrib\ctc_loss-inl.h" />
     <ClInclude Include="..\..\src\operator\contrib\deformable_convolution-inl.h" />
     <ClInclude Include="..\..\src\operator\contrib\deformable_psroi_pooling-inl.h" />
     <ClInclude Include="..\..\src\operator\contrib\dequantize-inl.h" />
@@ -198,8 +197,6 @@
     <ClInclude Include="..\..\src\operator\leaky_relu-inl.h" />
     <ClInclude Include="..\..\src\operator\linalg.h" />
     <ClInclude Include="..\..\src\operator\linalg_impl.h" />
-    <ClInclude Include="..\..\src\operator\loss_binary_op-inl.h" />
-    <ClInclude Include="..\..\src\operator\make_loss-inl.h" />
     <ClInclude Include="..\..\src\operator\math_functions-inl.h" />
     <ClInclude Include="..\..\src\operator\mshadow_op.h" />
     <ClInclude Include="..\..\src\operator\mxnet_op.h" />
@@ -241,14 +238,12 @@
     <ClInclude Include="..\..\src\operator\operator_common.h" />
     <ClInclude Include="..\..\src\operator\operator_tune-inl.h" />
     <ClInclude Include="..\..\src\operator\operator_tune.h" />
-    <ClInclude Include="..\..\src\operator\optimizer_op-inl.h" />
     <ClInclude Include="..\..\src\operator\pad-inl.h" />
     <ClInclude Include="..\..\src\operator\pooling_v1-inl.h" />
     <ClInclude Include="..\..\src\operator\random\multisample_op.h" />
     <ClInclude Include="..\..\src\operator\random\sampler.h" />
     <ClInclude Include="..\..\src\operator\random\sample_multinomial_op.h" />
     <ClInclude Include="..\..\src\operator\random\sample_op.h" />
-    <ClInclude Include="..\..\src\operator\regression_output-inl.h" />
     <ClInclude Include="..\..\src\operator\rnn-inl.h" />
     <ClInclude Include="..\..\src\operator\roi_pooling-inl.h" />
     <ClInclude Include="..\..\src\operator\sequence_last-inl.h" />
@@ -305,7 +300,6 @@
     <CudaCompile Include="..\..\src\operator\bilinear_sampler.cu" />
     <CudaCompile Include="..\..\src\operator\contrib\bounding_box.cu" />
     <CudaCompile Include="..\..\src\operator\contrib\count_sketch.cu" />
-    <CudaCompile Include="..\..\src\operator\contrib\ctc_loss.cu" />
     <CudaCompile Include="..\..\src\operator\contrib\deformable_convolution.cu" />
     <CudaCompile Include="..\..\src\operator\contrib\deformable_psroi_pooling.cu" />
     <CudaCompile Include="..\..\src\operator\contrib\dequantize.cu" />
@@ -327,8 +321,6 @@
     <CudaCompile Include="..\..\src\operator\instance_norm.cu" />
     <CudaCompile Include="..\..\src\operator\l2_normalization.cu" />
     <CudaCompile Include="..\..\src\operator\leaky_relu.cu" />
-    <CudaCompile Include="..\..\src\operator\loss_binary_op.cu" />
-    <CudaCompile Include="..\..\src\operator\make_loss.cu" />
     <CudaCompile Include="..\..\src\operator\nn\activation.cu" />
     <CudaCompile Include="..\..\src\operator\nn\batch_norm.cu" />
     <CudaCompile Include="..\..\src\operator\nn\concat.cu" />
@@ -342,13 +334,11 @@
     <CudaCompile Include="..\..\src\operator\nn\softmax.cu" />
     <CudaCompile Include="..\..\src\operator\nn\softmax_activation.cu" />
     <CudaCompile Include="..\..\src\operator\nn\upsampling.cu" />
-    <CudaCompile Include="..\..\src\operator\optimizer_op.cu" />
     <CudaCompile Include="..\..\src\operator\pad.cu" />
     <CudaCompile Include="..\..\src\operator\pooling_v1.cu" />
     <CudaCompile Include="..\..\src\operator\random\multisample_op.cu" />
     <CudaCompile Include="..\..\src\operator\random\sample_multinomial_op.cu" />
     <CudaCompile Include="..\..\src\operator\random\sample_op.cu" />
-    <CudaCompile Include="..\..\src\operator\regression_output.cu" />
     <CudaCompile Include="..\..\src\operator\rnn.cu" />
     <CudaCompile Include="..\..\src\operator\roi_pooling.cu" />
     <CudaCompile Include="..\..\src\operator\sequence_last.cu" />
@@ -443,7 +433,6 @@
     <ClCompile Include="..\..\src\operator\bilinear_sampler.cc" />
     <ClCompile Include="..\..\src\operator\contrib\bounding_box.cc" />
     <ClCompile Include="..\..\src\operator\contrib\count_sketch.cc" />
-    <ClCompile Include="..\..\src\operator\contrib\ctc_loss.cc" />
     <ClCompile Include="..\..\src\operator\contrib\deformable_convolution.cc" />
     <ClCompile Include="..\..\src\operator\contrib\deformable_psroi_pooling.cc" />
     <ClCompile Include="..\..\src\operator\contrib\dequantize.cc" />
@@ -470,8 +459,6 @@
     <ClCompile Include="..\..\src\operator\instance_norm.cc" />
     <ClCompile Include="..\..\src\operator\l2_normalization.cc" />
     <ClCompile Include="..\..\src\operator\leaky_relu.cc" />
-    <ClCompile Include="..\..\src\operator\loss_binary_op.cc" />
-    <ClCompile Include="..\..\src\operator\make_loss.cc" />
     <ClCompile Include="..\..\src\operator\nnpack\nnpack_util.cc" />
     <ClCompile Include="..\..\src\operator\nn\activation.cc" />
     <ClCompile Include="..\..\src\operator\nn\batch_norm.cc" />
@@ -499,13 +486,11 @@
     <ClCompile Include="..\..\src\operator\operator.cc" />
     <ClCompile Include="..\..\src\operator\operator_tune.cc" />
     <ClCompile Include="..\..\src\operator\operator_util.cc" />
-    <ClCompile Include="..\..\src\operator\optimizer_op.cc" />
     <ClCompile Include="..\..\src\operator\pad.cc" />
     <ClCompile Include="..\..\src\operator\pooling_v1.cc" />
     <ClCompile Include="..\..\src\operator\random\multisample_op.cc" />
     <ClCompile Include="..\..\src\operator\random\sample_multinomial_op.cc" />
     <ClCompile Include="..\..\src\operator\random\sample_op.cc" />
-    <ClCompile Include="..\..\src\operator\regression_output.cc" />
     <ClCompile Include="..\..\src\operator\rnn.cc" />
     <ClCompile Include="..\..\src\operator\roi_pooling.cc" />
     <ClCompile Include="..\..\src\operator\sequence_last.cc" />
