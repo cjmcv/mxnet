@@ -22,9 +22,6 @@
     <Filter Include="Include\src\operator\nn\cudnn">
       <UniqueIdentifier>{F59D8665-68EE-3A2D-8E26-091670B0632A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\src\operator\nn\mkldnn">
-      <UniqueIdentifier>{0D85F7D0-3B29-35EC-94A1-A94444DDDBCD}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\src\operator\contrib\ctc_include">
       <UniqueIdentifier>{C0358EE4-9A8B-36A2-910B-1E9C4C26C9BE}</UniqueIdentifier>
     </Filter>
@@ -39,9 +36,6 @@
     </Filter>
     <Filter Include="Source\src\operator\nn\cudnn">
       <UniqueIdentifier>{3149EAE6-CB07-3CD6-93E6-C3206CA78A50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\src\operator\nn\mkldnn">
-      <UniqueIdentifier>{6C558D91-D972-3196-BE5A-687FD45C61EB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\nnvm\src\c_api">
       <UniqueIdentifier>{DE1601CC-E9AA-38F6-800D-7DD2EBD82A82}</UniqueIdentifier>
@@ -154,9 +148,6 @@
     <Filter Include="Include\src\operator\nn">
       <UniqueIdentifier>{4233E1D1-D3FD-3EF7-AAD1-6CDB0494C0D9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\src\operator\nnpack">
-      <UniqueIdentifier>{8F72DAD5-F3D8-3E69-8682-0FC25FA38F12}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\src\operator\random">
       <UniqueIdentifier>{BEF043A5-CD56-3528-A30D-528D7341413B}</UniqueIdentifier>
     </Filter>
@@ -207,9 +198,6 @@
     </Filter>
     <Filter Include="Source\src\operator\nn">
       <UniqueIdentifier>{CFFE4C06-ABCE-35FF-80EE-E0B56733881F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\src\operator\nnpack">
-      <UniqueIdentifier>{2EAF4ED3-6AF1-30D4-9171-722869E8BBCB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\src\operator\random">
       <UniqueIdentifier>{B9583462-1EBA-3744-BAAC-3FE20F3C37C4}</UniqueIdentifier>
@@ -792,21 +780,6 @@
     <ClInclude Include="..\..\src\operator\nn\cudnn\cudnn_softmax_activation-inl.h">
       <Filter>Include\src\operator\nn\cudnn</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_base-inl.h">
-      <Filter>Include\src\operator\nn\mkldnn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_batch_norm-inl.h">
-      <Filter>Include\src\operator\nn\mkldnn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_lrn-inl.h">
-      <Filter>Include\src\operator\nn\mkldnn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_ops-inl.h">
-      <Filter>Include\src\operator\nn\mkldnn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling-inl.h">
-      <Filter>Include\src\operator\nn\mkldnn</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\operator\nn\activation-inl.h">
       <Filter>Include\src\operator\nn</Filter>
     </ClInclude>
@@ -851,18 +824,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\operator\nn\upsampling-inl.h">
       <Filter>Include\src\operator\nn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_convolution-inl.h">
-      <Filter>Include\src\operator\nnpack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_fully_connected-inl.h">
-      <Filter>Include\src\operator\nnpack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_pooling-inl.h">
-      <Filter>Include\src\operator\nnpack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_util.h">
-      <Filter>Include\src\operator\nnpack</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\operator\random\multisample_op.h">
       <Filter>Include\src\operator\random</Filter>
@@ -1552,36 +1513,6 @@
     <ClCompile Include="..\..\src\operator\nn\cudnn\cudnn_batch_norm.cc">
       <Filter>Source\src\operator\nn\cudnn</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_act.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_base.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_concat.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_convolution.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_copy.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_deconvolution.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_fully_connected.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_softmax.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_sum.cc">
-      <Filter>Source\src\operator\nn\mkldnn</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\operator\nn\activation.cc">
       <Filter>Source\src\operator\nn</Filter>
     </ClCompile>
@@ -1614,9 +1545,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\operator\nn\upsampling.cc">
       <Filter>Source\src\operator\nn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\nnpack\nnpack_util.cc">
-      <Filter>Source\src\operator\nnpack</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\random\multisample_op.cc">
       <Filter>Source\src\operator\random</Filter>

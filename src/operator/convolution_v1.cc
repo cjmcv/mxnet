@@ -25,9 +25,9 @@
 */
 
 #include "./convolution_v1-inl.h"
-#if MXNET_USE_NNPACK == 1
-#include "./nnpack/nnpack_convolution-inl.h"
-#endif  // MXNET_USE_NNPACK
+//#if MXNET_USE_NNPACK == 1
+//#include "./nnpack/nnpack_convolution-inl.h"
+//#endif  // MXNET_USE_NNPACK
 
 namespace mxnet {
 namespace op {

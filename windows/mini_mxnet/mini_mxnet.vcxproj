@@ -200,10 +200,6 @@
     <ClInclude Include="..\..\src\operator\math_functions-inl.h" />
     <ClInclude Include="..\..\src\operator\mshadow_op.h" />
     <ClInclude Include="..\..\src\operator\mxnet_op.h" />
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_convolution-inl.h" />
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_fully_connected-inl.h" />
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_pooling-inl.h" />
-    <ClInclude Include="..\..\src\operator\nnpack\nnpack_util.h" />
     <ClInclude Include="..\..\src\operator\nn\activation-inl.h" />
     <ClInclude Include="..\..\src\operator\nn\batch_norm-inl.h" />
     <ClInclude Include="..\..\src\operator\nn\concat-inl.h" />
@@ -223,11 +219,6 @@
     <ClInclude Include="..\..\src\operator\nn\im2col.cuh" />
     <ClInclude Include="..\..\src\operator\nn\im2col.h" />
     <ClInclude Include="..\..\src\operator\nn\lrn-inl.h" />
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_base-inl.h" />
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_batch_norm-inl.h" />
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_lrn-inl.h" />
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_ops-inl.h" />
-    <ClInclude Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling-inl.h" />
     <ClInclude Include="..\..\src\operator\nn\pool.cuh" />
     <ClInclude Include="..\..\src\operator\nn\pool.h" />
     <ClInclude Include="..\..\src\operator\nn\pooling-inl.h" />
@@ -459,7 +450,6 @@
     <ClCompile Include="..\..\src\operator\instance_norm.cc" />
     <ClCompile Include="..\..\src\operator\l2_normalization.cc" />
     <ClCompile Include="..\..\src\operator\leaky_relu.cc" />
-    <ClCompile Include="..\..\src\operator\nnpack\nnpack_util.cc" />
     <ClCompile Include="..\..\src\operator\nn\activation.cc" />
     <ClCompile Include="..\..\src\operator\nn\batch_norm.cc" />
     <ClCompile Include="..\..\src\operator\nn\concat.cc" />
@@ -469,16 +459,6 @@
     <ClCompile Include="..\..\src\operator\nn\deconvolution.cc" />
     <ClCompile Include="..\..\src\operator\nn\dropout.cc" />
     <ClCompile Include="..\..\src\operator\nn\fully_connected.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_act.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_base.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_concat.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_convolution.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_copy.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_deconvolution.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_fully_connected.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_pooling.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_softmax.cc" />
-    <ClCompile Include="..\..\src\operator\nn\mkldnn\mkldnn_sum.cc" />
     <ClCompile Include="..\..\src\operator\nn\pooling.cc" />
     <ClCompile Include="..\..\src\operator\nn\softmax.cc" />
     <ClCompile Include="..\..\src\operator\nn\softmax_activation.cc" />

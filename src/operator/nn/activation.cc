@@ -27,10 +27,10 @@
 #include "./activation-inl.h"
 #include "../mshadow_op.h"
 #include "../tensor/elemwise_unary_op.h"
-#if MXNET_USE_MKLDNN == 1
-#include "./mkldnn/mkldnn_base-inl.h"
-#include "./mkldnn/mkldnn_ops-inl.h"
-#endif  // MXNET_USE_MKLDNN
+//#if MXNET_USE_MKLDNN == 1
+//#include "./mkldnn/mkldnn_base-inl.h"
+//#include "./mkldnn/mkldnn_ops-inl.h"
+//#endif  // MXNET_USE_MKLDNN
 
 namespace mxnet {
 namespace op {
@@ -51,24 +51,24 @@ struct ActivationGrad {
   }
 };
 
-#if MXNET_USE_MKLDNN == 1
-static void ActivationComputeExCPU(const nnvm::NodeAttrs& attrs,
-                                   const OpContext& ctx,
-                                   const std::vector<NDArray>& inputs,
-                                   const std::vector<OpReqType>& req,
-                                   const std::vector<NDArray>& outputs) {
-  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
-  CHECK_EQ(inputs.size(), 1U);
-  CHECK_EQ(outputs.size(), 1U);
-  if (SupportMKLDNN(inputs[0])) {
-    MKLDNN_OPCHECK_INIT(false, outputs.size(), inputs, outputs);
-    MKLDNNActivationForward(attrs, ctx, inputs[0], req[0], outputs[0]);
-    MKLDNN_OPCHECK_RUN(ActivationCompute<cpu>, attrs, ctx, inputs, req, outputs);
-    return;
-  }
-  ActivationComputeImpl<cpu>(param, ctx, inputs[0].data(), req[0], outputs[0].data());
-}
-
+//#if MXNET_USE_MKLDNN == 1
+//static void ActivationComputeExCPU(const nnvm::NodeAttrs& attrs,
+//                                   const OpContext& ctx,
+//                                   const std::vector<NDArray>& inputs,
+//                                   const std::vector<OpReqType>& req,
+//                                   const std::vector<NDArray>& outputs) {
+//  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
+//  CHECK_EQ(inputs.size(), 1U);
+//  CHECK_EQ(outputs.size(), 1U);
+//  if (SupportMKLDNN(inputs[0])) {
+//    MKLDNN_OPCHECK_INIT(false, outputs.size(), inputs, outputs);
+//    MKLDNNActivationForward(attrs, ctx, inputs[0], req[0], outputs[0]);
+//    MKLDNN_OPCHECK_RUN(ActivationCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//    return;
+//  }
+//  ActivationComputeImpl<cpu>(param, ctx, inputs[0].data(), req[0], outputs[0].data());
+//}
+//
 //void ActivationGradComputeExCPU(const nnvm::NodeAttrs& attrs,
 //                                const OpContext& ctx,
 //                                const std::vector<NDArray>& inputs,
@@ -90,7 +90,7 @@ static void ActivationComputeExCPU(const nnvm::NodeAttrs& attrs,
 //  ActivationGradComputeImpl<cpu>(param, ctx, inputs[0].data(), inputs[1].data(),
 //                                 req[0], outputs[0].data());
 //}
-#endif
+//#endif
 
 inline static bool ActivationStorageType(const nnvm::NodeAttrs& attrs,
                                          const int dev_mask,
@@ -102,12 +102,12 @@ inline static bool ActivationStorageType(const nnvm::NodeAttrs& attrs,
   bool ret = ElemwiseStorageType<1, 1, false, false, false>(attrs, dev_mask,
                                                             dispatch_mode,
                                                             in_attrs, out_attrs);
-#if MXNET_USE_MKLDNN == 1
-  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
-  if (dev_mask == mshadow::cpu::kDevMask && SupportMKLDNNAct(param)) {
-    *dispatch_mode = DispatchMode::kFComputeEx;
-  }
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//  const ActivationParam& param = nnvm::get<ActivationParam>(attrs.parsed);
+//  if (dev_mask == mshadow::cpu::kDevMask && SupportMKLDNNAct(param)) {
+//    *dispatch_mode = DispatchMode::kFComputeEx;
+//  }
+//#endif
   return ret;
 }
 
@@ -154,9 +154,9 @@ The following activation functions are supported:
 .set_attr_parser(ParamParser<ActivationParam>)
 .set_attr<FInferStorageType>("FInferStorageType", ActivationStorageType)
 .set_attr<FCompute>("FCompute<cpu>", ActivationCompute<cpu>)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FComputeEx>("FComputeEx<cpu>", ActivationComputeExCPU)
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FComputeEx>("FComputeEx<cpu>", ActivationComputeExCPU)
+//#endif
 //.set_attr<nnvm::FGradient>("FGradient", ActivationGrad{"_backward_Activation"})
 .add_arguments(ActivationParam::__FIELDS__());
 

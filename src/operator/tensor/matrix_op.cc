@@ -25,8 +25,8 @@
 // this will be invoked by gcc and compile CPU version
 #include "./matrix_op-inl.h"
 #include "./elemwise_unary_op.h"
-#include "../nn/mkldnn/mkldnn_ops-inl.h"
-#include "../nn/mkldnn/mkldnn_base-inl.h"
+//#include "../nn/mkldnn/mkldnn_ops-inl.h"
+//#include "../nn/mkldnn/mkldnn_base-inl.h"
 
 namespace mxnet {
 namespace op {
@@ -190,22 +190,22 @@ static void FlattenEx(const nnvm::NodeAttrs& attrs,
                       const std::vector<NDArray>& outputs) {
   CHECK_EQ(inputs.size(), 1U);
   CHECK_EQ(outputs.size(), 1U);
-#if MXNET_USE_MKLDNN == 1
-  if (inputs[0].IsMKLDNNData()) {
-    MKLDNNCopy(attrs, ctx, inputs[0], req[0], outputs[0]);
-    // If the output is a special MKLDNN layout and the number of dimensions
-    // is larger than 2, we should use the default layout.
-    if (outputs[0].IsMKLDNNData() && inputs[0].shape().ndim() > 2)
-      const_cast<NDArray &>(outputs[0]).Reorder2Default();
-    return;
-  } else {
-    // This happens if inputs are supposed to be in MKLDNN format
-    // but MKLDNN doesn't support the data type or the shape. We're
-    // forced to convert it to the default format.
-    FallBackCompute(UnaryOp::IdentityCompute<cpu>, attrs, ctx, inputs, req, outputs);
-    return;
-  }
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//  if (inputs[0].IsMKLDNNData()) {
+//    MKLDNNCopy(attrs, ctx, inputs[0], req[0], outputs[0]);
+//    // If the output is a special MKLDNN layout and the number of dimensions
+//    // is larger than 2, we should use the default layout.
+//    if (outputs[0].IsMKLDNNData() && inputs[0].shape().ndim() > 2)
+//      const_cast<NDArray &>(outputs[0]).Reorder2Default();
+//    return;
+//  } else {
+//    // This happens if inputs are supposed to be in MKLDNN format
+//    // but MKLDNN doesn't support the data type or the shape. We're
+//    // forced to convert it to the default format.
+//    FallBackCompute(UnaryOp::IdentityCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//    return;
+//  }
+//#endif
 }
 
 static inline bool FlattenStorageType(const nnvm::NodeAttrs& attrs,
@@ -217,13 +217,13 @@ static inline bool FlattenStorageType(const nnvm::NodeAttrs& attrs,
   CHECK_EQ(out_attrs->size(), 1);
   bool ret = ElemwiseStorageType<1, 1, false, false, false>(attrs, dev_mask, dispatch_mode,
                                                             in_attrs, out_attrs);
-#if MXNET_USE_MKLDNN == 1
-  if (dev_mask == mshadow::cpu::kDevMask
-      && in_attrs->at(0) == kDefaultStorage
-      && out_attrs->at(0) == kDefaultStorage) {
-    *dispatch_mode = DispatchMode::kFComputeEx;
-  }
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//  if (dev_mask == mshadow::cpu::kDevMask
+//      && in_attrs->at(0) == kDefaultStorage
+//      && out_attrs->at(0) == kDefaultStorage) {
+//    *dispatch_mode = DispatchMode::kFComputeEx;
+//  }
+//#endif
   return ret;
 }
 
@@ -263,11 +263,11 @@ Example::
 //.set_attr<nnvm::FGradient>("FGradient", ElemwiseGradUseNone{ "_backward_copy" })
 .set_attr<FCompute>("FCompute<cpu>", UnaryOp::IdentityCompute<cpu>)
 .set_attr<FComputeEx>("FComputeEx<cpu>", FlattenEx)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-})
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//#endif
 .set_attr<nnvm::FInplaceOption>("FInplaceOption",
   [](const NodeAttrs& attrs) {
     return std::vector<std::pair<int, int> >{{0, 0}};

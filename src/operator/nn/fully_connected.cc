@@ -23,11 +23,11 @@
  * \brief fully connect operator
 */
 #include "./fully_connected-inl.h"
-#include "./mkldnn/mkldnn_ops-inl.h"
-#include "./mkldnn/mkldnn_base-inl.h"
-#if MXNET_USE_NNPACK == 1
-#include "./nnpack/nnpack_fully_connected-inl.h"
-#endif  // MXNET_USE_NNPACK
+//#include "./mkldnn/mkldnn_ops-inl.h"
+//#include "./mkldnn/mkldnn_base-inl.h"
+//#if MXNET_USE_NNPACK == 1
+//#include "./nnpack/nnpack_fully_connected-inl.h"
+//#endif  // MXNET_USE_NNPACK
 
 namespace mxnet {
 namespace op {
@@ -73,22 +73,22 @@ static bool FullyConnectedShape(const nnvm::NodeAttrs& attrs,
   return true;
 }
 
-#if MXNET_USE_MKLDNN == 1
-void FullyConnectedComputeExCPU(const nnvm::NodeAttrs& attrs,
-                                const OpContext &ctx,
-                                const std::vector<NDArray> &inputs,
-                                const std::vector<OpReqType> &req,
-                                const std::vector<NDArray> &outputs) {
-  if (SupportMKLDNN(inputs[0])) {
-    MKLDNN_OPCHECK_INIT(false, outputs.size(), inputs, outputs);
-    MKLDNNFCForward(attrs, ctx, inputs, req, outputs);
-    MKLDNN_OPCHECK_RUN(FullyConnectedCompute<cpu>, attrs, ctx, inputs, req,
-                       outputs);
-    return;
-  }
-  FallBackCompute(FullyConnectedCompute<cpu>, attrs, ctx, inputs, req, outputs);
-}
-
+//#if MXNET_USE_MKLDNN == 1
+//void FullyConnectedComputeExCPU(const nnvm::NodeAttrs& attrs,
+//                                const OpContext &ctx,
+//                                const std::vector<NDArray> &inputs,
+//                                const std::vector<OpReqType> &req,
+//                                const std::vector<NDArray> &outputs) {
+//  if (SupportMKLDNN(inputs[0])) {
+//    MKLDNN_OPCHECK_INIT(false, outputs.size(), inputs, outputs);
+//    MKLDNNFCForward(attrs, ctx, inputs, req, outputs);
+//    MKLDNN_OPCHECK_RUN(FullyConnectedCompute<cpu>, attrs, ctx, inputs, req,
+//                       outputs);
+//    return;
+//  }
+//  FallBackCompute(FullyConnectedCompute<cpu>, attrs, ctx, inputs, req, outputs);
+//}
+//
 //void FullyConnectedGradComputeExCPU(const nnvm::NodeAttrs& attrs,
 //                                    const OpContext &ctx,
 //                                    const std::vector<NDArray> &inputs,
@@ -103,7 +103,7 @@ void FullyConnectedComputeExCPU(const nnvm::NodeAttrs& attrs,
 //  }
 //  FallBackCompute(FullyConnectedGradCompute<cpu>, attrs, ctx, inputs, req, outputs);
 //}
-#endif
+//#endif
 
 static bool FullyConnectedType(const nnvm::NodeAttrs& attrs,
                                std::vector<int> *in_type, std::vector<int> *out_type) {
@@ -134,11 +134,11 @@ inline static bool FCStorageType(const nnvm::NodeAttrs& attrs,
   CHECK_EQ(out_attrs->size(), 1);
 
   DispatchMode wanted_mode;
-#if MXNET_USE_MKLDNN == 1
-  if (dev_mask == mshadow::cpu::kDevMask)
-    wanted_mode = DispatchMode::kFComputeEx;
-  else
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//  if (dev_mask == mshadow::cpu::kDevMask)
+//    wanted_mode = DispatchMode::kFComputeEx;
+//  else
+//#endif
     wanted_mode = DispatchMode::kFCompute;
   return storage_type_assign(out_attrs, mxnet::kDefaultStorage,
                              dispatch_mode, wanted_mode);
@@ -206,17 +206,17 @@ If ``no_bias`` is set to be true, then the ``bias`` term is ignored.
     return std::vector<std::string>{"data", "weight"};
   }
 })
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
-  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
-})
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FResourceRequest>("FResourceRequest", [](const NodeAttrs& n) {
+//  return std::vector<ResourceRequest>{ResourceRequest::kTempSpace};
+//})
+//#endif
 .set_attr<nnvm::FInferShape>("FInferShape", FullyConnectedShape)
 .set_attr<nnvm::FInferType>("FInferType", FullyConnectedType)
 .set_attr<FCompute>("FCompute<cpu>", FullyConnectedCompute<cpu>)
-#if MXNET_USE_MKLDNN == 1
-.set_attr<FComputeEx>("FComputeEx<cpu>", FullyConnectedComputeExCPU)
-#endif
+//#if MXNET_USE_MKLDNN == 1
+//.set_attr<FComputeEx>("FComputeEx<cpu>", FullyConnectedComputeExCPU)
+//#endif
 //.set_attr<nnvm::FGradient>("FGradient", FullyConnectedGrad{"_backward_FullyConnected"})
 .add_argument("data", "NDArray-or-Symbol", "Input data.")
 .add_argument("weight", "NDArray-or-Symbol", "Weight matrix.")
