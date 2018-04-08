@@ -31,7 +31,7 @@
 #include <mxnet/base.h>
 #include <mxnet/ndarray.h>
 #include <mxnet/operator.h>
-#include <mxnet/io.h>
+//#include <mxnet/io.h>
 #include <mxnet/c_api.h>
 //#include <mxnet/kvstore.h>
 #include <mxnet/rtc.h>
@@ -640,106 +640,106 @@ int MXFuncInvokeEx(FunctionHandle fun,
   API_END();
 }
 
-//--------------------------------------------
-// Part 5: IO Interface
-//--------------------------------------------
-int MXListDataIters(mx_uint *out_size,
-                    DataIterCreator **out_array) {
-  API_BEGIN();
-  auto &vec = dmlc::Registry<DataIteratorReg>::List();
-  *out_size = static_cast<mx_uint>(vec.size());
-  *out_array = (DataIterCreator*)(dmlc::BeginPtr(vec));  //  NOLINT(*)
-  API_END();
-}
-
-int MXDataIterGetIterInfo(DataIterCreator creator,
-                          const char **name,
-                          const char **description,
-                          mx_uint *num_args,
-                          const char ***arg_names,
-                          const char ***arg_type_infos,
-                          const char ***arg_descriptions) {
-  DataIteratorReg *e = static_cast<DataIteratorReg *>(creator);
-  return MXAPIGetFunctionRegInfo(e, name, description, num_args,
-                                 arg_names, arg_type_infos, arg_descriptions,
-                                 NULL);
-}
-
-int MXDataIterCreateIter(DataIterCreator creator,
-                         mx_uint num_param,
-                         const char **keys,
-                         const char **vals,
-                         DataIterHandle *out) {
-  IIterator<DataBatch> *iter = nullptr;
-  API_BEGIN();
-  DataIteratorReg *e = static_cast<DataIteratorReg *>(creator);
-  iter = e->body();
-  std::vector<std::pair<std::string, std::string> > kwargs;
-  for (mx_uint i = 0; i < num_param; ++i) {
-    kwargs.push_back({std::string(keys[i]), std::string(vals[i])});
-  }
-  iter->Init(kwargs);
-  *out = iter;
-  API_END_HANDLE_ERROR(delete iter);
-}
-
-int MXDataIterFree(DataIterHandle handle) {
-  API_BEGIN();
-  delete static_cast<IIterator<DataBatch> *>(handle);
-  API_END();
-}
-
-int MXDataIterBeforeFirst(DataIterHandle handle) {
-  API_BEGIN();
-  static_cast<IIterator<DataBatch>* >(handle)->BeforeFirst();
-  API_END();
-}
-
-int MXDataIterNext(DataIterHandle handle, int *out) {
-  API_BEGIN();
-  *out = static_cast<IIterator<DataBatch>* >(handle)->Next();
-  API_END();
-}
-
-int MXDataIterGetLabel(DataIterHandle handle, NDArrayHandle *out) {
-  API_BEGIN();
-  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
-  NDArray* pndarray = new NDArray();
-  // temp hack to make label 1D
-  // TODO(tianjun) make label 1D when label_width=0
-  TShape shape = db.data[1].shape();
-  if (shape[1] == 1) {
-    *pndarray = db.data[1].Reshape(mshadow::Shape1(shape[0]));
-  } else {
-    *pndarray = db.data[1];
-  }
-  *out = pndarray;
-  API_END();
-}
-
-int MXDataIterGetIndex(DataIterHandle handle, uint64_t **out_index, uint64_t *out_size) {
-  API_BEGIN();
-  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
-  *out_size = db.index.size();
-  *out_index = const_cast<uint64_t*>(db.index.data());
-  API_END();
-}
-
-int MXDataIterGetData(DataIterHandle handle, NDArrayHandle *out) {
-  API_BEGIN();
-  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
-  NDArray* pndarray = new NDArray();
-  *pndarray = db.data[0];
-  *out = pndarray;
-  API_END();
-}
-
-int MXDataIterGetPadNum(DataIterHandle handle, int *pad) {
-  API_BEGIN();
-  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
-  *pad = db.num_batch_padd;
-  API_END();
-}
+////--------------------------------------------
+//// Part 5: IO Interface
+////--------------------------------------------
+//int MXListDataIters(mx_uint *out_size,
+//                    DataIterCreator **out_array) {
+//  API_BEGIN();
+//  auto &vec = dmlc::Registry<DataIteratorReg>::List();
+//  *out_size = static_cast<mx_uint>(vec.size());
+//  *out_array = (DataIterCreator*)(dmlc::BeginPtr(vec));  //  NOLINT(*)
+//  API_END();
+//}
+//
+//int MXDataIterGetIterInfo(DataIterCreator creator,
+//                          const char **name,
+//                          const char **description,
+//                          mx_uint *num_args,
+//                          const char ***arg_names,
+//                          const char ***arg_type_infos,
+//                          const char ***arg_descriptions) {
+//  DataIteratorReg *e = static_cast<DataIteratorReg *>(creator);
+//  return MXAPIGetFunctionRegInfo(e, name, description, num_args,
+//                                 arg_names, arg_type_infos, arg_descriptions,
+//                                 NULL);
+//}
+//
+//int MXDataIterCreateIter(DataIterCreator creator,
+//                         mx_uint num_param,
+//                         const char **keys,
+//                         const char **vals,
+//                         DataIterHandle *out) {
+//  IIterator<DataBatch> *iter = nullptr;
+//  API_BEGIN();
+//  DataIteratorReg *e = static_cast<DataIteratorReg *>(creator);
+//  iter = e->body();
+//  std::vector<std::pair<std::string, std::string> > kwargs;
+//  for (mx_uint i = 0; i < num_param; ++i) {
+//    kwargs.push_back({std::string(keys[i]), std::string(vals[i])});
+//  }
+//  iter->Init(kwargs);
+//  *out = iter;
+//  API_END_HANDLE_ERROR(delete iter);
+//}
+//
+//int MXDataIterFree(DataIterHandle handle) {
+//  API_BEGIN();
+//  delete static_cast<IIterator<DataBatch> *>(handle);
+//  API_END();
+//}
+//
+//int MXDataIterBeforeFirst(DataIterHandle handle) {
+//  API_BEGIN();
+//  static_cast<IIterator<DataBatch>* >(handle)->BeforeFirst();
+//  API_END();
+//}
+//
+//int MXDataIterNext(DataIterHandle handle, int *out) {
+//  API_BEGIN();
+//  *out = static_cast<IIterator<DataBatch>* >(handle)->Next();
+//  API_END();
+//}
+//
+//int MXDataIterGetLabel(DataIterHandle handle, NDArrayHandle *out) {
+//  API_BEGIN();
+//  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
+//  NDArray* pndarray = new NDArray();
+//  // temp hack to make label 1D
+//  // TODO(tianjun) make label 1D when label_width=0
+//  TShape shape = db.data[1].shape();
+//  if (shape[1] == 1) {
+//    *pndarray = db.data[1].Reshape(mshadow::Shape1(shape[0]));
+//  } else {
+//    *pndarray = db.data[1];
+//  }
+//  *out = pndarray;
+//  API_END();
+//}
+//
+//int MXDataIterGetIndex(DataIterHandle handle, uint64_t **out_index, uint64_t *out_size) {
+//  API_BEGIN();
+//  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
+//  *out_size = db.index.size();
+//  *out_index = const_cast<uint64_t*>(db.index.data());
+//  API_END();
+//}
+//
+//int MXDataIterGetData(DataIterHandle handle, NDArrayHandle *out) {
+//  API_BEGIN();
+//  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
+//  NDArray* pndarray = new NDArray();
+//  *pndarray = db.data[0];
+//  *out = pndarray;
+//  API_END();
+//}
+//
+//int MXDataIterGetPadNum(DataIterHandle handle, int *pad) {
+//  API_BEGIN();
+//  const DataBatch& db = static_cast<IIterator<DataBatch>* >(handle)->Value();
+//  *pad = db.num_batch_padd;
+//  API_END();
+//}
 
 //int MXKVStoreCreate(const char *type,
 //                    KVStoreHandle *out) {
@@ -1038,107 +1038,107 @@ int MXDataIterGetPadNum(DataIterHandle handle, int *pad) {
 //  API_END();
 //}
 
-struct MXRecordIOContext {
-  dmlc::RecordIOWriter *writer;
-  dmlc::RecordIOReader *reader;
-  dmlc::Stream *stream;
-  std::string *read_buff;
-};
-
-int MXRecordIOWriterCreate(const char *uri,
-                           RecordIOHandle *out) {
-  API_BEGIN();
-  dmlc::Stream *stream = dmlc::Stream::Create(uri, "w");
-  MXRecordIOContext *context = new MXRecordIOContext;
-  context->writer = new dmlc::RecordIOWriter(stream);
-  context->reader = NULL;
-  context->stream = stream;
-  context->read_buff = NULL;
-  *out = reinterpret_cast<RecordIOHandle>(context);
-  API_END();
-}
-
-int MXRecordIOWriterFree(RecordIOHandle handle) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  delete context->writer;
-  delete context->stream;
-  delete context;
-  API_END();
-}
-
-int MXRecordIOWriterWriteRecord(RecordIOHandle handle,
-                                const char *buf, size_t size) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  context->writer->WriteRecord(reinterpret_cast<const void*>(buf), size);
-  API_END();
-}
-
-int MXRecordIOWriterTell(RecordIOHandle handle, size_t *pos) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  *pos = context->writer->Tell();
-  API_END();
-}
-
-int MXRecordIOReaderCreate(const char *uri,
-                           RecordIOHandle *out) {
-  API_BEGIN();
-  dmlc::Stream *stream = dmlc::Stream::Create(uri, "r");
-  MXRecordIOContext *context = new MXRecordIOContext;
-  context->reader = new dmlc::RecordIOReader(stream);
-  context->writer = NULL;
-  context->stream = stream;
-  context->read_buff = new std::string();
-  *out = reinterpret_cast<RecordIOHandle>(context);
-  API_END();
-}
-
-int MXRecordIOReaderFree(RecordIOHandle handle) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  delete context->reader;
-  delete context->stream;
-  delete context->read_buff;
-  delete context;
-  API_END();
-}
-
-int MXRecordIOReaderReadRecord(RecordIOHandle handle,
-                              char const **buf, size_t *size) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  if (context->reader->NextRecord(context->read_buff)) {
-    *buf = context->read_buff->c_str();
-    *size = context->read_buff->size();
-  } else {
-    *buf = NULL;
-    *size = 0;
-  }
-  API_END();
-}
-
-int MXRecordIOReaderSeek(RecordIOHandle handle, size_t pos) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  context->reader->Seek(pos);
-  API_END();
-}
-
-int MXRecordIOReaderTell(RecordIOHandle handle, size_t *pos) {
-  API_BEGIN();
-  MXRecordIOContext *context =
-    reinterpret_cast<MXRecordIOContext*>(handle);
-  *pos = context->reader->Tell();
-  API_END();
-}
+//struct MXRecordIOContext {
+//  dmlc::RecordIOWriter *writer;
+//  dmlc::RecordIOReader *reader;
+//  dmlc::Stream *stream;
+//  std::string *read_buff;
+//};
+//
+//int MXRecordIOWriterCreate(const char *uri,
+//                           RecordIOHandle *out) {
+//  API_BEGIN();
+//  dmlc::Stream *stream = dmlc::Stream::Create(uri, "w");
+//  MXRecordIOContext *context = new MXRecordIOContext;
+//  context->writer = new dmlc::RecordIOWriter(stream);
+//  context->reader = NULL;
+//  context->stream = stream;
+//  context->read_buff = NULL;
+//  *out = reinterpret_cast<RecordIOHandle>(context);
+//  API_END();
+//}
+//
+//int MXRecordIOWriterFree(RecordIOHandle handle) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  delete context->writer;
+//  delete context->stream;
+//  delete context;
+//  API_END();
+//}
+//
+//int MXRecordIOWriterWriteRecord(RecordIOHandle handle,
+//                                const char *buf, size_t size) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  context->writer->WriteRecord(reinterpret_cast<const void*>(buf), size);
+//  API_END();
+//}
+//
+//int MXRecordIOWriterTell(RecordIOHandle handle, size_t *pos) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  *pos = context->writer->Tell();
+//  API_END();
+//}
+//
+//int MXRecordIOReaderCreate(const char *uri,
+//                           RecordIOHandle *out) {
+//  API_BEGIN();
+//  dmlc::Stream *stream = dmlc::Stream::Create(uri, "r");
+//  MXRecordIOContext *context = new MXRecordIOContext;
+//  context->reader = new dmlc::RecordIOReader(stream);
+//  context->writer = NULL;
+//  context->stream = stream;
+//  context->read_buff = new std::string();
+//  *out = reinterpret_cast<RecordIOHandle>(context);
+//  API_END();
+//}
+//
+//int MXRecordIOReaderFree(RecordIOHandle handle) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  delete context->reader;
+//  delete context->stream;
+//  delete context->read_buff;
+//  delete context;
+//  API_END();
+//}
+//
+//int MXRecordIOReaderReadRecord(RecordIOHandle handle,
+//                              char const **buf, size_t *size) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  if (context->reader->NextRecord(context->read_buff)) {
+//    *buf = context->read_buff->c_str();
+//    *size = context->read_buff->size();
+//  } else {
+//    *buf = NULL;
+//    *size = 0;
+//  }
+//  API_END();
+//}
+//
+//int MXRecordIOReaderSeek(RecordIOHandle handle, size_t pos) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  context->reader->Seek(pos);
+//  API_END();
+//}
+//
+//int MXRecordIOReaderTell(RecordIOHandle handle, size_t *pos) {
+//  API_BEGIN();
+//  MXRecordIOContext *context =
+//    reinterpret_cast<MXRecordIOContext*>(handle);
+//  *pos = context->reader->Tell();
+//  API_END();
+//}
 
 int MXRtcCreate(char* name, mx_uint num_input, mx_uint num_output,
                 char** input_names, char** output_names,

@@ -1440,510 +1440,510 @@ MXNET_DLL int MXExecutorSimpleBind(SymbolHandle symbol_handle,
 MXNET_DLL int MXExecutorSetMonitorCallback(ExecutorHandle handle,
                                            ExecutorMonitorCallback callback,
                                            void* callback_handle);
-//--------------------------------------------
-// Part 5: IO Interface
-//--------------------------------------------
-/*!
- * \brief List all the available iterator entries
- * \param out_size the size of returned iterators
- * \param out_array the output iteratos entries
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXListDataIters(mx_uint *out_size,
-                              DataIterCreator **out_array);
-/*!
- * \brief Init an iterator, init with parameters
- * the array size of passed in arguments
- * \param handle of the iterator creator
- * \param num_param number of parameter
- * \param keys parameter keys
- * \param vals parameter values
- * \param out resulting iterator
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterCreateIter(DataIterCreator handle,
-                                   mx_uint num_param,
-                                   const char **keys,
-                                   const char **vals,
-                                   DataIterHandle *out);
-/*!
- * \brief Get the detailed information about data iterator.
- * \param creator the DataIterCreator.
- * \param name The returned name of the creator.
- * \param description The returned description of the symbol.
- * \param num_args Number of arguments.
- * \param arg_names Name of the arguments.
- * \param arg_type_infos Type informations about the arguments.
- * \param arg_descriptions Description information about the arguments.
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterGetIterInfo(DataIterCreator creator,
-                                    const char **name,
-                                    const char **description,
-                                    mx_uint *num_args,
-                                    const char ***arg_names,
-                                    const char ***arg_type_infos,
-                                    const char ***arg_descriptions);
-/*!
- * \brief Free the handle to the IO module
- * \param handle the handle pointer to the data iterator
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterFree(DataIterHandle handle);
-/*!
- * \brief Move iterator to next position
- * \param handle the handle to iterator
- * \param out return value of next
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterNext(DataIterHandle handle,
-                             int *out);
-/*!
- * \brief Call iterator.Reset
- * \param handle the handle to iterator
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterBeforeFirst(DataIterHandle handle);
-
-/*!
- * \brief Get the handle to the NDArray of underlying data
- * \param handle the handle pointer to the data iterator
- * \param out handle to underlying data NDArray
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterGetData(DataIterHandle handle,
-                                NDArrayHandle *out);
-/*!
- * \brief Get the image index by array.
- * \param handle the handle pointer to the data iterator
- * \param out_index output index of the array.
- * \param out_size output size of the array.
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterGetIndex(DataIterHandle handle,
-                                 uint64_t **out_index,
-                                 uint64_t *out_size);
-/*!
- * \brief Get the padding number in current data batch
- * \param handle the handle pointer to the data iterator
- * \param pad pad number ptr
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterGetPadNum(DataIterHandle handle,
-                                  int *pad);
-
-/*!
- * \brief Get the handle to the NDArray of underlying label
- * \param handle the handle pointer to the data iterator
- * \param out the handle to underlying label NDArray
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXDataIterGetLabel(DataIterHandle handle,
-                                 NDArrayHandle *out);
-//--------------------------------------------
-// Part 6: basic KVStore interface
-//--------------------------------------------
-/*!
- * \brief Initialized ps-lite environment variables
- * \param num_vars number of variables to initialize
- * \param keys environment keys
- * \param vals environment values
- */
-MXNET_DLL int MXInitPSEnv(mx_uint num_vars,
-                          const char **keys,
-                          const char **vals);
-
-
-/*!
- * \brief Create a kvstore
- * \param type the type of KVStore
- * \param out The output type of KVStore
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreCreate(const char *type,
-                              KVStoreHandle *out);
-
-/*!
- * \brief Set parameters to use low-bit compressed gradients
- * \param handle handle to the kvstore
- * \param keys keys for compression parameters
- * \param vals values for compression parameters
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreSetGradientCompression(KVStoreHandle handle,
-                                              mx_uint num_params,
-                                              const char** keys,
-                                              const char** vals);
-
-/*!
- * \brief Delete a KVStore handle.
- * \param handle handle to the kvstore
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreFree(KVStoreHandle handle);
-/*!
- * \brief Init a list of (key,value) pairs in kvstore
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreInit(KVStoreHandle handle,
-                            mx_uint num,
-                            const int* keys,
-                            NDArrayHandle* vals);
-
-/*!
- * \brief Init a list of (key,value) pairs in kvstore, where each key is a string
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreInitEx(KVStoreHandle handle,
-                              mx_uint num,
-                              const char** keys,
-                              NDArrayHandle* vals);
-
-/*!
- * \brief Push a list of (key,value) pairs to kvstore
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePush(KVStoreHandle handle,
-                            mx_uint num,
-                            const int* keys,
-                            NDArrayHandle* vals,
-                            int priority);
-/*!
- * \brief Push a list of (key,value) pairs to kvstore, where each key is a string
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePushEx(KVStoreHandle handle,
-                              mx_uint num,
-                              const char** keys,
-                              NDArrayHandle* vals,
-                              int priority);
-/*!
- * \brief pull a list of (key, value) pairs from the kvstore
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePull(KVStoreHandle handle,
-                            mx_uint num,
-                            const int* keys,
-                            NDArrayHandle* vals,
-                            int priority);
-/*!
- * \brief pull a list of (key, value) pairs from the kvstore, where each key is a string
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePullEx(KVStoreHandle handle,
-                              mx_uint num,
-                              const char** keys,
-                              NDArrayHandle* vals,
-                              int priority);
-
-/*!
- * \brief pull a list of (key, value) pairs from the kvstore, where each key is an integer.
- *        The NDArray pulled back will be in row_sparse storage with only the specified
- *        row_ids present based row_ids (others rows are zeros).
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param row_ids the list of row_id NDArrays
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePullRowSparse(KVStoreHandle handle,
-                                     mx_uint num,
-                                     const int* keys,
-                                     NDArrayHandle* vals,
-                                     const NDArrayHandle* row_ids,
-                                     int priority);
-/*!
- * \brief pull a list of (key, value) pairs from the kvstore, where each key is a string.
- *        The NDArray pulled back will be in row_sparse storage with only the specified
- *        row_ids present based row_ids (others rows are zeros).
- * \param handle handle to the kvstore
- * \param num the number of key-value pairs
- * \param keys the list of keys
- * \param vals the list of values
- * \param row_ids the list of row_id NDArrays
- * \param priority the priority of the action
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStorePullRowSparseEx(KVStoreHandle handle,
-                                       mx_uint num,
-                                       const char** keys,
-                                       NDArrayHandle* vals,
-                                       const NDArrayHandle* row_ids,
-                                       int priority);
-
-/*!
- * \brief user-defined updater for the kvstore
- * It's this updater's responsibility to delete \a recv and \a local
- * \param the key
- * \param recv the pushed value on this key
- * \param local the value stored on local on this key
- * \param handle The additional handle to the updater
- */
-typedef void (MXKVStoreUpdater)(int key,
-                                NDArrayHandle recv,
-                                NDArrayHandle local,
-                                void *handle);
-/*!
- * \brief user-defined updater for the kvstore with string keys
- * It's this updater's responsibility to delete \a recv and \a local
- * \param the key
- * \param recv the pushed value on this key
- * \param local the value stored on local on this key
- * \param handle The additional handle to the updater
- */
-typedef void (MXKVStoreStrUpdater)(const char* key,
-                                   NDArrayHandle recv,
-                                   NDArrayHandle local,
-                                   void *handle);
-/*!
- * \brief register a push updater
- * \param handle handle to the KVStore
- * \param updater udpater function
- * \param updater_handle The additional handle used to invoke the updater
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreSetUpdater(KVStoreHandle handle,
-                                  MXKVStoreUpdater updater,
-                                  void *updater_handle);
-/*!
- * \brief register a push updater with int keys and one with string keys
- * \param handle handle to the KVStore
- * \param updater updater function with int keys
- * \param str_updater updater function with string keys
- * \param updater_handle The additional handle used to invoke the updater
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreSetUpdaterEx(KVStoreHandle handle,
-                                    MXKVStoreUpdater updater,
-                                    MXKVStoreStrUpdater str_updater,
-                                    void *updater_handle);
-/*!
- * \brief get the type of the kvstore
- * \param handle handle to the KVStore
- * \param type a string type
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreGetType(KVStoreHandle handle,
-                               const char** type);
-//--------------------------------------------
-// Part 6: advanced KVStore for multi-machines
-//--------------------------------------------
-
-/**
- * \brief return The rank of this node in its group, which is in [0, GroupSize).
- *
- * \param handle handle to the KVStore
- * \param ret the node rank
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreGetRank(KVStoreHandle handle,
-                               int *ret);
-
-/**
- * \brief return The number of nodes in this group, which is
- * - number of workers if if `IsWorkerNode() == true`,
- * - number of servers if if `IsServerNode() == true`,
- * - 1 if `IsSchedulerNode() == true`,
- * \param handle handle to the KVStore
- * \param ret the group size
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreGetGroupSize(KVStoreHandle handle,
-                                    int *ret);
-
-/**
- * \brief return whether or not this process is a worker node.
- * \param ret 1 for yes, 0 for no
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreIsWorkerNode(int *ret);
-
-
-/**
- * \brief return whether or not this process is a server node.
- * \param ret 1 for yes, 0 for no
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreIsServerNode(int *ret);
-
-
-/**
- * \brief return whether or not this process is a scheduler node.
- * \param ret 1 for yes, 0 for no
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreIsSchedulerNode(int *ret);
-
-/**
- * \brief global barrier among all worker machines
- *
- * \param handle handle to the KVStore
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreBarrier(KVStoreHandle handle);
-
-/**
- * \brief whether to do barrier when finalize
- *
- * \param handle handle to the KVStore
- * \param barrier_before_exit whether to do barrier when kvstore finalize
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreSetBarrierBeforeExit(KVStoreHandle handle,
-                                            const int barrier_before_exit);
-
-/**
- * \brief the prototype of a server controller
- * \param head the head of the command
- * \param body the body of the command
- * \param controller_handle helper handle for implementing controller
- */
-typedef void (MXKVStoreServerController)(int head,
-                                         const char *body,
-                                         void *controller_handle);
-
-/**
- * \return Run as server (or scheduler)
- *
- * \param handle handle to the KVStore
- * \param controller the user-defined server controller
- * \param controller_handle helper handle for implementing controller
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreRunServer(KVStoreHandle handle,
-                                 MXKVStoreServerController controller,
-                                 void *controller_handle);
-
-/**
- * \return Send a command to all server nodes
- *
- * \param handle handle to the KVStore
- * \param cmd_id the head of the command
- * \param cmd_body the body of the command
- * \return 0 when success, -1 when failure happens
- */
-MXNET_DLL int MXKVStoreSendCommmandToServers(KVStoreHandle handle,
-                                             int cmd_id,
-                                             const char* cmd_body);
-
-/**
- * \brief Get the number of ps dead node(s) specified by {node_id}
- *
- * \param handle handle to the KVStore
- * \param node_id Can be a node group or a single node.
- *                kScheduler = 1, kServerGroup = 2, kWorkerGroup = 4
- * \param number Ouptut number of dead nodes
- * \param timeout_sec A node fails to send heartbeart in {timeout_sec} seconds
- *                    will be presumed as 'dead'
- */
-MXNET_DLL int MXKVStoreGetNumDeadNode(KVStoreHandle handle,
-                                      const int node_id,
-                                      int *number,
-                                      const int timeout_sec DEFAULT(60));
-
-/**
- * \brief Create a RecordIO writer object
- * \param uri path to file
- * \param out handle pointer to the created object
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOWriterCreate(const char *uri, RecordIOHandle *out);
-
-/**
- * \brief Delete a RecordIO writer object
- * \param handle handle to RecordIO object
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOWriterFree(RecordIOHandle handle);
-
-/**
- * \brief Write a record to a RecordIO object
- * \param handle handle to RecordIO object
- * \param buf buffer to write
- * \param size size of buffer
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOWriterWriteRecord(RecordIOHandle handle,
-                                          const char *buf, size_t size);
-
-/**
- * \brief Get the current writer pointer position
- * \param handle handle to RecordIO object
- * \param pos handle to output position
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOWriterTell(RecordIOHandle handle, size_t *pos);
-
-/**
- * \brief Create a RecordIO reader object
- * \param uri path to file
- * \param out handle pointer to the created object
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOReaderCreate(const char *uri, RecordIOHandle *out);
-
-/**
- * \brief Delete a RecordIO reader object
- * \param handle handle to RecordIO object
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOReaderFree(RecordIOHandle handle);
-
-/**
- * \brief Write a record to a RecordIO object
- * \param handle handle to RecordIO object
- * \param buf pointer to return buffer
- * \param size point to size of buffer
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOReaderReadRecord(RecordIOHandle handle,
-                                        char const **buf, size_t *size);
-
-/**
- * \brief Set the current reader pointer position
- * \param handle handle to RecordIO object
- * \param pos target position
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOReaderSeek(RecordIOHandle handle, size_t pos);
-
-/**
- * \brief Get the current writer pointer position
- * \param handle handle to RecordIO object
- * \param pos handle to output position
- * \return 0 when success, -1 when failure happens
-*/
-MXNET_DLL int MXRecordIOReaderTell(RecordIOHandle handle, size_t *pos);
+////--------------------------------------------
+//// Part 5: IO Interface
+////--------------------------------------------
+///*!
+// * \brief List all the available iterator entries
+// * \param out_size the size of returned iterators
+// * \param out_array the output iteratos entries
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXListDataIters(mx_uint *out_size,
+//                              DataIterCreator **out_array);
+///*!
+// * \brief Init an iterator, init with parameters
+// * the array size of passed in arguments
+// * \param handle of the iterator creator
+// * \param num_param number of parameter
+// * \param keys parameter keys
+// * \param vals parameter values
+// * \param out resulting iterator
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterCreateIter(DataIterCreator handle,
+//                                   mx_uint num_param,
+//                                   const char **keys,
+//                                   const char **vals,
+//                                   DataIterHandle *out);
+///*!
+// * \brief Get the detailed information about data iterator.
+// * \param creator the DataIterCreator.
+// * \param name The returned name of the creator.
+// * \param description The returned description of the symbol.
+// * \param num_args Number of arguments.
+// * \param arg_names Name of the arguments.
+// * \param arg_type_infos Type informations about the arguments.
+// * \param arg_descriptions Description information about the arguments.
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterGetIterInfo(DataIterCreator creator,
+//                                    const char **name,
+//                                    const char **description,
+//                                    mx_uint *num_args,
+//                                    const char ***arg_names,
+//                                    const char ***arg_type_infos,
+//                                    const char ***arg_descriptions);
+///*!
+// * \brief Free the handle to the IO module
+// * \param handle the handle pointer to the data iterator
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterFree(DataIterHandle handle);
+///*!
+// * \brief Move iterator to next position
+// * \param handle the handle to iterator
+// * \param out return value of next
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterNext(DataIterHandle handle,
+//                             int *out);
+///*!
+// * \brief Call iterator.Reset
+// * \param handle the handle to iterator
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterBeforeFirst(DataIterHandle handle);
+//
+///*!
+// * \brief Get the handle to the NDArray of underlying data
+// * \param handle the handle pointer to the data iterator
+// * \param out handle to underlying data NDArray
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterGetData(DataIterHandle handle,
+//                                NDArrayHandle *out);
+///*!
+// * \brief Get the image index by array.
+// * \param handle the handle pointer to the data iterator
+// * \param out_index output index of the array.
+// * \param out_size output size of the array.
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterGetIndex(DataIterHandle handle,
+//                                 uint64_t **out_index,
+//                                 uint64_t *out_size);
+///*!
+// * \brief Get the padding number in current data batch
+// * \param handle the handle pointer to the data iterator
+// * \param pad pad number ptr
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterGetPadNum(DataIterHandle handle,
+//                                  int *pad);
+//
+///*!
+// * \brief Get the handle to the NDArray of underlying label
+// * \param handle the handle pointer to the data iterator
+// * \param out the handle to underlying label NDArray
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXDataIterGetLabel(DataIterHandle handle,
+//                                 NDArrayHandle *out);
+////--------------------------------------------
+//// Part 6: basic KVStore interface
+////--------------------------------------------
+///*!
+// * \brief Initialized ps-lite environment variables
+// * \param num_vars number of variables to initialize
+// * \param keys environment keys
+// * \param vals environment values
+// */
+//MXNET_DLL int MXInitPSEnv(mx_uint num_vars,
+//                          const char **keys,
+//                          const char **vals);
+//
+//
+///*!
+// * \brief Create a kvstore
+// * \param type the type of KVStore
+// * \param out The output type of KVStore
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreCreate(const char *type,
+//                              KVStoreHandle *out);
+//
+///*!
+// * \brief Set parameters to use low-bit compressed gradients
+// * \param handle handle to the kvstore
+// * \param keys keys for compression parameters
+// * \param vals values for compression parameters
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreSetGradientCompression(KVStoreHandle handle,
+//                                              mx_uint num_params,
+//                                              const char** keys,
+//                                              const char** vals);
+//
+///*!
+// * \brief Delete a KVStore handle.
+// * \param handle handle to the kvstore
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreFree(KVStoreHandle handle);
+///*!
+// * \brief Init a list of (key,value) pairs in kvstore
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreInit(KVStoreHandle handle,
+//                            mx_uint num,
+//                            const int* keys,
+//                            NDArrayHandle* vals);
+//
+///*!
+// * \brief Init a list of (key,value) pairs in kvstore, where each key is a string
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreInitEx(KVStoreHandle handle,
+//                              mx_uint num,
+//                              const char** keys,
+//                              NDArrayHandle* vals);
+//
+///*!
+// * \brief Push a list of (key,value) pairs to kvstore
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePush(KVStoreHandle handle,
+//                            mx_uint num,
+//                            const int* keys,
+//                            NDArrayHandle* vals,
+//                            int priority);
+///*!
+// * \brief Push a list of (key,value) pairs to kvstore, where each key is a string
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePushEx(KVStoreHandle handle,
+//                              mx_uint num,
+//                              const char** keys,
+//                              NDArrayHandle* vals,
+//                              int priority);
+///*!
+// * \brief pull a list of (key, value) pairs from the kvstore
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePull(KVStoreHandle handle,
+//                            mx_uint num,
+//                            const int* keys,
+//                            NDArrayHandle* vals,
+//                            int priority);
+///*!
+// * \brief pull a list of (key, value) pairs from the kvstore, where each key is a string
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePullEx(KVStoreHandle handle,
+//                              mx_uint num,
+//                              const char** keys,
+//                              NDArrayHandle* vals,
+//                              int priority);
+//
+///*!
+// * \brief pull a list of (key, value) pairs from the kvstore, where each key is an integer.
+// *        The NDArray pulled back will be in row_sparse storage with only the specified
+// *        row_ids present based row_ids (others rows are zeros).
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param row_ids the list of row_id NDArrays
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePullRowSparse(KVStoreHandle handle,
+//                                     mx_uint num,
+//                                     const int* keys,
+//                                     NDArrayHandle* vals,
+//                                     const NDArrayHandle* row_ids,
+//                                     int priority);
+///*!
+// * \brief pull a list of (key, value) pairs from the kvstore, where each key is a string.
+// *        The NDArray pulled back will be in row_sparse storage with only the specified
+// *        row_ids present based row_ids (others rows are zeros).
+// * \param handle handle to the kvstore
+// * \param num the number of key-value pairs
+// * \param keys the list of keys
+// * \param vals the list of values
+// * \param row_ids the list of row_id NDArrays
+// * \param priority the priority of the action
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStorePullRowSparseEx(KVStoreHandle handle,
+//                                       mx_uint num,
+//                                       const char** keys,
+//                                       NDArrayHandle* vals,
+//                                       const NDArrayHandle* row_ids,
+//                                       int priority);
+//
+///*!
+// * \brief user-defined updater for the kvstore
+// * It's this updater's responsibility to delete \a recv and \a local
+// * \param the key
+// * \param recv the pushed value on this key
+// * \param local the value stored on local on this key
+// * \param handle The additional handle to the updater
+// */
+//typedef void (MXKVStoreUpdater)(int key,
+//                                NDArrayHandle recv,
+//                                NDArrayHandle local,
+//                                void *handle);
+///*!
+// * \brief user-defined updater for the kvstore with string keys
+// * It's this updater's responsibility to delete \a recv and \a local
+// * \param the key
+// * \param recv the pushed value on this key
+// * \param local the value stored on local on this key
+// * \param handle The additional handle to the updater
+// */
+//typedef void (MXKVStoreStrUpdater)(const char* key,
+//                                   NDArrayHandle recv,
+//                                   NDArrayHandle local,
+//                                   void *handle);
+///*!
+// * \brief register a push updater
+// * \param handle handle to the KVStore
+// * \param updater udpater function
+// * \param updater_handle The additional handle used to invoke the updater
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreSetUpdater(KVStoreHandle handle,
+//                                  MXKVStoreUpdater updater,
+//                                  void *updater_handle);
+///*!
+// * \brief register a push updater with int keys and one with string keys
+// * \param handle handle to the KVStore
+// * \param updater updater function with int keys
+// * \param str_updater updater function with string keys
+// * \param updater_handle The additional handle used to invoke the updater
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreSetUpdaterEx(KVStoreHandle handle,
+//                                    MXKVStoreUpdater updater,
+//                                    MXKVStoreStrUpdater str_updater,
+//                                    void *updater_handle);
+///*!
+// * \brief get the type of the kvstore
+// * \param handle handle to the KVStore
+// * \param type a string type
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreGetType(KVStoreHandle handle,
+//                               const char** type);
+////--------------------------------------------
+//// Part 6: advanced KVStore for multi-machines
+////--------------------------------------------
+//
+///**
+// * \brief return The rank of this node in its group, which is in [0, GroupSize).
+// *
+// * \param handle handle to the KVStore
+// * \param ret the node rank
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreGetRank(KVStoreHandle handle,
+//                               int *ret);
+//
+///**
+// * \brief return The number of nodes in this group, which is
+// * - number of workers if if `IsWorkerNode() == true`,
+// * - number of servers if if `IsServerNode() == true`,
+// * - 1 if `IsSchedulerNode() == true`,
+// * \param handle handle to the KVStore
+// * \param ret the group size
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreGetGroupSize(KVStoreHandle handle,
+//                                    int *ret);
+//
+///**
+// * \brief return whether or not this process is a worker node.
+// * \param ret 1 for yes, 0 for no
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreIsWorkerNode(int *ret);
+//
+//
+///**
+// * \brief return whether or not this process is a server node.
+// * \param ret 1 for yes, 0 for no
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreIsServerNode(int *ret);
+//
+//
+///**
+// * \brief return whether or not this process is a scheduler node.
+// * \param ret 1 for yes, 0 for no
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreIsSchedulerNode(int *ret);
+//
+///**
+// * \brief global barrier among all worker machines
+// *
+// * \param handle handle to the KVStore
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreBarrier(KVStoreHandle handle);
+//
+///**
+// * \brief whether to do barrier when finalize
+// *
+// * \param handle handle to the KVStore
+// * \param barrier_before_exit whether to do barrier when kvstore finalize
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreSetBarrierBeforeExit(KVStoreHandle handle,
+//                                            const int barrier_before_exit);
+//
+///**
+// * \brief the prototype of a server controller
+// * \param head the head of the command
+// * \param body the body of the command
+// * \param controller_handle helper handle for implementing controller
+// */
+//typedef void (MXKVStoreServerController)(int head,
+//                                         const char *body,
+//                                         void *controller_handle);
+//
+///**
+// * \return Run as server (or scheduler)
+// *
+// * \param handle handle to the KVStore
+// * \param controller the user-defined server controller
+// * \param controller_handle helper handle for implementing controller
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreRunServer(KVStoreHandle handle,
+//                                 MXKVStoreServerController controller,
+//                                 void *controller_handle);
+//
+///**
+// * \return Send a command to all server nodes
+// *
+// * \param handle handle to the KVStore
+// * \param cmd_id the head of the command
+// * \param cmd_body the body of the command
+// * \return 0 when success, -1 when failure happens
+// */
+//MXNET_DLL int MXKVStoreSendCommmandToServers(KVStoreHandle handle,
+//                                             int cmd_id,
+//                                             const char* cmd_body);
+//
+///**
+// * \brief Get the number of ps dead node(s) specified by {node_id}
+// *
+// * \param handle handle to the KVStore
+// * \param node_id Can be a node group or a single node.
+// *                kScheduler = 1, kServerGroup = 2, kWorkerGroup = 4
+// * \param number Ouptut number of dead nodes
+// * \param timeout_sec A node fails to send heartbeart in {timeout_sec} seconds
+// *                    will be presumed as 'dead'
+// */
+//MXNET_DLL int MXKVStoreGetNumDeadNode(KVStoreHandle handle,
+//                                      const int node_id,
+//                                      int *number,
+//                                      const int timeout_sec DEFAULT(60));
+//
+///**
+// * \brief Create a RecordIO writer object
+// * \param uri path to file
+// * \param out handle pointer to the created object
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOWriterCreate(const char *uri, RecordIOHandle *out);
+//
+///**
+// * \brief Delete a RecordIO writer object
+// * \param handle handle to RecordIO object
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOWriterFree(RecordIOHandle handle);
+//
+///**
+// * \brief Write a record to a RecordIO object
+// * \param handle handle to RecordIO object
+// * \param buf buffer to write
+// * \param size size of buffer
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOWriterWriteRecord(RecordIOHandle handle,
+//                                          const char *buf, size_t size);
+//
+///**
+// * \brief Get the current writer pointer position
+// * \param handle handle to RecordIO object
+// * \param pos handle to output position
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOWriterTell(RecordIOHandle handle, size_t *pos);
+//
+///**
+// * \brief Create a RecordIO reader object
+// * \param uri path to file
+// * \param out handle pointer to the created object
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOReaderCreate(const char *uri, RecordIOHandle *out);
+//
+///**
+// * \brief Delete a RecordIO reader object
+// * \param handle handle to RecordIO object
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOReaderFree(RecordIOHandle handle);
+//
+///**
+// * \brief Write a record to a RecordIO object
+// * \param handle handle to RecordIO object
+// * \param buf pointer to return buffer
+// * \param size point to size of buffer
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOReaderReadRecord(RecordIOHandle handle,
+//                                        char const **buf, size_t *size);
+//
+///**
+// * \brief Set the current reader pointer position
+// * \param handle handle to RecordIO object
+// * \param pos target position
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOReaderSeek(RecordIOHandle handle, size_t pos);
+//
+///**
+// * \brief Get the current writer pointer position
+// * \param handle handle to RecordIO object
+// * \param pos handle to output position
+// * \return 0 when success, -1 when failure happens
+//*/
+//MXNET_DLL int MXRecordIOReaderTell(RecordIOHandle handle, size_t *pos);
 
 /**
  * \brief Create a MXRtc object

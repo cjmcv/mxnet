@@ -258,7 +258,7 @@ int MXPredGetOutputShape(PredictorHandle handle,
   *shape_data = p->out_shapes_buffer.data();
   *shape_ndim = p->out_shapes[out_index].ndim();
   API_END();
-}
+} 
 
 int MXPredSetInput(PredictorHandle handle,
                    const char* key,

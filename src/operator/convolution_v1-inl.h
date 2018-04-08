@@ -26,7 +26,7 @@
 #ifndef MXNET_OPERATOR_CONVOLUTION_V1_INL_H_
 #define MXNET_OPERATOR_CONVOLUTION_V1_INL_H_
 
-#include <mxnet/io.h>
+//#include <mxnet/io.h>
 #include <mxnet/base.h>
 #include <mxnet/ndarray.h>
 #include <mxnet/operator.h>
