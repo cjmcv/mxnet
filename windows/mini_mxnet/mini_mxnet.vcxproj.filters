@@ -106,9 +106,6 @@
     <Filter Include="Source\src\imperative">
       <UniqueIdentifier>{ACBABAD2-4CEB-3314-80E3-44A4D861F1C3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\src\io">
-      <UniqueIdentifier>{848C8572-09F2-38ED-89F0-70A1B8FE4930}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\src\ndarray">
       <UniqueIdentifier>{88AFCACF-D6ED-3C1F-B703-51715C847707}</UniqueIdentifier>
     </Filter>
@@ -174,9 +171,6 @@
     </Filter>
     <Filter Include="Include\src\imperative">
       <UniqueIdentifier>{A02B08AD-4D7C-3E14-AA78-A4D6717C18FB}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\src\io">
-      <UniqueIdentifier>{7D0C454C-DFEC-3FC9-BF6D-BB233F17275F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\src\ndarray">
       <UniqueIdentifier>{09DCE631-14F6-310E-96EB-9185639B0357}</UniqueIdentifier>
@@ -358,12 +352,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\mxnet\imperative.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mxnet\io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mxnet\kvstore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\mxnet\ndarray.h">
@@ -641,36 +629,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\imperative\imperative_utils.h">
       <Filter>Include\src\imperative</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\image_augmenter.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\image_iter_common.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\image_recordio.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\inst_vector.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_batchloader.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_normalize.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_prefetcher.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_sparse.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_sparse_batchloader.h">
-      <Filter>Include\src\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\io\iter_sparse_prefetcher.h">
-      <Filter>Include\src\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ndarray\ndarray_function.h">
       <Filter>Include\src\ndarray</Filter>
@@ -1407,36 +1365,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\imperative\imperative.cc">
       <Filter>Source\src\imperative</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\image_aug_default.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\image_det_aug_default.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\image_io.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\io.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_csv.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_image_det_recordio.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_image_recordio.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_image_recordio_2.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_libsvm.cc">
-      <Filter>Source\src\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\io\iter_mnist.cc">
-      <Filter>Source\src\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ndarray\ndarray.cc">
       <Filter>Source\src\ndarray</Filter>
