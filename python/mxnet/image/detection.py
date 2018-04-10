@@ -29,11 +29,11 @@ import numpy as np
 
 from ..base import numeric_types
 from .. import ndarray as nd
-from ..ndarray._internal import _cvcopyMakeBorder as copyMakeBorder
-from .. import io
-from .image import RandomOrderAug, ColorJitterAug, LightingAug, ColorNormalizeAug
-from .image import ResizeAug, ForceResizeAug, CastAug, HueJitterAug, RandomGrayAug
-from .image import fixed_crop, ImageIter, Augmenter
+#from ..ndarray._internal import _cvcopyMakeBorder as copyMakeBorder
+#from .. import io
+#from .image import RandomOrderAug, ColorJitterAug, LightingAug, ColorNormalizeAug
+#from .image import ResizeAug, ForceResizeAug, CastAug, HueJitterAug, RandomGrayAug
+#from .image import fixed_crop, ImageIter, Augmenter
 
 
 class DetAugmenter(object):

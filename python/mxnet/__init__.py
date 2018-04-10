@@ -33,13 +33,13 @@ from . import name
 from . import symbol as sym
 from . import symbol
 from . import symbol_doc
-from . import io
-from . import recordio
+#from . import io
+#from . import recordio
 from . import operator
 # use mx.rnd as short for mx.random
 from . import random as rnd
 from . import random
-from . import optimizer
+#from . import optimizer
 from . import model
 from . import notebook
 from . import initializer
@@ -53,7 +53,7 @@ from . import callback
 from . import lr_scheduler
 # use mx.kv as short for kvstore
 from . import kvstore as kv
-from . import kvstore_server
+#from . import kvstore_server
 # Runtime compile module
 from . import rtc
 # Attribute scope to add attributes to symbolic graphs
@@ -71,10 +71,10 @@ from . import log
 from . import module
 from . import module as mod
 
-from . import image
-from . import image as img
+#from . import image
+#from . import image as img
 
-from . import test_utils
+#from . import test_utils
 
 from . import rnn
 

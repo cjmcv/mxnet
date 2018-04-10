@@ -27,7 +27,7 @@ from . import nn
 
 from . import rnn
 
-from .trainer import *
+#from .trainer import *
 
 from . import loss
 

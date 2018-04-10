@@ -19,8 +19,8 @@
 # pylint: disable=wildcard-import
 """Image Iterators and image augmentation functions"""
 
-from . import image
-from .image import *
+#from . import image
+#from .image import *
 
 from . import detection
 from . import detection as det

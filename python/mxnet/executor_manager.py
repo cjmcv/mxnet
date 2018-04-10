@@ -26,7 +26,7 @@ import numpy as np
 from .base import mx_real_t
 from . import ndarray as nd
 from .context import cpu
-from .io import DataDesc
+#from .io import DataDesc
 
 def _split_input_slice(batch_size, work_load_list):
     """Get input slice from the input shape.

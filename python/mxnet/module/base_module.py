@@ -28,7 +28,7 @@ from .. import ndarray
 from ..context import cpu
 from ..model import BatchEndParam
 from ..initializer import Uniform
-from ..io import DataDesc
+#from ..io import DataDesc
 from ..base import _as_list
 
 

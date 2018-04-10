@@ -30,7 +30,7 @@ import numpy as np
 
 from .. import dataset
 from ...utils import download, check_sha1
-from .... import nd, image, recordio
+#from .... import nd, image, recordio
 
 
 class MNIST(dataset._DownloadedDataset):
