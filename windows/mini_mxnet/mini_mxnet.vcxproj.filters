@@ -187,9 +187,6 @@
     <Filter Include="Source\src\operator\custom">
       <UniqueIdentifier>{607BAD38-B6F1-32A4-8296-E5690BA2657C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\src\operator\image">
-      <UniqueIdentifier>{248D562D-3303-3FC8-850A-966EFC928E8A}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\src\operator\nn">
       <UniqueIdentifier>{CFFE4C06-ABCE-35FF-80EE-E0B56733881F}</UniqueIdentifier>
     </Filter>
@@ -1431,9 +1428,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\operator\custom\ndarray_op.cc">
       <Filter>Source\src\operator\custom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\operator\image\image_random.cc">
-      <Filter>Source\src\operator\image</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\operator\nn\cudnn\cudnn_algoreg.cc">
       <Filter>Source\src\operator\nn\cudnn</Filter>
