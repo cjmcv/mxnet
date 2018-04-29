@@ -441,7 +441,7 @@ int MXInferencer::GetOutClassInfo(std::string &synset_file, float *data, int dat
   int best_idx = 0;
 
   for (int i = 0; i < data_size; i++) {
-    printf("Accuracy[%d] = %.8f\n", i, data[i]);
+    //printf("Accuracy[%d] = %.8f\n", i, data[i]);
 
     if (data[i] > best_accuracy) {
       best_accuracy = data[i];
@@ -457,16 +457,16 @@ int MXInferencer::GetOutClassInfo(std::string &synset_file, float *data, int dat
 
 int main(int argc, char* argv[]) {
 
-  std::string test_file = "D://Documents//GitHub//test-material//pic//2.jpg";
+  std::string test_file = "D://test-material//pic//3.jpg";
 
   // Models path for your model, you have to modify it
-  //std::string json_file = "D://Documents//GitHub//test-material//model//Inception//resnet-18-0000.json";
-  //std::string param_file = "D://Documents//GitHub//test-material//model//Inception//resnet-18-0000.params";
-  std::string json_file = "D://Documents//GitHub//test-material//model//vgg//vgg16-0000.json";
-  std::string param_file = "D://Documents//GitHub//test-material//model//vgg//vgg16-0000.params";
+  //std::string json_file = "D://test-material//model//Inception//resnet-18-0000.json";
+  //std::string param_file = "D://test-material//model//Inception//resnet-18-0000.params";
+  std::string json_file = "D://test-material//model//imagenet//vgg//vgg16-0000.json";
+  std::string param_file = "D://test-material//model//imagenet//vgg//vgg16-0000.params";
 
-  std::string synset_file = "D://Documents//GitHub//test-material//model//Inception//synset.txt";
-  std::string nd_file = "D://Documents//GitHub//test-material//model//Inception//mean_224.nd";
+  std::string synset_file = "D://test-material//model//imagenet//synset.txt";
+  std::string nd_file = "D://test-material//model//imagenet//mean_224.nd";
   
   int dev_type = 2; // 1: cpu, 2: gpu
   int dev_id = 0;
@@ -486,6 +486,10 @@ int main(int argc, char* argv[]) {
   mx_infer->SetInputMean(NULL, nd_file.c_str());
   
   cv::Mat src = cv::imread(test_file);
+  if (src.empty()) {
+    printf("Can not open image %s.\n", test_file.c_str());
+    return -1;
+  }
   mx_infer->Inference(src);
 
   int output_index = 0;
